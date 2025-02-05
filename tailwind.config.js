@@ -1,0 +1,52 @@
+/** @type {import('tailwindcss').Config} */
+module.exports = {
+  content: ['./app/**/*.{js,jsx,ts,tsx}', './components/**/*.{js,jsx,ts,tsx}'],
+  presets: [require('nativewind/preset')],
+  theme: {
+    extend: {
+      colors: {
+        text: '#EAEAEA',
+        primary: '#D2D2FF',
+        background: '#16161D',
+        success: '#A9EBCC',
+        info: '#9ED7F4',
+        error: '#FFB0AC',
+        warning: '#FDE4A3',
+        muted: '#A3A3A3',
+        disabled: '#49484D',
+      },
+    },
+    fontFamily: {
+      'geist-semibold': ['Geist-SemiBold'],
+      'geist-medium': ['Geist-Medium'],
+      'geist-regular': ['Geist-Regular'],
+    },
+    fontSize: {
+      heading: '34px',
+      title1: '28px',
+      title2: '22px',
+      title3: '20px',
+      body: '17px',
+      callout: '16px',
+      subhead: '15px',
+      footnote: '13px',
+      caption: '12px',
+      button: '18px',
+      link: '17px',
+    },
+    lineHeight: {
+      heading: '41px',
+      title1: '34px',
+      title2: '28px',
+      title3: '25px',
+      body: '22px',
+      callout: '21px',
+      subhead: '20px',
+      footnote: '18px',
+      caption: '16px',
+      button: '36px',
+      link: '22px',
+    },
+  },
+  plugins: [],
+}
