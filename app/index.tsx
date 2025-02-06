@@ -1,65 +1,69 @@
-import { Image, SafeAreaView, StyleSheet, View } from 'react-native'
-import React, { useEffect, useRef, useState } from 'react'
-import { BlurView } from 'expo-blur'
-import Animated, { FadeIn, FadeOut } from 'react-native-reanimated'
-import { useSafeAreaInsets } from 'react-native-safe-area-context'
+import { TouchableOpacity, View } from 'react-native'
+import { router, SplashScreen } from 'expo-router'
+import React, { ComponentProps, useContext, useEffect } from 'react'
+import { Ionicons } from '@expo/vector-icons'
 
-import mockData from '@/constants/mockData'
-
+import { signInWithApple } from '@/libs/apple'
+import { HOME } from '@/constants/routes'
 import Text from '@/components/ui/Text'
-import MediaList from '@/components/MediaList'
-import GradientBlur from '@/components/GradientBlur'
+import { SessionContext } from '@/container/SessionProvider'
 
-const HomeScreen = () => {
-  const [backgroundImage, setBackgroundImage] = useState(mockData[0]?.image)
-  const [headerHeight, setHeaderHeight] = useState(0)
+type Provider = {
+  name: string
+  iconName: ComponentProps<typeof Ionicons>['name']
+  iconColor: string
+  buttonColor: string
+  onPress: () => void
+}
 
-  const insets = useSafeAreaInsets()
-  const headerRef = useRef<View>(null)
+const LoginScreen = () => {
+  const { session, isSessionFetched } = useContext(SessionContext)
 
   useEffect(() => {
-    if (headerRef.current) {
-      headerRef.current.measure((x, y, width, height, pageX, pageY) => {
-        setHeaderHeight(height)
-      })
+    SplashScreen.preventAutoHideAsync()
+  }, [])
+
+  useEffect(() => {
+    if (!isSessionFetched) return
+
+    const closeSplashScreen = async () => {
+      await SplashScreen.hideAsync()
     }
-  }, [headerRef])
+
+    if (!session) {
+      closeSplashScreen()
+
+      return
+    }
+
+    router.replace(HOME)
+  }, [isSessionFetched, session])
+
+  const PROVIDERS: Array<Provider> = [
+    {
+      name: 'Apple',
+      iconName: 'logo-apple',
+      iconColor: 'white',
+      buttonColor: 'black',
+      onPress: signInWithApple,
+    },
+  ]
 
   return (
-    <>
-      <Animated.Image
-        key={backgroundImage}
-        source={{ uri: backgroundImage }}
-        entering={FadeIn.duration(300)}
-        exiting={FadeOut.duration(300)}
-        style={StyleSheet.absoluteFill}
-      />
-      <BlurView
-        intensity={80}
-        tint="systemChromeMaterialDark"
-        style={StyleSheet.absoluteFill}
-        className="absolute w-full h-full"
-      />
-      <View className="flex-1 justify-center">
-        <MediaList
-          data={mockData}
-          onVisibleItemChange={setBackgroundImage}
-          headerHeight={insets.top + headerHeight}
-        />
+    <View className="flex-1 justify-center items-center">
+      <View className="gap-4">
+        {PROVIDERS.map((provider) => (
+          <TouchableOpacity
+            key={provider.name}
+            className="bg-black rounded-full p-4 flex-row items-center gap-2"
+            onPress={provider.onPress}>
+            <Ionicons name={provider.iconName} size={24} color={provider.iconColor} />
+            <Text type="button">Sign in with {provider.name}</Text>
+          </TouchableOpacity>
+        ))}
       </View>
-      <GradientBlur position="top" height={insets.top + headerHeight + 50}>
-        <SafeAreaView style={{ position: 'absolute', width: '100%', zIndex: 10 }}>
-          <View ref={headerRef} className="px-4 py-4 justify-between items-center flex-row">
-            <Text type="heading">Album</Text>
-            <Image
-              source={{ uri: mockData[0]?.author.avatar }}
-              className="w-10 h-10 rounded-full"
-            />
-          </View>
-        </SafeAreaView>
-      </GradientBlur>
-    </>
+    </View>
   )
 }
 
-export default HomeScreen
+export default LoginScreen

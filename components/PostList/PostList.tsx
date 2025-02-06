@@ -1,4 +1,4 @@
-import { Dimensions } from 'react-native'
+import { Dimensions, RefreshControl } from 'react-native'
 import Animated, {
   useSharedValue,
   useAnimatedScrollHandler,
@@ -6,25 +6,25 @@ import Animated, {
 } from 'react-native-reanimated'
 import { useEffect } from 'react'
 
+import { Post } from '@/constants/mockData'
+
 import AnimatedCard from '../AnimatedCard'
 
-type Item = {
-  title: string
-  description: string
-  image: string
-  author: {
-    name: string
-    avatar: string
-  }
-}
-
 type Props = {
-  data: Array<Item>
+  data: Array<Post>
   headerHeight: number
   onVisibleItemChange?: (imageSrc: string) => void
+  isRefreshing: boolean
+  handleRefresh: () => void
 }
 
-const MediaList = ({ data, onVisibleItemChange, headerHeight }: Props) => {
+const PostList = ({
+  data,
+  onVisibleItemChange,
+  headerHeight,
+  isRefreshing,
+  handleRefresh,
+}: Props) => {
   const { height } = Dimensions.get('screen')
 
   const SPACING = 8
@@ -39,7 +39,7 @@ const MediaList = ({ data, onVisibleItemChange, headerHeight }: Props) => {
 
     const currentIndex = Math.round(scrollY.value)
     if (currentIndex >= 0 && currentIndex < data.length) {
-      runOnJS(onVisibleItemChange)(data[currentIndex].image)
+      runOnJS(onVisibleItemChange)(data[currentIndex].image_url)
     }
   })
 
@@ -47,21 +47,28 @@ const MediaList = ({ data, onVisibleItemChange, headerHeight }: Props) => {
     if (!data.length) return
 
     if (onVisibleItemChange && data.length > 0) {
-      onVisibleItemChange(data[0].image)
+      onVisibleItemChange(data[0].image_url)
     }
   }, [data, onVisibleItemChange])
 
   return (
     <Animated.FlatList
       data={data}
+      refreshControl={
+        <RefreshControl
+          refreshing={isRefreshing}
+          onRefresh={handleRefresh}
+          progressViewOffset={headerHeight}
+        />
+      }
       contentContainerStyle={{
         gap: SPACING * 2,
         paddingHorizontal: SPACING * 2,
         paddingBottom: SPACING * 4,
-        paddingTop: headerHeight,
+        marginTop: headerHeight,
       }}
       onScroll={onScroll}
-      scrollEventThrottle={1000 / 60} // 16.6ms
+      scrollEventThrottle={16}
       snapToInterval={ITEM_FULL_SIZE}
       decelerationRate="fast"
       renderItem={({ item }) => <AnimatedCard item={item} />}
@@ -69,4 +76,4 @@ const MediaList = ({ data, onVisibleItemChange, headerHeight }: Props) => {
   )
 }
 
-export default MediaList
+export default PostList
