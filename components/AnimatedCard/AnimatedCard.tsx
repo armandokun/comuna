@@ -2,6 +2,8 @@ import { Animated, Dimensions, Image, View } from 'react-native'
 
 import { LinearGradient } from 'expo-linear-gradient'
 
+import { useEffect, useRef, useState } from 'react'
+
 import Text from '@/components/ui/Text'
 
 import GradientBlur from '../GradientBlur'
@@ -21,9 +23,21 @@ type Props = {
 }
 
 const AnimatedCard = ({ item }: Props) => {
+  const descriptionRef = useRef<View>(null)
+  const [descriptionHeight, setDescriptionHeight] = useState(0)
+
+  useEffect(() => {
+    if (!descriptionRef.current) return
+
+    descriptionRef.current.measure((x, y, width, height, pageX, pageY) => {
+      setDescriptionHeight(height)
+    })
+  }, [])
+
   const { height } = Dimensions.get('screen')
 
   const ITEM_SIZE = height * 0.62
+  const DEFAULT_HEIGHT = 50
 
   return (
     <Animated.View
@@ -34,7 +48,7 @@ const AnimatedCard = ({ item }: Props) => {
         },
       ]}>
       <View className="relative flex-1">
-        <GradientBlur>
+        <GradientBlur height={descriptionHeight + DEFAULT_HEIGHT}>
           <Image className="w-full h-full" source={{ uri: item.image }} resizeMode="cover" />
         </GradientBlur>
         <View className="absolute w-full gap-4">
@@ -47,7 +61,7 @@ const AnimatedCard = ({ item }: Props) => {
             </View>
           </LinearGradient>
         </View>
-        <View className="absolute bottom-4 left-4 right-4">
+        <View className="absolute bottom-4 w-full px-4" ref={descriptionRef}>
           <Text type="footnote" className="text-white">
             {item.description}
           </Text>

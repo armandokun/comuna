@@ -1,5 +1,5 @@
 import React, { ReactNode } from 'react'
-import { Platform, StyleSheet, View } from 'react-native'
+import { StyleSheet, View } from 'react-native'
 import { easeGradient } from 'react-native-easing-gradient'
 import { LinearGradient } from 'expo-linear-gradient'
 import { BlurView } from 'expo-blur'
@@ -37,7 +37,7 @@ const GradientBlur = ({ children, height = 100, position = 'bottom' }: Props) =>
           style={[StyleSheet.absoluteFill]}>
           <BlurView
             intensity={100}
-            tint={Platform.OS === 'ios' ? 'systemChromeMaterialDark' : 'systemMaterialDark'}
+            tint="systemChromeMaterialDark"
             style={[StyleSheet.absoluteFill]}
           />
         </MaskedView>
