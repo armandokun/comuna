@@ -40,6 +40,7 @@ const Text = ({ type = 'body', truncate, className, ...rest }: Props) => {
       numberOfLines={truncate ? 1 : undefined}
       ellipsizeMode={truncate ? 'tail' : undefined}
       className={classNames}
+      style={{ color: '#EAEAEA' }}
       {...rest}
     />
   )
