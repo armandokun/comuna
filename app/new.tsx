@@ -21,6 +21,7 @@ import Spacer from '@/components/ui/Spacer'
 import Button from '@/components/ui/Button'
 import Text from '@/components/ui/Text'
 import { Colors } from '@/constants/colors'
+import KeyboardDismissPressable from '@/components/ui/KeyboardDismissPressable'
 
 const NewScreen = () => {
   const [description, setDescription] = useState('')
@@ -72,25 +73,27 @@ const NewScreen = () => {
         style={StyleSheet.absoluteFill}
         className="absolute w-full h-full"
       />
-      <KeyboardAvoidingView
-        behavior="padding"
-        keyboardVerticalOffset={160}
-        className="flex-1 mx-4 justify-center">
-        <Image
-          source={{ uri: imageUrl.toString() }}
-          resizeMode="cover"
-          className="aspect-square rounded-3xl"
-        />
-        <Spacer />
-        <TextArea
-          value={description}
-          onChangeText={setDescription}
-          placeholder="What's on your mind?"
-          style={{ fontSize: 22, color: Colors.text }}
-          placeholderTextColor="rgba(255, 255, 255, 0.6)"
-          className="h-[100px]"
-        />
-      </KeyboardAvoidingView>
+      <KeyboardDismissPressable>
+        <KeyboardAvoidingView
+          behavior="padding"
+          keyboardVerticalOffset={160}
+          className="flex-1 mx-4 justify-center">
+          <Image
+            source={{ uri: imageUrl.toString() }}
+            resizeMode="cover"
+            className="aspect-square rounded-3xl"
+          />
+          <Spacer />
+          <TextArea
+            value={description}
+            onChangeText={setDescription}
+            placeholder="What's on your mind?"
+            style={{ fontSize: 22, color: Colors.text }}
+            placeholderTextColor="rgba(255, 255, 255, 0.6)"
+            className="h-[100px]"
+          />
+        </KeyboardAvoidingView>
+      </KeyboardDismissPressable>
       <Modal transparent animationType="fade" visible={isUploading}>
         <BlurView className="absolute top-0 left-0 right-0 bottom-0" intensity={50}>
           <View className="justify-center items-center flex-1">
