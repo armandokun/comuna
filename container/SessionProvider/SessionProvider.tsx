@@ -16,6 +16,8 @@ const SessionProvider = ({ children }: Props) => {
   const [profile, setProfile] = useState<Profile | null>(null)
   const [isFetched, setIsFetched] = useState(false)
 
+  console.log('profile', profile)
+
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session: sessionData } }) => {
       setSession(sessionData)

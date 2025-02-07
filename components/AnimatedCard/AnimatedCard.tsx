@@ -1,7 +1,6 @@
 import { Animated, Dimensions, Image, View } from 'react-native'
 import { LinearGradient } from 'expo-linear-gradient'
 import { useEffect, useRef, useState } from 'react'
-import { faker } from '@faker-js/faker'
 
 import Text from '@/components/ui/Text'
 import { Post } from '@/constants/mockData'
@@ -44,9 +43,13 @@ const AnimatedCard = ({ item }: Props) => {
         <View className="absolute w-full gap-4">
           <LinearGradient colors={['rgba(0,0,0,0.6)', 'transparent']} locations={[0, 1]}>
             <View className="flex-row items-center gap-2 p-4">
-              <Image className="size-8 rounded-full" source={{ uri: faker.image.avatarGitHub() }} />
+              <Image
+                className="size-8 rounded-full"
+                source={{ uri: item.author.avatar_url }}
+                resizeMode="cover"
+              />
               <Text type="subhead" className="text-white">
-                {faker.person.fullName()}
+                {item.author.name}
               </Text>
             </View>
           </LinearGradient>

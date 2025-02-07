@@ -1,5 +1,5 @@
 import { Alert, Image, SafeAreaView, StyleSheet, View } from 'react-native'
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useContext, useEffect, useRef, useState } from 'react'
 import { BlurView } from 'expo-blur'
 import Animated, { FadeIn, FadeOut } from 'react-native-reanimated'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
@@ -12,15 +12,19 @@ import MediaList from '@/components/PostList'
 import GradientBlur from '@/components/GradientBlur'
 import ImagePickerButton from '@/components/ImagePickerButton'
 import { supabase } from '@/libs/supabase'
+import Onboarding from '@/components/Onboarding'
+import { SessionContext } from '@/container/SessionProvider'
 
 const HomeScreen = () => {
   const [backgroundImage, setBackgroundImage] = useState(mockData[0]?.image_url)
   const [headerHeight, setHeaderHeight] = useState(0)
   const [posts, setPosts] = useState<Array<Post>>([])
   const [isRefreshing, setIsRefreshing] = useState(false)
+  const [showOnboarding, setShowOnboarding] = useState(false)
 
   const insets = useSafeAreaInsets()
   const headerRef = useRef<View>(null)
+  const { profile, isSessionFetched } = useContext(SessionContext)
 
   useEffect(() => {
     const closeSplashScreen = async () => {
@@ -31,6 +35,17 @@ const HomeScreen = () => {
   }, [])
 
   useEffect(() => {
+    if (!isSessionFetched) return
+
+    // TODO: Fix logic when session is fetched correctly
+    if (!profile?.name) {
+      setShowOnboarding(true)
+    } else {
+      setShowOnboarding(false)
+    }
+  }, [profile?.name, isSessionFetched])
+
+  useEffect(() => {
     if (headerRef.current) {
       headerRef.current.measure((x, y, width, height, pageX, pageY) => {
         setHeaderHeight(height)
@@ -38,13 +53,15 @@ const HomeScreen = () => {
     }
   }, [headerRef])
 
+  console.log({ posts })
+
   const fetchPosts = async () => {
     const { data, error } = await supabase
       .from('posts')
       .select(
         `
       *,
-      profiles (
+      author: profiles (
         id,
         name,
         avatar_url
@@ -109,13 +126,15 @@ const HomeScreen = () => {
             <View className="flex-row items-center gap-4">
               <ImagePickerButton />
               <Image
-                source={{ uri: mockData[0]?.author.avatar_url }}
+                source={{ uri: profile?.avatar_url }}
                 className="size-11 rounded-full"
+                resizeMode="cover"
               />
             </View>
           </View>
         </SafeAreaView>
       </GradientBlur>
+      <Onboarding isVisible={showOnboarding} onDismiss={() => setShowOnboarding(false)} />
     </>
   )
 }
