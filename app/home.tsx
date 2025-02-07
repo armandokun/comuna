@@ -53,8 +53,6 @@ const HomeScreen = () => {
     }
   }, [headerRef])
 
-  console.log({ posts })
-
   const fetchPosts = async () => {
     const { data, error } = await supabase
       .from('posts')
