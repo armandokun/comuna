@@ -30,15 +30,9 @@ const Button = ({
   disabled = false,
 }: Props) => {
   const backgroundStyles = {
-    filled: 'bg-primary',
+    filled: 'bg-text',
     outlined: 'border border-primary',
     flat: '',
-  }
-
-  const textColors: { [key in ButtonType]: keyof typeof Colors } = {
-    filled: 'background',
-    outlined: 'primary',
-    flat: 'primary',
   }
 
   const sizeStyles: Record<ButtonSize, string> = {
@@ -66,7 +60,7 @@ const Button = ({
         />
       )}
       {title && (
-        <Text type="button" color={textColors[type]}>
+        <Text type="button" style={{ color: type === 'flat' ? Colors.text : Colors.background }}>
           {title}
         </Text>
       )}

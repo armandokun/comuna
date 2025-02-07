@@ -3,6 +3,7 @@ import React, { useEffect, useRef, useState } from 'react'
 import { BlurView } from 'expo-blur'
 import Animated, { FadeIn, FadeOut } from 'react-native-reanimated'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
+import { SplashScreen } from 'expo-router'
 
 import mockData, { Post } from '@/constants/mockData'
 
@@ -20,6 +21,14 @@ const HomeScreen = () => {
 
   const insets = useSafeAreaInsets()
   const headerRef = useRef<View>(null)
+
+  useEffect(() => {
+    const closeSplashScreen = async () => {
+      await SplashScreen.hideAsync()
+    }
+
+    closeSplashScreen()
+  }, [])
 
   useEffect(() => {
     if (headerRef.current) {

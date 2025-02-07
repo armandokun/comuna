@@ -13,7 +13,6 @@ type Props = TextInputProps & {
 const TextArea = ({ placeholder, value, onChangeText, forwardRef, ...props }: Props) => (
   <TextInput
     ref={forwardRef}
-    className="h-40 p-2 rounded-lg bg-zinc-800"
     placeholder={placeholder}
     value={value}
     textAlignVertical="top"

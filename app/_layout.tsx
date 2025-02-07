@@ -8,6 +8,7 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler'
 import SessionProvider from '@/container/SessionProvider'
 
 import '../global.css'
+import { Colors } from '@/constants/colors'
 
 SplashScreen.preventAutoHideAsync()
 
@@ -23,9 +24,18 @@ const RootLayout = () => {
     <GestureHandlerRootView className="flex-1">
       <BottomSheetModalProvider>
         <SessionProvider>
-          <Stack screenOptions={{ headerShown: false }}>
+          <Stack
+            screenOptions={{
+              headerShown: false,
+              headerTransparent: true,
+              headerTintColor: Colors.text,
+            }}>
             <Stack.Screen name="+not-found" />
             <Stack.Screen name="home" />
+            <Stack.Screen
+              name="new"
+              options={{ presentation: 'modal', headerTitle: 'New Post', headerShown: true }}
+            />
             <Stack.Screen name="index" />
           </Stack>
           <StatusBar style="light" />
