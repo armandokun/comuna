@@ -48,7 +48,7 @@ const NewScreen = () => {
 
   useEffect(() => {
     navigation.setOptions({
-      headerRight: () => <Button title="Upload" onPress={uploadPost} />,
+      headerRight: () => <Button title="Post" onPress={uploadPost} />,
       headerLeft: () => <Button title="Cancel" type="flat" onPress={() => navigation.goBack()} />,
       headerBackground: () => (
         <LinearGradient
@@ -99,7 +99,7 @@ const NewScreen = () => {
         <BlurView className="absolute top-0 left-0 right-0 bottom-0" intensity={50}>
           <View className="justify-center items-center flex-1">
             <ActivityIndicator size="large" />
-            <Text>Uploading...</Text>
+            <Text>Posting...</Text>
           </View>
         </BlurView>
       </Modal>

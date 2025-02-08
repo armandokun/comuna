@@ -98,7 +98,7 @@ const HomeScreen = () => {
     <>
       <Animated.Image
         key={backgroundImage}
-        source={{ uri: `${backgroundImage}?width=500&height=500` }}
+        source={{ uri: `${backgroundImage}?width=500&height=500&quality=10` }}
         entering={FadeIn.duration(300)}
         exiting={FadeOut.duration(300)}
         style={StyleSheet.absoluteFill}
