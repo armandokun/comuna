@@ -19,7 +19,6 @@ const SessionProvider = ({ children }: Props) => {
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session: sessionData } }) => {
       setSession(sessionData)
-      setIsFetched(true)
     })
 
     const { data: authListener } = supabase.auth.onAuthStateChange((_event, newSession) => {
@@ -40,13 +39,14 @@ const SessionProvider = ({ children }: Props) => {
     if (error) Alert.alert(error.message)
 
     setProfile(profileData?.[0])
+    setIsFetched(true)
   }, [session?.user.id])
 
   useEffect(() => {
-    if (!session?.user.email) return
+    if (!session?.user) return
 
     fetchProfile()
-  }, [fetchProfile, session?.user.email])
+  }, [fetchProfile, session?.user])
 
   const values = useMemo(
     () => ({

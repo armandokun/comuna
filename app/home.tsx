@@ -38,12 +38,7 @@ const HomeScreen = () => {
   useEffect(() => {
     if (!isSessionFetched) return
 
-    // TODO: Fix logic when session is fetched correctly
-    if (!profile?.name) {
-      setShowOnboarding(true)
-    } else {
-      setShowOnboarding(false)
-    }
+    if (!profile?.name) setShowOnboarding(true)
   }, [profile?.name, isSessionFetched])
 
   useEffect(() => {
