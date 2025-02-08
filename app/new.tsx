@@ -9,7 +9,7 @@ import {
   Modal,
   ActivityIndicator,
 } from 'react-native'
-import { useLocalSearchParams, useNavigation } from 'expo-router'
+import { router, useLocalSearchParams, useNavigation } from 'expo-router'
 import { useCallback, useEffect, useState } from 'react'
 import Animated, { FadeIn, FadeOut } from 'react-native-reanimated'
 
@@ -21,6 +21,7 @@ import Spacer from '@/components/ui/Spacer'
 import Button from '@/components/ui/Button'
 import Text from '@/components/ui/Text'
 import { Colors } from '@/constants/colors'
+import { HOME } from '@/constants/routes'
 import KeyboardDismissPressable from '@/components/ui/KeyboardDismissPressable'
 
 const NewScreen = () => {
@@ -42,8 +43,8 @@ const NewScreen = () => {
 
     setIsUploading(false)
 
-    navigation.goBack()
-  }, [description, imageUrl, navigation])
+    router.replace(HOME)
+  }, [description, imageUrl])
 
   useEffect(() => {
     navigation.setOptions({
