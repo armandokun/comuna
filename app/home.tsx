@@ -1,9 +1,10 @@
-import { Alert, Image, SafeAreaView, StyleSheet, View } from 'react-native'
+import { Alert, SafeAreaView, StyleSheet, View } from 'react-native'
 import React, { useContext, useEffect, useRef, useState } from 'react'
 import { BlurView } from 'expo-blur'
 import Animated, { FadeIn, FadeOut } from 'react-native-reanimated'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { SplashScreen } from 'expo-router'
+import { Image } from 'expo-image'
 
 import mockData, { Post } from '@/constants/mockData'
 
@@ -97,7 +98,7 @@ const HomeScreen = () => {
     <>
       <Animated.Image
         key={backgroundImage}
-        source={{ uri: backgroundImage }}
+        source={{ uri: `${backgroundImage}?width=500&height=500` }}
         entering={FadeIn.duration(300)}
         exiting={FadeOut.duration(300)}
         style={StyleSheet.absoluteFill}
@@ -121,12 +122,12 @@ const HomeScreen = () => {
         <SafeAreaView style={{ position: 'absolute', width: '100%', zIndex: 10 }}>
           <View ref={headerRef} className="px-4 py-4 justify-between items-center flex-row">
             <Text type="heading">Comuna</Text>
-            <View className="flex-row items-center gap-4">
+            <View className="flex-row items-center gap-2">
               <ImagePickerButton />
               <Image
-                source={{ uri: profile?.avatar_url }}
-                className="size-11 rounded-full"
-                resizeMode="cover"
+                source={{ uri: `${profile?.avatar_url}?width=50&height=50` }}
+                contentFit="cover"
+                style={{ width: 44, height: 44, borderRadius: 44 }}
               />
             </View>
           </View>

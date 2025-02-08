@@ -36,10 +36,16 @@ const ImagePickerButton = () => {
           .from('user_content')
           .upload(fileName, decode(base64Data), {
             contentType: file.mimeType,
+            cacheControl: '3600',
+            upsert: true,
           })
 
         if (uploadError) {
-          Alert.alert('Error uploading image', uploadError.message)
+          Alert.alert('Error uploading image', uploadError?.message)
+
+          setIsLoading(false)
+
+          return
         }
 
         const {
@@ -48,7 +54,14 @@ const ImagePickerButton = () => {
 
         setIsLoading(false)
 
-        if (publicUrl) router.push({ pathname: NEW, params: { imageUrl: publicUrl } })
+        if (publicUrl) {
+          router.push({
+            pathname: NEW,
+            params: {
+              imageUrl: `${publicUrl}?quality=50&width=500&height=500`,
+            },
+          })
+        }
       }
     } catch (error) {
       Alert.alert('Error picking image', error instanceof Error ? error.message : 'Unknown error')

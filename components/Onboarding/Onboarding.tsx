@@ -38,6 +38,8 @@ const Onboarding = ({ isVisible, onDismiss }: Props) => {
       .from('avatars')
       .upload(fileName, decode(base64Data), {
         contentType: avatar.mimeType,
+        cacheControl: '3600', // 1 hour
+        upsert: true,
       })
 
     if (storageError) Alert.alert('Error uploading image', storageError.message)
@@ -61,8 +63,10 @@ const Onboarding = ({ isVisible, onDismiss }: Props) => {
   const selectAvatar = async () => {
     const result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ['images'],
-      quality: 0.5,
+      quality: 0.4,
       selectionLimit: 1,
+      allowsEditing: true,
+      aspect: [1, 1],
     })
 
     if (result.canceled) return
