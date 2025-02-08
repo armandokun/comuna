@@ -58,7 +58,7 @@ const PostList = ({
         <RefreshControl
           refreshing={isRefreshing}
           onRefresh={handleRefresh}
-          progressViewOffset={headerHeight}
+          progressViewOffset={250}
         />
       }
       contentContainerStyle={{
