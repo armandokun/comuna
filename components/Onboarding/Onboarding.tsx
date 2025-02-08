@@ -93,6 +93,8 @@ const Onboarding = ({ isVisible, onDismiss }: Props) => {
                 <TextInput
                   onChangeText={setName}
                   value={name}
+                  multiline
+                  numberOfLines={2}
                   className="text-center"
                   placeholder="Elizabeth Sobeck"
                   placeholderTextColor="rgba(255, 255, 255, 0.5)"
