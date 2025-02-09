@@ -1,20 +1,25 @@
-import { Alert, SafeAreaView, StyleSheet, View } from 'react-native'
+import { Alert, Platform, SafeAreaView, StyleSheet, TouchableOpacity, View } from 'react-native'
 import React, { useContext, useEffect, useRef, useState } from 'react'
 import { BlurView } from 'expo-blur'
 import Animated, { FadeIn, FadeOut } from 'react-native-reanimated'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
-import { SplashScreen } from 'expo-router'
+import { router, SplashScreen } from 'expo-router'
 import { Image } from 'expo-image'
 
+import { signOut } from '@/libs/auth'
+import { supabase } from '@/libs/supabase'
+
+import { AUTH } from '@/constants/routes'
 import mockData, { Post } from '@/constants/mockData'
+
+import { SessionContext } from '@/container/SessionProvider'
 
 import Text from '@/components/ui/Text'
 import MediaList from '@/components/PostList'
 import GradientBlur from '@/components/GradientBlur'
 import ImagePickerButton from '@/components/ImagePickerButton'
-import { supabase } from '@/libs/supabase'
 import Onboarding from '@/components/Onboarding'
-import { SessionContext } from '@/container/SessionProvider'
+import ContextMenu from '@/components/ui/ContextMenu'
 
 const HomeScreen = () => {
   const [backgroundImage, setBackgroundImage] = useState(mockData[0]?.image_url)
@@ -89,6 +94,14 @@ const HomeScreen = () => {
     setIsRefreshing(false)
   }
 
+  const handleContextMenuPress = (actionId: string) => {
+    if (actionId === 'sign-out') {
+      signOut(() => {
+        router.replace(AUTH)
+      })
+    }
+  }
+
   return (
     <>
       <Animated.Image
@@ -119,11 +132,31 @@ const HomeScreen = () => {
             <Text type="heading">Comuna</Text>
             <View className="flex-row items-center gap-2">
               <ImagePickerButton />
-              <Image
-                source={{ uri: `${profile?.avatar_url}?width=50&height=50` }}
-                contentFit="cover"
-                style={{ width: 44, height: 44, borderRadius: 44 }}
-              />
+              <TouchableOpacity>
+                <ContextMenu
+                  itemId={0}
+                  shouldOpenOnLongPress={false}
+                  onPress={handleContextMenuPress}
+                  actions={[
+                    {
+                      id: 'sign-out',
+                      title: 'Sign out',
+                      image: Platform.select({
+                        ios: 'rectangle.portrait.and.arrow.rightv',
+                        android: 'ic_menu_logout',
+                      }),
+                      attributes: {
+                        destructive: true,
+                      },
+                    },
+                  ]}>
+                  <Image
+                    source={{ uri: `${profile?.avatar_url}?width=50&height=50` }}
+                    contentFit="cover"
+                    style={{ width: 44, height: 44, borderRadius: 44 }}
+                  />
+                </ContextMenu>
+              </TouchableOpacity>
             </View>
           </View>
         </SafeAreaView>
