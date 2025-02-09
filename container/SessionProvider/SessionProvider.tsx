@@ -14,11 +14,14 @@ type Props = {
 const SessionProvider = ({ children }: Props) => {
   const [session, setSession] = useState<Session | null>(null)
   const [profile, setProfile] = useState<Profile | null>(null)
-  const [isFetched, setIsFetched] = useState(false)
+  const [isSessionFetched, setIsSessionFetched] = useState(false)
+  const [isProfileFetched, setIsProfileFetched] = useState(false)
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session: sessionData } }) => {
       setSession(sessionData)
+
+      setIsSessionFetched(true)
     })
 
     const { data: authListener } = supabase.auth.onAuthStateChange((_event, newSession) => {
@@ -39,7 +42,7 @@ const SessionProvider = ({ children }: Props) => {
     if (error) Alert.alert(error.message)
 
     setProfile(profileData?.[0])
-    setIsFetched(true)
+    setIsProfileFetched(true)
   }, [session?.user.id])
 
   useEffect(() => {
@@ -51,10 +54,11 @@ const SessionProvider = ({ children }: Props) => {
   const values = useMemo(
     () => ({
       session,
-      isSessionFetched: isFetched,
+      isSessionFetched,
       profile,
+      isProfileFetched,
     }),
-    [session, isFetched, profile],
+    [session, isSessionFetched, profile, isProfileFetched],
   )
 
   return <SessionContext.Provider value={values}>{children}</SessionContext.Provider>

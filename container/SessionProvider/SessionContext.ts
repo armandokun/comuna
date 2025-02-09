@@ -7,10 +7,12 @@ type Args = {
   session: Session | null
   profile: Profile | null
   isSessionFetched: boolean
+  isProfileFetched: boolean
 }
 
 export const SessionContext = createContext<Args>({
   session: null,
   profile: null,
   isSessionFetched: false,
+  isProfileFetched: false,
 })

@@ -30,7 +30,7 @@ const HomeScreen = () => {
 
   const insets = useSafeAreaInsets()
   const headerRef = useRef<View>(null)
-  const { profile, isSessionFetched } = useContext(SessionContext)
+  const { profile, isProfileFetched } = useContext(SessionContext)
 
   useEffect(() => {
     const closeSplashScreen = async () => {
@@ -41,10 +41,10 @@ const HomeScreen = () => {
   }, [])
 
   useEffect(() => {
-    if (!isSessionFetched) return
+    if (!isProfileFetched) return
 
     if (!profile?.name) setShowOnboarding(true)
-  }, [profile?.name, isSessionFetched])
+  }, [profile?.name, isProfileFetched])
 
   useEffect(() => {
     if (headerRef.current) {
