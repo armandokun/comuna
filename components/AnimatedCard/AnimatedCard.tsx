@@ -38,7 +38,7 @@ const AnimatedCard = ({ item }: Props) => {
         },
       ]}>
       <View className="relative flex-1">
-        <GradientBlur height={descriptionHeight + DEFAULT_HEIGHT}>
+        <GradientBlur height={item.description ? descriptionHeight + DEFAULT_HEIGHT : 0}>
           <Image
             source={`${item.image_url}?quality=50`}
             contentFit="cover"
