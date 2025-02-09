@@ -28,7 +28,7 @@ const Onboarding = ({ isVisible, onDismiss }: Props) => {
 
     setIsLoading(true)
 
-    const fileName = `${Date.now()}-${avatar.fileName}`
+    const fileName = `${Date.now()}-${avatar.uri.split('/').pop()}`
 
     const base64Data = await FileSystem.readAsStringAsync(avatar.uri, {
       encoding: FileSystem.EncodingType.Base64,
