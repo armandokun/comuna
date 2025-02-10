@@ -1,18 +1,17 @@
-import { ActivityIndicator, Alert, Modal, Platform, TouchableOpacity, View } from 'react-native'
+import { Alert, Platform, TouchableOpacity } from 'react-native'
 import { Ionicons } from '@expo/vector-icons'
 import * as ImagePicker from 'expo-image-picker'
 import { decode } from 'base64-arraybuffer'
 import * as FileSystem from 'expo-file-system'
 import { router } from 'expo-router'
 import { useState } from 'react'
-import { BlurView } from 'expo-blur'
 import { faker } from '@faker-js/faker'
 
 import { supabase } from '@/libs/supabase'
 import { NEW } from '@/constants/routes'
-import Text from '@/components/ui/Text'
 
 import ContextMenu from '../ui/ContextMenu'
+import FullScreenLoader from '../FullScreenLoader'
 
 const ImagePickerButton = () => {
   const [isLoading, setIsLoading] = useState(false)
@@ -129,14 +128,7 @@ const ImagePickerButton = () => {
           <Ionicons name="add-circle" size={48} color="white" />
         </ContextMenu>
       </TouchableOpacity>
-      <Modal transparent animationType="fade" visible={isLoading}>
-        <BlurView className="absolute top-0 left-0 right-0 bottom-0" intensity={50}>
-          <View className="justify-center items-center flex-1">
-            <ActivityIndicator size="large" />
-            <Text>Loading...</Text>
-          </View>
-        </BlurView>
-      </Modal>
+      <FullScreenLoader show={isLoading} title="Loading..." />
     </>
   )
 }

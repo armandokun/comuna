@@ -1,14 +1,6 @@
 /* eslint-disable react/no-unstable-nested-components */
 import { BlurView } from 'expo-blur'
-import {
-  Alert,
-  Image,
-  View,
-  StyleSheet,
-  KeyboardAvoidingView,
-  Modal,
-  ActivityIndicator,
-} from 'react-native'
+import { Alert, Image, StyleSheet, KeyboardAvoidingView } from 'react-native'
 import { router, useLocalSearchParams, useNavigation } from 'expo-router'
 import { useCallback, useEffect, useState } from 'react'
 import Animated, { FadeIn, FadeOut } from 'react-native-reanimated'
@@ -19,10 +11,10 @@ import { supabase } from '@/libs/supabase'
 import TextArea from '@/components/ui/TextArea'
 import Spacer from '@/components/ui/Spacer'
 import Button from '@/components/ui/Button'
-import Text from '@/components/ui/Text'
 import { Colors } from '@/constants/colors'
 import { HOME } from '@/constants/routes'
 import KeyboardDismissPressable from '@/components/ui/KeyboardDismissPressable'
+import FullScreenLoader from '@/components/FullScreenLoader'
 
 const NewScreen = () => {
   const [description, setDescription] = useState('')
@@ -95,14 +87,7 @@ const NewScreen = () => {
           />
         </KeyboardAvoidingView>
       </KeyboardDismissPressable>
-      <Modal transparent animationType="fade" visible={isUploading}>
-        <BlurView className="absolute top-0 left-0 right-0 bottom-0" intensity={50}>
-          <View className="justify-center items-center flex-1">
-            <ActivityIndicator size="large" />
-            <Text>Posting...</Text>
-          </View>
-        </BlurView>
-      </Modal>
+      <FullScreenLoader show={isUploading} title="Posting..." />
     </>
   )
 }
