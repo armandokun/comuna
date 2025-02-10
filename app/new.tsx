@@ -26,16 +26,30 @@ const NewScreen = () => {
   const uploadPost = useCallback(async () => {
     setIsUploading(true)
 
-    const { error } = await supabase.from('posts').insert({
-      image_url: imageUrl,
-      description,
-    })
+    try {
+      const {
+        data: { blurhash },
+        error: blurhashError,
+      } = await supabase.functions.invoke('generate-blurhash', {
+        body: { imageUrl },
+      })
 
-    if (error) Alert.alert('Error uploading image', error.message)
+      if (blurhashError) Alert.alert('Error generating blurhash', blurhashError.message)
 
-    setIsUploading(false)
+      const { error } = await supabase.from('posts').insert({
+        image_url: imageUrl,
+        description,
+        image_blurhash: blurhash,
+      })
 
-    router.replace(HOME)
+      if (error) Alert.alert('Error uploading image', error.message)
+
+      setIsUploading(false)
+
+      router.replace(HOME)
+    } catch (error) {
+      Alert.alert('Error uploading image', (error as Error).message)
+    }
   }, [description, imageUrl])
 
   useEffect(() => {
