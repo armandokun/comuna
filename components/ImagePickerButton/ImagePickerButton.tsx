@@ -6,6 +6,7 @@ import * as FileSystem from 'expo-file-system'
 import { router } from 'expo-router'
 import { useState } from 'react'
 import { faker } from '@faker-js/faker'
+import { Blurhash } from 'react-native-blurhash'
 
 import { supabase } from '@/libs/supabase'
 import { NEW } from '@/constants/routes'
@@ -71,6 +72,8 @@ const ImagePickerButton = () => {
           data: { publicUrl },
         } = supabase.storage.from('user_content').getPublicUrl(fileName)
 
+        const blurhash = await Blurhash.encode(publicUrl, 4, 4)
+
         setIsLoading(false)
 
         if (publicUrl) {
@@ -78,6 +81,7 @@ const ImagePickerButton = () => {
             pathname: NEW,
             params: {
               imageUrl: `${publicUrl}?quality=50&width=500&height=500`,
+              blurhash,
             },
           })
         }

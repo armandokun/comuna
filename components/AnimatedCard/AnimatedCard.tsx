@@ -41,6 +41,7 @@ const AnimatedCard = ({ item }: Props) => {
         <GradientBlur height={item.description ? descriptionHeight + DEFAULT_HEIGHT : 0}>
           <Image
             source={`${item.image_url}?quality=50`}
+            placeholder={{ blurhash: item.image_blurhash }}
             contentFit="cover"
             style={{ width: '100%', height: '100%' }}
           />

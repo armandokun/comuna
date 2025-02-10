@@ -13,7 +13,7 @@ import AnimatedCard from '../AnimatedCard'
 type Props = {
   data: Array<Post>
   headerHeight: number
-  onVisibleItemChange?: (imageSrc: string) => void
+  onVisibleItemChange?: (imageBlurhash: string) => void
   isRefreshing: boolean
   handleRefresh: () => void
 }
@@ -39,7 +39,7 @@ const PostList = ({
 
     const currentIndex = Math.round(scrollY.value)
     if (currentIndex >= 0 && currentIndex < data.length) {
-      runOnJS(onVisibleItemChange)(data[currentIndex].image_url)
+      runOnJS(onVisibleItemChange)(data[currentIndex].image_blurhash)
     }
   })
 
@@ -47,7 +47,7 @@ const PostList = ({
     if (!data.length) return
 
     if (onVisibleItemChange && data.length > 0) {
-      onVisibleItemChange(data[0].image_url)
+      onVisibleItemChange(data[0].image_blurhash)
     }
   }, [data, onVisibleItemChange])
 

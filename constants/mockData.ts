@@ -8,6 +8,8 @@ const data = Array.from({ length: 20 }, () => ({
     height: 300 * 1.4,
     blur: 0,
   }),
+  image_blurhash:
+    '|rF?hV%2WCj[ayj[a|j[az_NaeWBj@ayfRayfQfQM{M|azj[azf6fQfQfQIpWXofj[ayj[j[fQayWCoeoeaya}j[ayfQa{oLj?j[WVj[ayayj[fQoff7azayj[ayj[j[ayofayayayj[fQj[ayayj[ayfjj[j[ayjuayj[',
   description: faker.lorem.sentences({ min: 1, max: 3 }),
   author: {
     id: faker.string.uuid(),

@@ -1,10 +1,11 @@
 import { Alert, Platform, SafeAreaView, StyleSheet, TouchableOpacity, View } from 'react-native'
 import React, { useContext, useEffect, useRef, useState } from 'react'
 import { BlurView } from 'expo-blur'
-import Animated, { FadeIn, FadeOut } from 'react-native-reanimated'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { router, SplashScreen } from 'expo-router'
 import { Image } from 'expo-image'
+
+import Animated, { FadeIn, FadeOut } from 'react-native-reanimated'
 
 import { signOut } from '@/libs/auth'
 import { supabase } from '@/libs/supabase'
@@ -22,7 +23,7 @@ import Onboarding from '@/components/Onboarding'
 import ContextMenu from '@/components/ui/ContextMenu'
 
 const HomeScreen = () => {
-  const [backgroundImage, setBackgroundImage] = useState(mockData[0]?.image_url)
+  const [backgroundBlurhash, setBackgroundBlurhash] = useState(mockData[0]?.image_blurhash)
   const [headerHeight, setHeaderHeight] = useState(0)
   const [posts, setPosts] = useState<Array<Post>>([])
   const [isRefreshing, setIsRefreshing] = useState(false)
@@ -78,7 +79,7 @@ const HomeScreen = () => {
     setPosts(data)
 
     if (data.length > 0) {
-      setBackgroundImage(data[0].image_url)
+      setBackgroundBlurhash(data[0].image_blurhash)
     }
   }
 
@@ -104,13 +105,20 @@ const HomeScreen = () => {
 
   return (
     <>
-      <Animated.Image
-        key={backgroundImage}
-        source={{ uri: `${backgroundImage}?width=500&height=500&quality=10` }}
-        entering={FadeIn.duration(300)}
-        exiting={FadeOut.duration(300)}
-        style={StyleSheet.absoluteFill}
-      />
+      <Animated.View
+        key={backgroundBlurhash}
+        entering={FadeIn.duration(250)}
+        exiting={FadeOut.duration(250)}
+        style={StyleSheet.absoluteFill}>
+        <Image
+          source={
+            backgroundBlurhash ? { blurhash: backgroundBlurhash } : { uri: mockData[0]?.image_url }
+          }
+          style={StyleSheet.absoluteFill}
+          contentFit="cover"
+          transition={250}
+        />
+      </Animated.View>
       <BlurView
         intensity={80}
         tint="systemChromeMaterialDark"
@@ -120,7 +128,7 @@ const HomeScreen = () => {
       <View className="flex-1 justify-center">
         <MediaList
           data={posts}
-          onVisibleItemChange={setBackgroundImage}
+          onVisibleItemChange={setBackgroundBlurhash}
           headerHeight={insets.top + headerHeight}
           isRefreshing={isRefreshing}
           handleRefresh={handleRefresh}

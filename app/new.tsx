@@ -1,9 +1,9 @@
 /* eslint-disable react/no-unstable-nested-components */
 import { BlurView } from 'expo-blur'
-import { Alert, Image, StyleSheet, KeyboardAvoidingView } from 'react-native'
+import { Alert, StyleSheet, KeyboardAvoidingView } from 'react-native'
 import { router, useLocalSearchParams, useNavigation } from 'expo-router'
 import { useCallback, useEffect, useState } from 'react'
-import Animated, { FadeIn, FadeOut } from 'react-native-reanimated'
+import { Image } from 'expo-image'
 
 import { LinearGradient } from 'expo-linear-gradient'
 
@@ -20,7 +20,7 @@ const NewScreen = () => {
   const [description, setDescription] = useState('')
   const [isUploading, setIsUploading] = useState(false)
 
-  const { imageUrl } = useLocalSearchParams()
+  const { imageUrl, blurhash } = useLocalSearchParams()
   const navigation = useNavigation()
 
   const uploadPost = useCallback(async () => {
@@ -28,6 +28,7 @@ const NewScreen = () => {
 
     const { error } = await supabase.from('posts').insert({
       image_url: imageUrl,
+      image_blurhash: blurhash,
       description,
     })
 
@@ -36,7 +37,7 @@ const NewScreen = () => {
     setIsUploading(false)
 
     router.replace(HOME)
-  }, [description, imageUrl])
+  }, [blurhash, description, imageUrl])
 
   useEffect(() => {
     navigation.setOptions({
@@ -53,12 +54,11 @@ const NewScreen = () => {
 
   return (
     <>
-      <Animated.Image
-        key={imageUrl.toString()}
-        source={{ uri: imageUrl.toString() }}
-        entering={FadeIn.duration(300)}
-        exiting={FadeOut.duration(300)}
+      <Image
+        key={blurhash.toString()}
+        source={{ blurhash }}
         style={StyleSheet.absoluteFill}
+        contentFit="cover"
       />
       <BlurView
         intensity={80}
@@ -73,7 +73,8 @@ const NewScreen = () => {
           className="flex-1 mx-4 justify-center">
           <Image
             source={{ uri: imageUrl.toString() }}
-            resizeMode="cover"
+            placeholder={{ blurhash }}
+            contentFit="cover"
             className="aspect-square rounded-3xl"
           />
           <Spacer />
