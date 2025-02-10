@@ -35,14 +35,6 @@ const HomeScreen = () => {
   const { profile, isProfileFetched } = useContext(SessionContext)
 
   useEffect(() => {
-    const closeSplashScreen = async () => {
-      await SplashScreen.hideAsync()
-    }
-
-    closeSplashScreen()
-  }, [])
-
-  useEffect(() => {
     if (!isProfileFetched) return
 
     if (!profile?.name) setShowOnboarding(true)
@@ -104,6 +96,10 @@ const HomeScreen = () => {
     }
   }
 
+  const closeSplashScreen = async () => {
+    await SplashScreen.hideAsync()
+  }
+
   return (
     <>
       <Animated.View
@@ -118,6 +114,7 @@ const HomeScreen = () => {
           style={StyleSheet.absoluteFill}
           contentFit="cover"
           transition={250}
+          onLoadEnd={closeSplashScreen}
         />
       </Animated.View>
       <BlurView
