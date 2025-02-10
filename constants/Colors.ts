@@ -8,6 +8,7 @@ const Colors = {
   warning: '#FDE4A3',
   muted: '#A3A3A3',
   disabled: '#49484D',
+  systemDestructive: '#FF453A',
 }
 
 export { Colors }

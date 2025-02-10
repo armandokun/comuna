@@ -10,6 +10,8 @@ import { faker } from '@faker-js/faker'
 import { supabase } from '@/libs/supabase'
 import { NEW } from '@/constants/routes'
 
+import { Colors } from '@/constants/colors'
+
 import ContextMenu from '../ui/ContextMenu'
 import FullScreenLoader from '../FullScreenLoader'
 
@@ -113,6 +115,7 @@ const ImagePickerButton = () => {
                 ios: 'camera',
                 android: 'ic_menu_camera',
               }),
+              imageColor: Colors.text,
             },
             {
               id: 'gallery',
@@ -121,6 +124,7 @@ const ImagePickerButton = () => {
                 ios: 'photo',
                 android: 'ic_menu_gallery',
               }),
+              imageColor: Colors.text,
             },
           ]}
           onPress={handleContextMenuPress}

@@ -21,6 +21,7 @@ import GradientBlur from '@/components/GradientBlur'
 import ImagePickerButton from '@/components/ImagePickerButton'
 import Onboarding from '@/components/Onboarding'
 import ContextMenu from '@/components/ui/ContextMenu'
+import { Colors } from '@/constants/colors'
 
 const HomeScreen = () => {
   const [backgroundBlurhash, setBackgroundBlurhash] = useState(mockData[0]?.image_blurhash)
@@ -150,9 +151,10 @@ const HomeScreen = () => {
                       id: 'sign-out',
                       title: 'Sign out',
                       image: Platform.select({
-                        ios: 'rectangle.portrait.and.arrow.rightv',
+                        ios: 'rectangle.portrait.and.arrow.right',
                         android: 'ic_menu_logout',
                       }),
+                      imageColor: Colors.systemDestructive,
                       attributes: {
                         destructive: true,
                       },
