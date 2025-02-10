@@ -2,17 +2,17 @@
 import { BlurView } from 'expo-blur'
 import { Alert, StyleSheet, KeyboardAvoidingView } from 'react-native'
 import { router, useLocalSearchParams, useNavigation } from 'expo-router'
-import { useCallback, useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import { Image } from 'expo-image'
-
 import { LinearGradient } from 'expo-linear-gradient'
 
 import { supabase } from '@/libs/supabase'
+import { Colors } from '@/constants/colors'
+import { HOME } from '@/constants/routes'
+
 import TextArea from '@/components/ui/TextArea'
 import Spacer from '@/components/ui/Spacer'
 import Button from '@/components/ui/Button'
-import { Colors } from '@/constants/colors'
-import { HOME } from '@/constants/routes'
 import KeyboardDismissPressable from '@/components/ui/KeyboardDismissPressable'
 import FullScreenLoader from '@/components/FullScreenLoader'
 
@@ -20,7 +20,7 @@ const NewScreen = () => {
   const [description, setDescription] = useState('')
   const [isUploading, setIsUploading] = useState(false)
 
-  const { imageUrl, blurhash } = useLocalSearchParams()
+  const { imageUrl } = useLocalSearchParams()
   const navigation = useNavigation()
 
   const uploadPost = useCallback(async () => {
@@ -28,7 +28,6 @@ const NewScreen = () => {
 
     const { error } = await supabase.from('posts').insert({
       image_url: imageUrl,
-      image_blurhash: blurhash,
       description,
     })
 
@@ -37,7 +36,7 @@ const NewScreen = () => {
     setIsUploading(false)
 
     router.replace(HOME)
-  }, [blurhash, description, imageUrl])
+  }, [description, imageUrl])
 
   useEffect(() => {
     navigation.setOptions({
@@ -55,8 +54,8 @@ const NewScreen = () => {
   return (
     <>
       <Image
-        key={blurhash.toString()}
-        source={{ blurhash }}
+        key={imageUrl.toString()}
+        source={{ uri: imageUrl.toString() }}
         style={StyleSheet.absoluteFill}
         contentFit="cover"
       />
@@ -69,13 +68,15 @@ const NewScreen = () => {
       <KeyboardDismissPressable>
         <KeyboardAvoidingView
           behavior="padding"
-          keyboardVerticalOffset={160}
+          keyboardVerticalOffset={100}
           className="flex-1 mx-4 justify-center">
           <Image
             source={{ uri: imageUrl.toString() }}
-            placeholder={{ blurhash }}
             contentFit="cover"
-            className="aspect-square rounded-3xl"
+            style={{
+              aspectRatio: 1,
+              borderRadius: 32,
+            }}
           />
           <Spacer />
           <TextArea
