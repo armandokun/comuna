@@ -42,6 +42,8 @@ const ImagePickerButton = () => {
       })
     }
 
+    setIsLoading(true)
+
     try {
       if (!result.canceled) {
         const file = result.assets[0]
@@ -50,8 +52,6 @@ const ImagePickerButton = () => {
         const base64Data = await FileSystem.readAsStringAsync(file.uri, {
           encoding: FileSystem.EncodingType.Base64,
         })
-
-        setIsLoading(true)
 
         const { error: uploadError } = await supabase.storage
           .from('user_content')

@@ -48,6 +48,8 @@ const NewScreen = () => {
 
       router.replace(HOME)
     } catch (error) {
+      setIsUploading(false)
+
       Alert.alert('Error uploading image', (error as Error).message)
     }
   }, [description, imageUrl])
