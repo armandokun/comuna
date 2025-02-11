@@ -11,6 +11,7 @@ import Carousel from '@/components/ui/Carousel'
 import { Colors } from '@/constants/colors'
 import { SessionContext } from '@/container/SessionProvider'
 import { supabase } from '@/libs/supabase'
+import usePushNotifications from '@/hooks/usePushNotifications'
 
 type Props = {
   isVisible: boolean
@@ -21,7 +22,10 @@ const Onboarding = ({ isVisible, onDismiss }: Props) => {
   const [name, setName] = useState('')
   const [avatar, setAvatar] = useState<ImagePickerAsset | null>(null)
   const [isLoading, setIsLoading] = useState(false)
+
   const { profile } = useContext(SessionContext)
+
+  const { registerForPushNotifications } = usePushNotifications()
 
   const submitProfileDetails = async () => {
     if (!name.trim().includes(' ') || !avatar?.uri) return
@@ -56,8 +60,6 @@ const Onboarding = ({ isVisible, onDismiss }: Props) => {
     if (error) Alert.alert('Error updating profile details', error.message)
 
     setIsLoading(false)
-
-    onDismiss()
   }
 
   const selectAvatar = async () => {
@@ -72,6 +74,12 @@ const Onboarding = ({ isVisible, onDismiss }: Props) => {
     if (result.canceled) return
 
     setAvatar(result.assets[0])
+  }
+
+  const handleRequestPermissions = async () => {
+    await registerForPushNotifications(profile?.id!)
+
+    onDismiss()
   }
 
   return (
@@ -128,6 +136,12 @@ const Onboarding = ({ isVisible, onDismiss }: Props) => {
                   )}
                 </TouchableOpacity>
               ),
+            },
+            {
+              title: 'Enable notifications.',
+              subtitle: 'Know when your friends post something new.',
+              actionLabel: 'Enable',
+              onActionPress: handleRequestPermissions,
             },
           ]}
         />
