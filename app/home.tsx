@@ -87,8 +87,8 @@ const HomeScreen = () => {
     <>
       <Animated.View
         key={backgroundBlurhash}
-        entering={FadeIn.duration(250)}
-        exiting={FadeOut.duration(250)}
+        entering={FadeIn.duration(400)}
+        exiting={FadeOut.duration(250).delay(200)}
         style={StyleSheet.absoluteFill}>
         <Image
           source={
