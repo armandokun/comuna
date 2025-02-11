@@ -20,7 +20,7 @@
   "dependencies": {
     "@expo/vector-icons": "^14.0.2",
     "@faker-js/faker": "^9.4.0",
-    "@gorhom/bottom-sheet": "^5.0.6",
+    "@gorhom/bottom-sheet": "^5.1.1",
     "@react-native-async-storage/async-storage": "1.23.1",
     "@react-native-masked-view/masked-view": "^0.3.2",
     "@react-native-menu/menu": "github:react-native-menu/menu",

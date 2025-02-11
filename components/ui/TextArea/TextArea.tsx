@@ -22,6 +22,7 @@ const TextArea = ({ placeholder, value, onChangeText, forwardRef, ...props }: Pr
     numberOfLines={4}
     style={{ color: Colors.text, fontSize: 16 }}
     autoCorrect={false}
+    autoComplete="off"
     {...props}
   />
 )

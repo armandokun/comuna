@@ -3,11 +3,15 @@ import {
   BottomSheetBackdrop,
   BottomSheetBackdropProps,
   BottomSheetBackgroundProps,
+  BottomSheetFooter,
+  BottomSheetFooterProps,
   BottomSheetModal,
   BottomSheetScrollView,
+  BottomSheetProps,
 } from '@gorhom/bottom-sheet'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { View } from 'react-native'
+import { BlurView } from 'expo-blur'
 
 import { Colors } from '@/constants/colors'
 
@@ -15,17 +19,18 @@ type Props = {
   show: boolean
   children: ReactNode
   onBackdropPress?: () => void
-}
+  footer?: ReactNode
+} & BottomSheetProps
 
-const BottomSheet = ({ show, children, onBackdropPress = undefined }: Props) => {
+const BottomSheet = ({ show, children, onBackdropPress = undefined, footer, ...props }: Props) => {
   const bottomSheetModalRef = useRef<BottomSheetModal>(null)
 
   const insets = useSafeAreaInsets()
 
   const BackDrop = useCallback(
-    (props: BottomSheetBackdropProps) => (
+    (backdropProps: BottomSheetBackdropProps) => (
       <BottomSheetBackdrop
-        {...props}
+        {...backdropProps}
         disappearsOnIndex={-1}
         appearsOnIndex={0}
         onPress={onBackdropPress}
@@ -36,13 +41,37 @@ const BottomSheet = ({ show, children, onBackdropPress = undefined }: Props) => 
   )
 
   const Background = useCallback(
-    (props: BottomSheetBackgroundProps) => (
-      <View
-        {...props}
-        style={[props.style, { borderRadius: 30, backgroundColor: Colors.background }]}
+    (backgroundProps: BottomSheetBackgroundProps) => (
+      <BlurView
+        intensity={80}
+        className="rounded-t-3xl overflow-hidden"
+        tint="systemChromeMaterialDark"
+        style={backgroundProps.style}
+        {...backgroundProps}
       />
     ),
     [],
+  )
+
+  const Footer = useCallback(
+    (footerProps: BottomSheetFooterProps) => (
+      <BottomSheetFooter style={{ paddingHorizontal: 16 }} {...footerProps}>
+        <BlurView
+          intensity={80}
+          tint="systemChromeMaterialDark"
+          style={{
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+          }}
+        />
+        {footer}
+        <View style={{ height: insets.bottom }} />
+      </BottomSheetFooter>
+    ),
+    [footer, insets.bottom],
   )
 
   useEffect(() => {
@@ -58,7 +87,10 @@ const BottomSheet = ({ show, children, onBackdropPress = undefined }: Props) => 
       onDismiss={onBackdropPress}
       backdropComponent={BackDrop}
       backgroundComponent={Background}
-      handleIndicatorStyle={{ backgroundColor: Colors.disabled }}>
+      footerComponent={Footer}
+      snapPoints={['90%']}
+      handleIndicatorStyle={{ backgroundColor: Colors.muted }}
+      {...props}>
       <BottomSheetScrollView>
         <View style={{ paddingBottom: insets.bottom }}>{children}</View>
       </BottomSheetScrollView>

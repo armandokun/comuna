@@ -4,14 +4,15 @@ import Animated, {
   useAnimatedScrollHandler,
   runOnJS,
 } from 'react-native-reanimated'
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 
-import { Post } from '@/constants/mockData'
+import { Post as PostType } from '@/constants/mockData'
 
-import AnimatedCard from '../AnimatedCard'
+import Post from '../Post'
+import CommentsBottomSheet from '../CommentsBottomSheet'
 
 type Props = {
-  data: Array<Post>
+  data: Array<PostType>
   headerHeight: number
   onVisibleItemChange?: (imageBlurhash: string) => void
   isRefreshing: boolean
@@ -25,6 +26,8 @@ const PostList = ({
   isRefreshing,
   handleRefresh,
 }: Props) => {
+  const [selectedPostId, setSelectedPostId] = useState<string | null>(null)
+
   const { height } = Dimensions.get('screen')
 
   const SPACING = 8
@@ -52,27 +55,34 @@ const PostList = ({
   }, [data, onVisibleItemChange])
 
   return (
-    <Animated.FlatList
-      data={data}
-      refreshControl={
-        <RefreshControl
-          refreshing={isRefreshing}
-          onRefresh={handleRefresh}
-          progressViewOffset={250}
-        />
-      }
-      contentContainerStyle={{
-        gap: SPACING * 2,
-        paddingHorizontal: SPACING * 2,
-        paddingBottom: SPACING * 4,
-        marginTop: headerHeight,
-      }}
-      onScroll={onScroll}
-      scrollEventThrottle={16}
-      snapToInterval={ITEM_FULL_SIZE}
-      decelerationRate="fast"
-      renderItem={({ item }) => <AnimatedCard item={item} />}
-    />
+    <>
+      <Animated.FlatList
+        data={data}
+        refreshControl={
+          <RefreshControl
+            refreshing={isRefreshing}
+            onRefresh={handleRefresh}
+            progressViewOffset={250}
+          />
+        }
+        contentContainerStyle={{
+          gap: SPACING * 2,
+          paddingHorizontal: SPACING * 2,
+          paddingBottom: SPACING * 4,
+          marginTop: headerHeight,
+        }}
+        onScroll={onScroll}
+        scrollEventThrottle={16}
+        snapToInterval={ITEM_FULL_SIZE}
+        decelerationRate="fast"
+        renderItem={({ item }) => <Post item={item} onPress={() => setSelectedPostId(item.id)} />}
+      />
+      <CommentsBottomSheet
+        show={!!selectedPostId}
+        postId={selectedPostId}
+        onClose={() => setSelectedPostId(null)}
+      />
+    </>
   )
 }
 

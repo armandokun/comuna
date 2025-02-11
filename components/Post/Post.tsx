@@ -1,18 +1,23 @@
-import { Animated, Dimensions, View } from 'react-native'
+import { Animated, Dimensions, TouchableOpacity, View } from 'react-native'
 import { LinearGradient } from 'expo-linear-gradient'
 import { useEffect, useRef, useState } from 'react'
 import { Image } from 'expo-image'
 
+import { Ionicons } from '@expo/vector-icons'
+
 import Text from '@/components/ui/Text'
-import { Post } from '@/constants/mockData'
+import { Post as PostType } from '@/constants/mockData'
+
+import { Colors } from '@/constants/colors'
 
 import GradientBlur from '../GradientBlur'
 
 type Props = {
-  item: Post
+  item: PostType
+  onPress: () => void
 }
 
-const AnimatedCard = ({ item }: Props) => {
+const Post = ({ item, onPress }: Props) => {
   const descriptionRef = useRef<View>(null)
   const [descriptionHeight, setDescriptionHeight] = useState(0)
 
@@ -38,7 +43,7 @@ const AnimatedCard = ({ item }: Props) => {
         },
       ]}>
       <View className="relative flex-1">
-        <GradientBlur height={item.description ? descriptionHeight + DEFAULT_HEIGHT : 0}>
+        <GradientBlur height={descriptionHeight + DEFAULT_HEIGHT}>
           <Image
             source={`${item.image_url}?quality=50`}
             placeholder={{ blurhash: item.image_blurhash }}
@@ -60,14 +65,24 @@ const AnimatedCard = ({ item }: Props) => {
             </View>
           </LinearGradient>
         </View>
-        <View className="absolute bottom-4 w-full px-4" ref={descriptionRef}>
-          <Text type="footnote" className="text-white">
-            {item.description}
-          </Text>
+        <View
+          className="absolute bottom-2 w-full px-4 flex-row items-center justify-between"
+          ref={descriptionRef}>
+          <View className="flex-1">
+            <Text type="footnote" className="text-white">
+              {item.description}
+            </Text>
+          </View>
+          <TouchableOpacity className="flex-row items-center gap-2" onPress={onPress}>
+            <Ionicons name="chatbox-ellipses-outline" size={24} color={Colors.text} />
+            <Text type="button" className="text-white">
+              {item.comments[0].count || 0}
+            </Text>
+          </TouchableOpacity>
         </View>
       </View>
     </Animated.View>
   )
 }
 
-export default AnimatedCard
+export default Post

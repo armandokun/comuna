@@ -31,7 +31,7 @@ const Button = ({
 }: Props) => {
   const backgroundStyles = {
     filled: 'bg-text',
-    outlined: 'border border-primary',
+    outlined: 'border border-text/40',
     flat: '',
   }
 
@@ -60,7 +60,11 @@ const Button = ({
         />
       )}
       {title && (
-        <Text type="button" style={{ color: type === 'flat' ? Colors.text : Colors.background }}>
+        <Text
+          type="button"
+          style={{
+            color: type === 'flat' || type === 'outlined' ? Colors.text : Colors.background,
+          }}>
           {title}
         </Text>
       )}

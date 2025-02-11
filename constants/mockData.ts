@@ -16,6 +16,7 @@ const data = Array.from({ length: 20 }, () => ({
     name: faker.person.fullName(),
     avatar_url: faker.image.avatarGitHub(),
   },
+  comments: [{ count: faker.number.int({ min: 0, max: 10 }) }],
 }))
 
 export type Post = (typeof data)[0]

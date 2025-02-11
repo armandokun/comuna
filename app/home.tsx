@@ -49,7 +49,8 @@ const HomeScreen = () => {
         id,
         name,
         avatar_url
-      )
+      ),
+      comments: comments(count)
     `,
       )
       .order('created_at', { ascending: false })
