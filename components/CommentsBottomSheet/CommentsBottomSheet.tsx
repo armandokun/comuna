@@ -4,19 +4,18 @@ import { Image } from 'expo-image'
 import { BottomSheetTextInput } from '@gorhom/bottom-sheet'
 
 import { supabase } from '@/libs/supabase'
+import { getRelativeTimeFromNow } from '@/libs/date'
 import Text from '@/components/ui/Text'
 import BottomSheet from '@/components/ui/BottomSheet'
 import { Comment } from '@/types/comment'
 import { SessionContext } from '@/container/SessionProvider'
 import { Colors } from '@/constants/colors'
 
-import { getRelativeTimeFromNow } from '@/libs/date'
-
 import Spacer from '../ui/Spacer'
 
 type Props = {
   show: boolean
-  postId: string | null
+  postId: number | null
   onClose: () => void
 }
 
@@ -45,7 +44,18 @@ const CommentsBottomSheet = ({ show, postId, onClose }: Props) => {
 
     if (error) Alert.alert('Error fetching comments', error.message)
 
-    if (data) setComments(data)
+    if (data) {
+      const formattedComments = data.map((comment) => ({
+        ...comment,
+        author: {
+          ...comment.author,
+          name: comment.author.name ?? '',
+          avatar_url: comment.author.avatar_url ?? '',
+        },
+      }))
+
+      setComments(formattedComments)
+    }
 
     setShouldShow(true)
   }, [postId])
@@ -59,6 +69,7 @@ const CommentsBottomSheet = ({ show, postId, onClose }: Props) => {
   }, [fetchComments, show])
 
   const handleSubmitComment = async (content: string) => {
+    if (!postId) return
     if (!content.trim()) return
 
     const { error } = await supabase.from('comments').insert({

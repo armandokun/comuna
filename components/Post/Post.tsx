@@ -6,7 +6,7 @@ import { Image } from 'expo-image'
 import { Ionicons } from '@expo/vector-icons'
 
 import Text from '@/components/ui/Text'
-import { Post as PostType } from '@/constants/mockData'
+import PostType from '@/types/post'
 
 import { Colors } from '@/constants/colors'
 
@@ -76,7 +76,7 @@ const Post = ({ item, onPress }: Props) => {
           <TouchableOpacity className="flex-row items-center gap-2" onPress={onPress}>
             <Ionicons name="chatbox-ellipses-outline" size={24} color={Colors.text} />
             <Text type="button" className="text-white">
-              {item.comments[0].count || 0}
+              {item.comments_count || 0}
             </Text>
           </TouchableOpacity>
         </View>

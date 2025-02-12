@@ -1,5 +1,5 @@
 import { Alert, StyleSheet, View } from 'react-native'
-import React, { useContext, useEffect, useRef, useState } from 'react'
+import React, { useCallback, useContext, useEffect, useRef, useState } from 'react'
 import { BlurView } from 'expo-blur'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { SplashScreen } from 'expo-router'
@@ -7,19 +7,25 @@ import { Image } from 'expo-image'
 import Animated, { FadeIn, FadeOut } from 'react-native-reanimated'
 
 import { supabase } from '@/libs/supabase'
-import mockData, { Post } from '@/constants/mockData'
 import { SessionContext } from '@/container/SessionProvider'
+import Post from '@/types/post'
 
-import MediaList from '@/components/PostList'
+import PostList from '@/components/PostList'
 import Onboarding from '@/components/Onboarding'
 import Header from '@/components/Header'
 
+const POSTS_PER_BATCH = 5
+const POSTS_PER_BATCH_INDEX = POSTS_PER_BATCH - 1
+
 const HomeScreen = () => {
-  const [backgroundBlurhash, setBackgroundBlurhash] = useState(mockData[0]?.image_blurhash)
-  const [posts, setPosts] = useState<Array<Post>>([])
+  const [backgroundBlurhash, setBackgroundBlurhash] = useState('')
   const [isRefreshing, setIsRefreshing] = useState(false)
   const [showOnboarding, setShowOnboarding] = useState(false)
   const [headerHeight, setHeaderHeight] = useState(0)
+
+  const [posts, setPosts] = useState<Array<Post>>([])
+  const [hasMore, setHasMore] = useState(true)
+  const [isLoading, setIsLoading] = useState(false)
 
   const insets = useSafeAreaInsets()
   const { profile, isProfileFetched } = useContext(SessionContext)
@@ -39,45 +45,81 @@ const HomeScreen = () => {
     }
   }, [headerRef])
 
-  const fetchPosts = async () => {
-    const { data, error } = await supabase
-      .from('posts')
-      .select(
-        `
-      *,
-      author: profiles (
-        id,
-        name,
-        avatar_url
-      ),
-      comments: comments(count)
-    `,
-      )
-      .order('created_at', { ascending: false })
+  const fetchPosts = useCallback(
+    async ({ refresh = false }: { refresh?: boolean } = {}) => {
+      const startIndex = refresh ? 0 : posts.length
+      const endIndex = refresh ? POSTS_PER_BATCH_INDEX : posts.length + POSTS_PER_BATCH_INDEX
 
-    if (error) {
-      Alert.alert('Error fetching posts', error.message)
+      const { data, error } = await supabase
+        .from('posts')
+        .select(
+          `
+            *,
+            author: profiles (
+              id,
+              name,
+              avatar_url
+            ),
+            comments_count: comments(count)
+        `,
+        )
+        .order('created_at', { ascending: false })
+        .range(startIndex, endIndex)
 
-      return
-    }
+      if (error) {
+        Alert.alert('Error fetching posts', error.message)
 
-    setPosts(data)
+        return
+      }
 
-    if (data.length > 0) {
-      setBackgroundBlurhash(data[0].image_blurhash)
-    }
-  }
+      if (data.length === 0) {
+        setHasMore(false)
+
+        return
+      }
+
+      const formattedPosts = data.map((post) => ({
+        ...post,
+        author: {
+          id: post.author?.id ?? '',
+          name: post.author?.name ?? '',
+          avatar_url: post.author?.avatar_url ?? '',
+        },
+        comments_count: post.comments_count[0].count,
+      }))
+
+      setPosts(refresh ? formattedPosts : [...posts, ...formattedPosts])
+
+      if (data.length > 0 && refresh) {
+        setBackgroundBlurhash(data[0].image_blurhash)
+      }
+    },
+    [posts],
+  )
 
   useEffect(() => {
+    if (posts.length) return
+
     fetchPosts()
-  }, [])
+  }, [fetchPosts, posts.length])
 
   const handleRefresh = async () => {
     setIsRefreshing(true)
+    setHasMore(true)
+
+    await fetchPosts({ refresh: true })
+
+    setIsRefreshing(false)
+  }
+
+  const handleLoadMore = async () => {
+    if (isLoading || !hasMore) return
+
+    setIsLoading(true)
 
     await fetchPosts()
 
-    setIsRefreshing(false)
+    setIsLoading(false)
   }
 
   const closeSplashScreen = async () => {
@@ -92,9 +134,7 @@ const HomeScreen = () => {
         exiting={FadeOut.duration(250).delay(200)}
         style={StyleSheet.absoluteFill}>
         <Image
-          source={
-            backgroundBlurhash ? { blurhash: backgroundBlurhash } : { uri: mockData[0]?.image_url }
-          }
+          source={{ blurhash: backgroundBlurhash }}
           style={StyleSheet.absoluteFill}
           contentFit="cover"
           transition={250}
@@ -108,12 +148,14 @@ const HomeScreen = () => {
         className="absolute w-full h-full"
       />
       <View className="flex-1 justify-center">
-        <MediaList
+        <PostList
           data={posts}
           onVisibleItemChange={setBackgroundBlurhash}
           headerHeight={insets.top + headerHeight}
           isRefreshing={isRefreshing}
           handleRefresh={handleRefresh}
+          onEndReached={handleLoadMore}
+          onEndReachedThreshold={0.5}
         />
       </View>
       <Header headerRef={headerRef} headerHeight={headerHeight} />

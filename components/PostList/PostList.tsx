@@ -4,9 +4,9 @@ import Animated, {
   useAnimatedScrollHandler,
   runOnJS,
 } from 'react-native-reanimated'
-import { useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 
-import { Post as PostType } from '@/constants/mockData'
+import PostType from '@/types/post'
 
 import Post from '../Post'
 import CommentsBottomSheet from '../CommentsBottomSheet'
@@ -17,6 +17,8 @@ type Props = {
   onVisibleItemChange?: (imageBlurhash: string) => void
   isRefreshing: boolean
   handleRefresh: () => void
+  onEndReached: () => void
+  onEndReachedThreshold: number
 }
 
 const PostList = ({
@@ -25,6 +27,8 @@ const PostList = ({
   headerHeight,
   isRefreshing,
   handleRefresh,
+  onEndReached,
+  onEndReachedThreshold,
 }: Props) => {
   const [selectedPostId, setSelectedPostId] = useState<string | null>(null)
 
@@ -75,7 +79,11 @@ const PostList = ({
         scrollEventThrottle={16}
         snapToInterval={ITEM_FULL_SIZE}
         decelerationRate="fast"
-        renderItem={({ item }) => <Post item={item} onPress={() => setSelectedPostId(item.id)} />}
+        renderItem={({ item }) => (
+          <Post item={item} onPress={() => setSelectedPostId(item.id.toString())} />
+        )}
+        onEndReached={onEndReached}
+        onEndReachedThreshold={onEndReachedThreshold}
       />
       <CommentsBottomSheet
         show={!!selectedPostId}
