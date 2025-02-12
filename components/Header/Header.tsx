@@ -62,12 +62,11 @@ const Header = ({ headerRef, headerHeight }: Props) => {
   const handleContextMenuPress = async (actionId: string) => {
     switch (actionId) {
       case 'sign-out':
-        signOut(() => {
-          router.replace(AUTH)
-        })
+        signOut(() => router.replace(AUTH))
+
         break
       case 'notifications':
-        if (!profile?.expo_push_token) await registerForPushNotifications(profile?.id!)
+        await registerForPushNotifications(profile?.id!)
 
         Linking.openSettings()
 
