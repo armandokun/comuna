@@ -7,8 +7,9 @@ import {
   Image,
   TouchableOpacity,
   Switch,
+  Platform,
 } from 'react-native'
-import { useContext, useRef, useState } from 'react'
+import React, { useContext, useRef, useState } from 'react'
 import { Ionicons } from '@expo/vector-icons'
 import * as ImagePicker from 'expo-image-picker'
 import { ImagePickerAsset } from 'expo-image-picker'
@@ -25,6 +26,7 @@ import { supabase } from '@/libs/supabase'
 import usePushNotifications from '@/hooks/usePushNotifications'
 
 import Spacer from '../ui/Spacer'
+import ContextMenu from '../ui/ContextMenu'
 
 type Props = {
   isVisible: boolean
@@ -80,18 +82,47 @@ const Onboarding = ({ isVisible, onDismiss }: Props) => {
     setIsLoading(false)
   }
 
-  const selectAvatar = async () => {
-    const result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ['images'],
-      quality: 0.4,
-      selectionLimit: 1,
-      allowsEditing: true,
-      aspect: [1, 1],
-    })
+  const handleContextMenuPress = async (actionId: string) => {
+    let result: ImagePicker.ImagePickerResult
 
-    if (result.canceled) return
+    const { status } = await ImagePicker.requestCameraPermissionsAsync()
 
-    setAvatar(result.assets[0])
+    switch (actionId) {
+      case 'camera':
+        if (status !== ImagePicker.PermissionStatus.GRANTED) {
+          Alert.alert('Permission not granted', 'Please grant permission to access the camera')
+
+          return
+        }
+
+        result = await ImagePicker.launchCameraAsync({
+          mediaTypes: ['images'],
+          quality: 0.4,
+          selectionLimit: 1,
+          allowsEditing: true,
+          aspect: [1, 1],
+        })
+
+        if (result.canceled) return
+
+        setAvatar(result.assets[0])
+
+        break
+      case 'gallery':
+        result = await ImagePicker.launchImageLibraryAsync({
+          mediaTypes: ['images'],
+          quality: 0.4,
+          selectionLimit: 1,
+          allowsEditing: true,
+          aspect: [1, 1],
+        })
+
+        if (result.canceled) return
+
+        setAvatar(result.assets[0])
+
+        break
+    }
   }
 
   const handleRequestPermissions = async () => {
@@ -175,17 +206,42 @@ const Onboarding = ({ isVisible, onDismiss }: Props) => {
               mediaPosition: 'bottom',
               actionDisabled: isLoading || !avatar?.uri,
               media: (
-                <TouchableOpacity
-                  className="size-32 items-center justify-center rounded-full border border-dashed border-white"
-                  onPress={selectAvatar}>
-                  {avatar ? (
-                    <Image
-                      source={{ uri: avatar.uri }}
-                      className="size-32 rounded-full border-2 border-white"
-                    />
-                  ) : (
-                    <Ionicons name="camera" size={36} color={Colors.text} />
-                  )}
+                <TouchableOpacity>
+                  <ContextMenu
+                    itemId={1}
+                    shouldOpenOnLongPress={false}
+                    actions={[
+                      {
+                        id: 'camera',
+                        title: 'Take a photo',
+                        image: Platform.select({
+                          ios: 'camera',
+                          android: 'ic_menu_camera',
+                        }),
+                        imageColor: Colors.text,
+                      },
+                      {
+                        id: 'gallery',
+                        title: 'Choose from gallery',
+                        image: Platform.select({
+                          ios: 'photo',
+                          android: 'ic_menu_gallery',
+                        }),
+                        imageColor: Colors.text,
+                      },
+                    ]}
+                    onPress={handleContextMenuPress}>
+                    <View className="size-32 items-center justify-center rounded-full border border-dashed border-white">
+                      {avatar ? (
+                        <Image
+                          source={{ uri: avatar.uri }}
+                          className="size-32 rounded-full border-2 border-white"
+                        />
+                      ) : (
+                        <Ionicons name="camera" size={36} color={Colors.text} />
+                      )}
+                    </View>
+                  </ContextMenu>
                 </TouchableOpacity>
               ),
             },
