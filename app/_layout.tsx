@@ -5,10 +5,10 @@ import { StatusBar } from 'expo-status-bar'
 import { BottomSheetModalProvider } from '@gorhom/bottom-sheet'
 import { GestureHandlerRootView } from 'react-native-gesture-handler'
 
+import { Colors } from '@/constants/colors'
 import SessionProvider from '@/container/SessionProvider'
 
 import '../global.css'
-import { Colors } from '@/constants/colors'
 
 SplashScreen.preventAutoHideAsync()
 

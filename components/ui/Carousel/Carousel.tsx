@@ -6,7 +6,6 @@ import Animated, {
   runOnJS,
 } from 'react-native-reanimated'
 import { SafeAreaView } from 'react-native-safe-area-context'
-import { faker } from '@faker-js/faker'
 
 import { BlurView } from 'expo-blur'
 
@@ -53,6 +52,7 @@ const Carousel = ({ slides, onSlideChange, onSkip }: Props) => {
 
   const handleContinue = async () => {
     if (!scrollViewRef.current) return
+    if (slides[activeIndex].actionDisabled) return
 
     if (slides[activeIndex].onActionPress) {
       if (slides[activeIndex].onActionPress instanceof Promise) {

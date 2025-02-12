@@ -110,6 +110,8 @@ const Onboarding = ({ isVisible, onDismiss }: Props) => {
     setNotificationsEnabled(false)
   }
 
+  const isDismissReady = firstName.trim() && lastName.trim() && avatar?.uri
+
   return (
     <Modal visible={isVisible} onDismiss={onDismiss} animationType="fade">
       <View className="flex-1 bg-background">
@@ -192,6 +194,7 @@ const Onboarding = ({ isVisible, onDismiss }: Props) => {
               subtitle: 'Know when your friends post something new.',
               actionLabel: notificationsEnabled ? 'Start Exploring' : 'Not now',
               onActionPress: onDismiss,
+              actionDisabled: !isDismissReady,
               mediaPosition: 'bottom',
               media: (
                 <BlurView
