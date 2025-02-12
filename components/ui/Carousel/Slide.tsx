@@ -14,13 +14,13 @@ type Props = {
 const Slide = ({ title, subtitle, mediaPosition, media }: Props) => (
   <View className="justify-center items-center flex-1 p-6">
     {mediaPosition === 'top' && media}
-    <Text className="items-center" type="heading">
+    <Text className="items-center text-center" type="heading">
       {title}
     </Text>
     {subtitle && (
       <>
         <Spacer size="small" />
-        <Text type="body" className="text-center" color="muted">
+        <Text type="body" className="text-center">
           {subtitle}
         </Text>
       </>

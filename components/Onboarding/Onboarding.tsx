@@ -1,17 +1,30 @@
-import { Modal, View, Dimensions, TextInput, Alert, Image, TouchableOpacity } from 'react-native'
-import { useContext, useState } from 'react'
+import {
+  Modal,
+  View,
+  Dimensions,
+  TextInput,
+  Alert,
+  Image,
+  TouchableOpacity,
+  Switch,
+} from 'react-native'
+import { useContext, useRef, useState } from 'react'
 import { Ionicons } from '@expo/vector-icons'
 import * as ImagePicker from 'expo-image-picker'
 import { ImagePickerAsset } from 'expo-image-picker'
 import * as FileSystem from 'expo-file-system'
 import { decode } from 'base64-arraybuffer'
 
-import Carousel from '@/components/ui/Carousel'
+import { BlurView } from 'expo-blur'
 
+import Carousel from '@/components/ui/Carousel'
+import Text from '@/components/ui/Text'
 import { Colors } from '@/constants/colors'
 import { SessionContext } from '@/container/SessionProvider'
 import { supabase } from '@/libs/supabase'
 import usePushNotifications from '@/hooks/usePushNotifications'
+
+import Spacer from '../ui/Spacer'
 
 type Props = {
   isVisible: boolean
@@ -19,16 +32,21 @@ type Props = {
 }
 
 const Onboarding = ({ isVisible, onDismiss }: Props) => {
-  const [name, setName] = useState('')
+  const [firstName, setFirstName] = useState('')
+  const [lastName, setLastName] = useState('')
   const [avatar, setAvatar] = useState<ImagePickerAsset | null>(null)
   const [isLoading, setIsLoading] = useState(false)
+  const [notificationsEnabled, setNotificationsEnabled] = useState(false)
 
   const { profile } = useContext(SessionContext)
+  const lastNameInput = useRef<TextInput>(null)
 
-  const { registerForPushNotifications } = usePushNotifications()
+  const { registerForPushNotifications, checkPermissions } = usePushNotifications()
 
   const submitProfileDetails = async () => {
-    if (!name.trim().includes(' ') || !avatar?.uri) return
+    const name = `${firstName.trim()} ${lastName.trim()}`
+
+    if (!name.trim().includes(' ') || !avatar?.uri || !profile?.id) return
 
     setIsLoading(true)
 
@@ -55,7 +73,7 @@ const Onboarding = ({ isVisible, onDismiss }: Props) => {
     const { error } = await supabase
       .from('profiles')
       .update({ name, avatar_url: publicUrl })
-      .eq('id', profile?.id)
+      .eq('id', profile.id)
 
     if (error) Alert.alert('Error updating profile details', error.message)
 
@@ -77,9 +95,19 @@ const Onboarding = ({ isVisible, onDismiss }: Props) => {
   }
 
   const handleRequestPermissions = async () => {
+    setNotificationsEnabled(true)
+
     await registerForPushNotifications(profile?.id!)
 
-    onDismiss()
+    const status = await checkPermissions()
+
+    if (status === 'granted') {
+      setNotificationsEnabled(true)
+
+      return
+    }
+
+    setNotificationsEnabled(false)
   }
 
   return (
@@ -96,30 +124,52 @@ const Onboarding = ({ isVisible, onDismiss }: Props) => {
               title: 'Enter your full name.',
               subtitle: 'This will be used to identify you in the app.',
               mediaPosition: 'bottom',
-              actionDisabled: !name.trim().includes(' '),
+              actionDisabled: !firstName.trim() || !lastName.trim(),
               media: (
-                <TextInput
-                  onChangeText={setName}
-                  value={name}
-                  multiline
-                  numberOfLines={2}
-                  className="text-center"
-                  placeholder="Elizabeth Sobeck"
-                  placeholderTextColor="rgba(255, 255, 255, 0.5)"
-                  style={{
-                    fontSize: 36,
-                    fontWeight: 'bold',
-                    color: Colors.text,
-                    width: Dimensions.get('window').width * 0.8,
-                  }}
-                />
+                <>
+                  <TextInput
+                    autoCorrect={false}
+                    returnKeyType="next"
+                    className="text-center"
+                    onSubmitEditing={() => lastNameInput.current?.focus()}
+                    placeholder="First Name"
+                    placeholderTextColor="rgba(255, 255, 255, 0.5)"
+                    value={firstName}
+                    onChangeText={setFirstName}
+                    style={{
+                      fontSize: 24,
+                      fontWeight: 'bold',
+                      color: Colors.text,
+                      width: Dimensions.get('window').width * 0.8,
+                    }}
+                  />
+                  <Spacer />
+                  <TextInput
+                    ref={lastNameInput}
+                    autoCorrect={false}
+                    returnKeyType="done"
+                    className="text-center"
+                    placeholder="Last Name"
+                    placeholderTextColor="rgba(255, 255, 255, 0.5)"
+                    value={lastName}
+                    onChangeText={setLastName}
+                    style={{
+                      fontSize: 24,
+                      fontWeight: 'bold',
+                      color: Colors.text,
+                      width: Dimensions.get('window').width * 0.8,
+                    }}
+                  />
+                </>
               ),
             },
             {
               title: 'Add a profile picture.',
               subtitle: 'Let your people know how do you look like.',
-              actionLabel: isLoading ? 'Preparing...' : 'Start Exploring',
-              onActionPress: submitProfileDetails,
+              actionLabel: isLoading ? 'Preparing...' : 'Continue',
+              onActionPress: async () => {
+                await submitProfileDetails()
+              },
               mediaPosition: 'bottom',
               actionDisabled: isLoading || !avatar?.uri,
               media: (
@@ -140,8 +190,28 @@ const Onboarding = ({ isVisible, onDismiss }: Props) => {
             {
               title: 'Enable notifications.',
               subtitle: 'Know when your friends post something new.',
-              actionLabel: 'Enable',
-              onActionPress: handleRequestPermissions,
+              actionLabel: notificationsEnabled ? 'Start Exploring' : 'Not now',
+              onActionPress: onDismiss,
+              mediaPosition: 'bottom',
+              media: (
+                <BlurView
+                  intensity={80}
+                  tint="systemChromeMaterialDark"
+                  className="p-4 rounded-3xl overflow-hidden"
+                  style={{ width: Dimensions.get('window').width * 0.8 }}>
+                  <View className="flex-row items-center justify-between">
+                    <View className="flex-row items-center gap-2">
+                      <Ionicons name="notifications" size={24} color={Colors.text} />
+                      <Text>Notifications</Text>
+                    </View>
+                    <Switch
+                      ios_backgroundColor={Colors.muted}
+                      value={notificationsEnabled}
+                      onValueChange={handleRequestPermissions}
+                    />
+                  </View>
+                </BlurView>
+              ),
             },
           ]}
         />

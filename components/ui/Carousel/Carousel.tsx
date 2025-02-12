@@ -22,7 +22,7 @@ type Props = {
     mediaPosition?: 'top' | 'bottom'
     media?: ReactNode
     actionLabel?: string
-    onActionPress?: () => void
+    onActionPress?: () => Promise<void> | void
     actionDisabled?: boolean
   }>
   onSlideChange?: (index: number) => void
@@ -31,13 +31,6 @@ type Props = {
 
 const Carousel = ({ slides, onSlideChange, onSkip }: Props) => {
   const [activeIndex, setActiveIndex] = useState(0)
-  const [backgroundImage] = useState(
-    faker.image.urlPicsumPhotos({
-      width: 300,
-      height: 300 * 1.4,
-      blur: 0,
-    }),
-  )
 
   const scrollX = useSharedValue(0)
   const scrollViewRef = useRef<Animated.ScrollView>(null)
@@ -58,11 +51,15 @@ const Carousel = ({ slides, onSlideChange, onSkip }: Props) => {
     },
   })
 
-  const handleContinue = () => {
+  const handleContinue = async () => {
     if (!scrollViewRef.current) return
 
     if (slides[activeIndex].onActionPress) {
-      slides[activeIndex].onActionPress()
+      if (slides[activeIndex].onActionPress instanceof Promise) {
+        await slides[activeIndex].onActionPress()
+      } else {
+        slides[activeIndex].onActionPress()
+      }
     }
 
     scrollViewRef.current.scrollTo({ x: scrollX.value + SCREEN_WIDTH, animated: true })
@@ -71,11 +68,9 @@ const Carousel = ({ slides, onSlideChange, onSkip }: Props) => {
   return (
     <>
       <Animated.Image
-        key={faker.string.uuid()}
-        source={{
-          uri: backgroundImage,
-        }}
-        style={StyleSheet.absoluteFill}
+        className="absolute inset-0 w-full h-full"
+        source={require('@/assets/images/onboarding-background.png')}
+        resizeMode="cover"
       />
       <BlurView intensity={80} tint="systemChromeMaterialDark" style={StyleSheet.absoluteFill} />
       <SafeAreaView className="flex-1">
@@ -115,7 +110,7 @@ const Carousel = ({ slides, onSlideChange, onSkip }: Props) => {
             disabled={slides[activeIndex].actionDisabled}
             size="medium"
             title={slides[activeIndex].actionLabel ?? 'Continue'}
-            onPress={slides[activeIndex].onActionPress ?? handleContinue}
+            onPress={handleContinue}
           />
         </View>
       </SafeAreaView>
