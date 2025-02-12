@@ -12,7 +12,8 @@
     "ios:build:dev": "eas build --platform ios --profile development",
     "test": "jest --watchAll",
     "lint": "expo lint",
-    "update": "npx expo install --check"
+    "update": "npx expo install --check",
+    "generate-db-types": "npx supabase gen types typescript --project-id gypcmmyhkdobmzqlisto --schema public > database.types.ts"
   },
   "jest": {
     "preset": "jest-expo"
