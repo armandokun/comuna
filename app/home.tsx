@@ -8,7 +8,7 @@ import Animated, { FadeIn, FadeOut } from 'react-native-reanimated'
 
 import { supabase } from '@/libs/supabase'
 import { SessionContext } from '@/container/SessionProvider'
-import Post from '@/types/post'
+import { Post } from '@/types/posts'
 
 import PostList from '@/components/PostList'
 import Onboarding from '@/components/Onboarding'
@@ -54,13 +54,20 @@ const HomeScreen = () => {
         .from('posts')
         .select(
           `
+          *,
+          author: profiles (
+            id,
+            name,
+            avatar_url
+          ),
+          comments: comments!inner(
             *,
             author: profiles (
               id,
               name,
               avatar_url
-            ),
-            comments_count: comments(count)
+            )
+          )
         `,
         )
         .order('created_at', { ascending: false })
@@ -85,7 +92,14 @@ const HomeScreen = () => {
           name: post.author?.name ?? '',
           avatar_url: post.author?.avatar_url ?? '',
         },
-        comments_count: post.comments_count[0].count,
+        comments: post.comments.map((comment) => ({
+          ...comment,
+          author: {
+            id: comment.author?.id ?? '',
+            name: comment.author?.name ?? '',
+            avatar_url: comment.author?.avatar_url ?? '',
+          },
+        })),
       }))
 
       setPosts(refresh ? formattedPosts : [...posts, ...formattedPosts])
@@ -155,7 +169,7 @@ const HomeScreen = () => {
           isRefreshing={isRefreshing}
           handleRefresh={handleRefresh}
           onEndReached={handleLoadMore}
-          onEndReachedThreshold={0.5}
+          onEndReachedThreshold={0.7}
         />
       </View>
       <Header headerRef={headerRef} headerHeight={headerHeight} />

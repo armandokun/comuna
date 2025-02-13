@@ -18,7 +18,7 @@ import { BlurView } from 'expo-blur'
 import { LinearGradient } from 'expo-linear-gradient'
 
 import { supabase } from '@/libs/supabase'
-import Post from '@/types/post'
+import Post from '@/types/posts'
 import Text from '@/components/ui/Text'
 import GradientBlur from '@/components/GradientBlur'
 import { Colors } from '@/constants/colors'

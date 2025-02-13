@@ -6,7 +6,7 @@ import Animated, {
 } from 'react-native-reanimated'
 import React, { useEffect, useState } from 'react'
 
-import PostType from '@/types/post'
+import { Post as PostType } from '@/types/posts'
 
 import Post from '../Post'
 import CommentsBottomSheet from '../CommentsBottomSheet'
@@ -35,8 +35,9 @@ const PostList = ({
   const { height } = Dimensions.get('screen')
 
   const SPACING = 8
-  const ITEM_SIZE = height * 0.62
-  const ITEM_FULL_SIZE = ITEM_SIZE + SPACING * 2
+  const COMMENT_CONTAINER_HEIGHT = 90
+  const ITEM_SIZE = height * 0.62 + COMMENT_CONTAINER_HEIGHT
+  const ITEM_FULL_SIZE = ITEM_SIZE + SPACING * 4
 
   const scrollY = useSharedValue(0)
   const onScroll = useAnimatedScrollHandler((e) => {
@@ -53,9 +54,9 @@ const PostList = ({
   useEffect(() => {
     if (!data.length) return
 
-    if (onVisibleItemChange && data.length > 0) {
-      onVisibleItemChange(data[0].image_blurhash)
-    }
+    if (!onVisibleItemChange || !data.length) return
+
+    onVisibleItemChange(data[0].image_blurhash)
   }, [data, onVisibleItemChange])
 
   return (
@@ -64,7 +65,7 @@ const PostList = ({
         data={data}
         refreshControl={<RefreshControl refreshing={isRefreshing} onRefresh={handleRefresh} />}
         contentContainerStyle={{
-          gap: SPACING * 2,
+          gap: SPACING * 4,
           paddingHorizontal: SPACING * 2,
           paddingBottom: SPACING * 4,
           marginTop: headerHeight,
