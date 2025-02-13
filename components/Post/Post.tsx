@@ -2,8 +2,11 @@ import { Dimensions, TouchableOpacity, View } from 'react-native'
 import { LinearGradient } from 'expo-linear-gradient'
 import React, { useEffect, useRef, useState } from 'react'
 import { Image } from 'expo-image'
+import { faker } from '@faker-js/faker'
 
 import Animated from 'react-native-reanimated'
+
+import { BlurView } from 'expo-blur'
 
 import Text from '@/components/ui/Text'
 import { Post as PostType } from '@/types/posts'
@@ -65,6 +68,19 @@ const Post = ({ item, onPress }: Props) => {
                 <Text type="subhead" className="text-white">
                   {item.author.name}
                 </Text>
+                {item.author.name === 'Ignas Hermanas' && (
+                  <BlurView
+                    intensity={80}
+                    tint="systemChromeMaterialDark"
+                    className="flex-row items-center gap-1 py-1 pl-2 pr-3 rounded-full overflow-hidden border border-zinc-500">
+                    <Image
+                      source={require('@/assets/images/badge-icon.gif')}
+                      contentFit="cover"
+                      style={{ width: 24, height: 24 }}
+                    />
+                    <Text type="subhead">grand mecenat</Text>
+                  </BlurView>
+                )}
               </View>
             </LinearGradient>
           </View>
