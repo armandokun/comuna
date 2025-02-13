@@ -11,6 +11,8 @@ import { BlurView } from 'expo-blur'
 import Text from '@/components/ui/Text'
 import { Post as PostType } from '@/types/posts'
 
+import { Colors } from '@/constants/colors'
+
 import GradientBlur from '../GradientBlur'
 
 type Props = {
@@ -69,17 +71,16 @@ const Post = ({ item, onPress }: Props) => {
                   {item.author.name}
                 </Text>
                 {item.author.name === 'Ignas Hermanas' && (
-                  <BlurView
-                    intensity={80}
-                    tint="systemChromeMaterialDark"
-                    className="flex-row items-center gap-1 py-1 pl-2 pr-3 rounded-full overflow-hidden border border-zinc-500">
+                  <View className="flex-row items-center gap-1 py-1 pl-2 pr-3 rounded-full overflow-hidden border border-black bg-white">
                     <Image
                       source={require('@/assets/images/badge-icon.gif')}
                       contentFit="cover"
                       style={{ width: 24, height: 24 }}
                     />
-                    <Text type="subhead">grand mecenat</Text>
-                  </BlurView>
+                    <Text type="subhead" style={{ color: Colors.background }}>
+                      grand mecenat
+                    </Text>
+                  </View>
                 )}
               </View>
             </LinearGradient>
