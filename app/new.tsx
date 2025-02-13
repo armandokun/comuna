@@ -37,7 +37,7 @@ const NewScreen = () => {
       if (blurhashError) Alert.alert('Error generating blurhash', blurhashError.message)
 
       const { error } = await supabase.from('posts').insert({
-        image_url: imageUrl,
+        image_url: imageUrl.toString(),
         description,
         image_blurhash: blurhash,
       })

@@ -30,7 +30,7 @@ const PostList = ({
   onEndReached,
   onEndReachedThreshold,
 }: Props) => {
-  const [selectedPostId, setSelectedPostId] = useState<string | null>(null)
+  const [selectedPostId, setSelectedPostId] = useState<number | null>(null)
 
   const { height } = Dimensions.get('screen')
 
@@ -62,13 +62,7 @@ const PostList = ({
     <>
       <Animated.FlatList
         data={data}
-        refreshControl={
-          <RefreshControl
-            refreshing={isRefreshing}
-            onRefresh={handleRefresh}
-            progressViewOffset={250}
-          />
-        }
+        refreshControl={<RefreshControl refreshing={isRefreshing} onRefresh={handleRefresh} />}
         contentContainerStyle={{
           gap: SPACING * 2,
           paddingHorizontal: SPACING * 2,
@@ -79,9 +73,7 @@ const PostList = ({
         scrollEventThrottle={16}
         snapToInterval={ITEM_FULL_SIZE}
         decelerationRate="fast"
-        renderItem={({ item }) => (
-          <Post item={item} onPress={() => setSelectedPostId(item.id.toString())} />
-        )}
+        renderItem={({ item }) => <Post item={item} onPress={() => setSelectedPostId(item.id)} />}
         onEndReached={onEndReached}
         onEndReachedThreshold={onEndReachedThreshold}
       />

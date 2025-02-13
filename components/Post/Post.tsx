@@ -2,12 +2,10 @@ import { Animated, Dimensions, TouchableOpacity, View } from 'react-native'
 import { LinearGradient } from 'expo-linear-gradient'
 import { useEffect, useRef, useState } from 'react'
 import { Image } from 'expo-image'
-
 import { Ionicons } from '@expo/vector-icons'
 
 import Text from '@/components/ui/Text'
 import PostType from '@/types/post'
-
 import { Colors } from '@/constants/colors'
 
 import GradientBlur from '../GradientBlur'

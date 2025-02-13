@@ -3,6 +3,7 @@ import { createClient } from 'https://esm.sh/@supabase/supabase-js'
 type Notification = {
   id: string
   user_id: string
+  post_id: number
   title: string
   body: string
 }
@@ -37,6 +38,7 @@ Deno.serve(async (req) => {
     body: JSON.stringify({
       to: data.expo_push_token,
       sound: 'default',
+      data: { post_id: payload.record.post_id },
       title: payload.record.title,
       body: payload.record.body,
     }),
