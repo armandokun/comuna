@@ -60,7 +60,7 @@ const HomeScreen = () => {
             name,
             avatar_url
           ),
-          comments: comments!inner(
+          comments: comments (
             *,
             author: profiles (
               id,
