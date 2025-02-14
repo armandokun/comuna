@@ -1,5 +1,5 @@
-import { View, Alert } from 'react-native'
-import { useCallback, useContext, useEffect, useState } from 'react'
+import { View, Alert, Keyboard, ScrollView } from 'react-native'
+import { useCallback, useContext, useEffect, useRef, useState } from 'react'
 import { Image } from 'expo-image'
 import { BottomSheetTextInput } from '@gorhom/bottom-sheet'
 
@@ -24,6 +24,22 @@ const CommentsBottomSheet = ({ show, postId, onClose }: Props) => {
   const [shouldShow, setShouldShow] = useState(false)
 
   const { profile } = useContext(SessionContext)
+  const bottomSheetScrollViewRef = useRef<ScrollView>(null)
+
+  useEffect(() => {
+    const keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', () => {
+      bottomSheetScrollViewRef.current?.scrollToEnd({ animated: true })
+    })
+
+    const keyboardDidHideListener = Keyboard.addListener('keyboardDidHide', () => {
+      bottomSheetScrollViewRef.current?.scrollToEnd({ animated: true })
+    })
+
+    return () => {
+      keyboardDidShowListener.remove()
+      keyboardDidHideListener.remove()
+    }
+  }, [])
 
   const fetchComments = useCallback(async () => {
     if (!postId) return
@@ -114,8 +130,11 @@ const CommentsBottomSheet = ({ show, postId, onClose }: Props) => {
     <BottomSheet
       show={shouldShow}
       onBackdropPress={onClose}
-      keyboardBehavior="interactive"
+      snapPoints={['90%']}
+      enableDynamicSizing={false}
+      keyboardBehavior="extend"
       keyboardBlurBehavior="restore"
+      scrollViewRef={bottomSheetScrollViewRef}
       footer={
         <View className="flex-row items-center gap-2 justify-between mt-4">
           <Image

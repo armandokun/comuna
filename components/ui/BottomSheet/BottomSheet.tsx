@@ -1,4 +1,4 @@
-import { ReactNode, useCallback, useEffect, useRef } from 'react'
+import { ReactNode, RefObject, useCallback, useEffect, useRef } from 'react'
 import {
   BottomSheetBackdrop,
   BottomSheetBackdropProps,
@@ -10,7 +10,7 @@ import {
   BottomSheetProps,
 } from '@gorhom/bottom-sheet'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
-import { View } from 'react-native'
+import { ScrollView, View } from 'react-native'
 import { BlurView } from 'expo-blur'
 
 import { Colors } from '@/constants/colors'
@@ -20,9 +20,17 @@ type Props = {
   children: ReactNode
   onBackdropPress?: () => void
   footer?: ReactNode
+  scrollViewRef?: RefObject<ScrollView>
 } & BottomSheetProps
 
-const BottomSheet = ({ show, children, onBackdropPress = undefined, footer, ...props }: Props) => {
+const BottomSheet = ({
+  show,
+  children,
+  onBackdropPress = undefined,
+  footer,
+  scrollViewRef,
+  ...props
+}: Props) => {
   const bottomSheetModalRef = useRef<BottomSheetModal>(null)
 
   const insets = useSafeAreaInsets()
@@ -91,7 +99,7 @@ const BottomSheet = ({ show, children, onBackdropPress = undefined, footer, ...p
       snapPoints={['90%']}
       handleIndicatorStyle={{ backgroundColor: Colors.muted }}
       {...props}>
-      <BottomSheetScrollView>
+      <BottomSheetScrollView ref={scrollViewRef}>
         <View style={{ paddingBottom: insets.bottom }}>{children}</View>
       </BottomSheetScrollView>
     </BottomSheetModal>
