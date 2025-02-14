@@ -7,7 +7,7 @@ import { supabase } from '@/libs/supabase'
 import { getRelativeTimeFromNow } from '@/libs/date'
 import Text from '@/components/ui/Text'
 import BottomSheet from '@/components/ui/BottomSheet'
-import { Comment } from '@/types/comment'
+import { Comment } from '@/types/posts'
 import { SessionContext } from '@/container/SessionProvider'
 import { Colors } from '@/constants/colors'
 
@@ -67,6 +67,28 @@ const CommentsBottomSheet = ({ show, postId, onClose }: Props) => {
       setShouldShow(false)
     }
   }, [fetchComments, show])
+
+  useEffect(() => {
+    if (!postId) return
+
+    const subscription = supabase
+      .channel('comments')
+      .on(
+        'postgres_changes',
+        {
+          event: 'INSERT',
+          schema: 'public',
+          table: 'comments',
+          filter: `post_id=eq.${postId}`,
+        },
+        () => fetchComments(),
+      )
+      .subscribe()
+
+    return () => {
+      subscription.unsubscribe()
+    }
+  }, [fetchComments, postId])
 
   const handleSubmitComment = async (content: string) => {
     if (!postId) return
