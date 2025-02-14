@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from 'react'
+import { RefObject, useContext, useEffect, useState } from 'react'
 import {
   Platform,
   TouchableOpacity,
@@ -25,7 +25,7 @@ import ContextMenu from '../ui/ContextMenu'
 import Text from '../ui/Text'
 
 type Props = {
-  headerRef: React.RefObject<View>
+  headerRef: RefObject<View>
   headerHeight: number
 }
 
@@ -77,7 +77,7 @@ const Header = ({ headerRef, headerHeight }: Props) => {
   return (
     <GradientBlur position="top" height={insets.top + headerHeight + 50}>
       <SafeAreaView style={{ position: 'absolute', width: '100%', zIndex: 10 }}>
-        <View ref={headerRef} className="px-4 py-4 justify-between items-center flex-row">
+        <View ref={headerRef} className="px-4 pb-2 justify-between items-center flex-row">
           <Text type="heading">Comuna</Text>
           <View className="flex-row items-center gap-2">
             <ImagePickerButton />
@@ -113,7 +113,7 @@ const Header = ({ headerRef, headerHeight }: Props) => {
                 <Image
                   source={{ uri: `${profile?.avatar_url}?width=50&height=50` }}
                   contentFit="cover"
-                  style={{ width: 44, height: 44, borderRadius: 44 }}
+                  style={{ width: 42, height: 42, borderRadius: 42 }}
                 />
               </ContextMenu>
             </TouchableOpacity>

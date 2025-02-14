@@ -65,7 +65,13 @@ const PostList = ({
     <>
       <Animated.FlatList
         data={data}
-        refreshControl={<RefreshControl refreshing={isRefreshing} onRefresh={handleRefresh} />}
+        refreshControl={
+          <RefreshControl
+            refreshing={isRefreshing}
+            onRefresh={handleRefresh}
+            progressViewOffset={headerHeight}
+          />
+        }
         contentContainerStyle={{
           gap: SPACING * 4,
           paddingHorizontal: SPACING * 2,
