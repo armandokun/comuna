@@ -13,21 +13,28 @@ serve(async (req) => {
     const imageBuffer = await response.arrayBuffer()
     const image = await decode(imageBuffer)
 
-    image.resize(32, 32)
+    const IMAGE_SIZE = 32
+    image.resize(IMAGE_SIZE, IMAGE_SIZE)
 
-    const pixels = new Uint8ClampedArray(32 * 32 * 4)
-    for (let i = 0; i < 32 * 32; i++) {
-      const [r, g, b, a] = image.getRGBAAt((i % 32) + 1, Math.floor(i / 32) + 1)
+    const pixels = new Uint8ClampedArray(IMAGE_SIZE * IMAGE_SIZE * 4)
+    for (let i = 0; i < IMAGE_SIZE * IMAGE_SIZE; i++) {
+      const [r, g, b, a] = image.getRGBAAt((i % IMAGE_SIZE) + 1, Math.floor(i / IMAGE_SIZE) + 1)
       pixels[i * 4] = r
       pixels[i * 4 + 1] = g
       pixels[i * 4 + 2] = b
       pixels[i * 4 + 3] = a
     }
 
-    const BLURHASH_COMPONENT_X = 4
-    const BLURHASH_COMPONENT_Y = 4
+    const BLURHASH_COMPONENT_X = 5
+    const BLURHASH_COMPONENT_Y = 5
 
-    const blurhash = encode(pixels, 32, 32, BLURHASH_COMPONENT_X, BLURHASH_COMPONENT_Y)
+    const blurhash = encode(
+      pixels,
+      IMAGE_SIZE,
+      IMAGE_SIZE,
+      BLURHASH_COMPONENT_X,
+      BLURHASH_COMPONENT_Y,
+    )
 
     return new Response(JSON.stringify({ blurhash }), {
       status: 200,

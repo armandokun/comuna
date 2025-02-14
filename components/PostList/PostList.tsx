@@ -46,9 +46,11 @@ const PostList = ({
     if (!onVisibleItemChange) return
 
     const currentIndex = Math.round(scrollY.value)
-    if (currentIndex >= 0 && currentIndex < data.length) {
-      runOnJS(onVisibleItemChange)(data[currentIndex].image_blurhash)
-    }
+    const isValidIndex = currentIndex >= 0 && currentIndex < data.length
+
+    if (!isValidIndex) return
+
+    runOnJS(onVisibleItemChange)(data[currentIndex].image_blurhash)
   })
 
   useEffect(() => {
