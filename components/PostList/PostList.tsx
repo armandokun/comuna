@@ -32,6 +32,8 @@ const PostList = ({
 }: Props) => {
   const [selectedPostId, setSelectedPostId] = useState<number | null>(null)
 
+  const scrollY = useSharedValue(0)
+
   const { height } = Dimensions.get('screen')
 
   const SPACING = 8
@@ -39,7 +41,6 @@ const PostList = ({
   const ITEM_SIZE = height * 0.62 + COMMENT_CONTAINER_HEIGHT
   const ITEM_FULL_SIZE = ITEM_SIZE + SPACING * 4
 
-  const scrollY = useSharedValue(0)
   const onScroll = useAnimatedScrollHandler((e) => {
     scrollY.value = e.contentOffset.y / ITEM_FULL_SIZE
 
@@ -70,6 +71,8 @@ const PostList = ({
             refreshing={isRefreshing}
             onRefresh={handleRefresh}
             progressViewOffset={headerHeight}
+            tintColor="#FFFFFF"
+            style={{ backgroundColor: 'transparent' }}
           />
         }
         contentContainerStyle={{
