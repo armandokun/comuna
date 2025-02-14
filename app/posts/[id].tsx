@@ -18,19 +18,19 @@ import { BlurView } from 'expo-blur'
 import { LinearGradient } from 'expo-linear-gradient'
 
 import { supabase } from '@/libs/supabase'
-import { Post, Comment } from '@/types/posts'
+import { Post, CommentWithLikes } from '@/types/posts'
 import Text from '@/components/ui/Text'
 import GradientBlur from '@/components/GradientBlur'
 import { Colors } from '@/constants/colors'
-import { getRelativeTimeFromNow } from '@/libs/date'
 import Spacer from '@/components/ui/Spacer'
 import { SessionContext } from '@/container/SessionProvider'
+import Comment from '@/components/CommentsBottomSheet/Comment'
 
 type PostWithoutComments = Omit<Post, 'comments'>
 
 const PostScreen = () => {
   const [post, setPost] = useState<PostWithoutComments | null>(null)
-  const [comments, setComments] = useState<Array<Comment>>([])
+  const [comments, setComments] = useState<Array<CommentWithLikes>>([])
   const [descriptionHeight, setDescriptionHeight] = useState(0)
 
   const { id } = useLocalSearchParams<{ id: string }>()
@@ -114,6 +114,10 @@ const PostScreen = () => {
         id,
         name,
         avatar_url
+      ),
+      likes:comments_likes(
+        id,
+        liker_id
       )
     `,
       )
@@ -210,22 +214,19 @@ const PostScreen = () => {
             {comments.length ? (
               <View className="gap-4 w-full my-4">
                 {comments.map((comment) => (
-                  <View key={comment.id} className="flex-row items-center gap-2">
-                    <Image
-                      source={{ uri: comment.author.avatar_url }}
-                      style={{ width: 32, height: 32, borderRadius: 36 }}
-                      contentFit="cover"
-                    />
-                    <View className="flex-1">
-                      <View className="flex-row items-center gap-2">
-                        <Text type="subhead">{comment.author.name}</Text>
-                        <Text type="subhead" style={{ color: Colors.muted }}>
-                          {getRelativeTimeFromNow(comment.created_at)}
-                        </Text>
-                      </View>
-                      <Text type="body">{comment.content}</Text>
-                    </View>
-                  </View>
+                  <Comment
+                    key={comment.id}
+                    id={comment.id}
+                    content={comment.content}
+                    createdAt={comment.created_at}
+                    author={{
+                      id: comment.author.id,
+                      name: comment.author.name,
+                      avatarUrl: comment.author.avatar_url,
+                    }}
+                    likes={comment.likes}
+                    currentUserId={profile?.id}
+                  />
                 ))}
               </View>
             ) : (

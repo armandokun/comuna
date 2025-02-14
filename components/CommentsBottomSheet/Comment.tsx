@@ -28,28 +28,39 @@ const Comment = ({ id, currentUserId, content, createdAt, author, likes }: Props
   const [isLiked, setIsLiked] = useState(likes.some((like) => like.liker_id === currentUserId))
   const [likesCount, setLikesCount] = useState(likes.length)
 
+  const incrementLikesCount = () => setLikesCount((prev) => prev + 1)
+  const decrementLikesCount = () => setLikesCount((prev) => prev - 1)
+
   const handleHeartToggle = async () => {
     setIsLiked((prev) => !prev)
 
     if (isLiked) {
+      decrementLikesCount()
+
       const { error } = await supabase.rpc('unlike_comment', {
         arg_comment_id: id,
       })
 
-      if (error) Alert.alert('Error unliking comment', error.message)
+      if (error) {
+        Alert.alert('Error unliking comment', error.message)
 
-      setLikesCount((prev) => prev - 1)
+        incrementLikesCount()
+      }
 
       return
     }
+
+    incrementLikesCount()
 
     const { error } = await supabase.rpc('like_comment', {
       arg_comment_id: id,
     })
 
-    if (error) Alert.alert('Error liking comment', error.message)
+    if (error) {
+      Alert.alert('Error liking comment', error.message)
 
-    setLikesCount((prev) => prev + 1)
+      decrementLikesCount()
+    }
   }
 
   return (
