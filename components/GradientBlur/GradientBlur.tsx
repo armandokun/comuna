@@ -14,9 +14,9 @@ type Props = {
 const GradientBlur = ({ children, height = 100, position = 'bottom' }: Props) => {
   const { colors, locations } = easeGradient({
     colorStops: {
-      0: { color: position === 'bottom' ? 'transparent' : 'rgba(0, 0, 0, 0.9)' },
+      0: { color: position === 'bottom' ? 'transparent' : 'rgb(0, 0, 0)' },
       0.5: { color: 'rgba(0, 0, 0, 0.9)' },
-      1: { color: position === 'bottom' ? 'rgba(0, 0, 0, 0.9)' : 'transparent' },
+      1: { color: position === 'bottom' ? 'rgb(0, 0, 0)' : 'transparent' },
     },
   })
 
