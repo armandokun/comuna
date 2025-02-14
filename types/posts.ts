@@ -9,6 +9,13 @@ type Comment = {
   }
 }
 
+type CommentWithLikes = Comment & {
+  likes: Array<{
+    id: number
+    liker_id: string
+  }>
+}
+
 type Post = {
   id: number
   created_at: string
@@ -23,4 +30,4 @@ type Post = {
   comments: Array<Comment> | null
 }
 
-export { Comment, Post }
+export { Comment, Post, CommentWithLikes }

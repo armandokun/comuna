@@ -4,13 +4,13 @@ import { Image } from 'expo-image'
 import { BottomSheetTextInput } from '@gorhom/bottom-sheet'
 
 import { supabase } from '@/libs/supabase'
-import { getRelativeTimeFromNow } from '@/libs/date'
 import Text from '@/components/ui/Text'
 import BottomSheet from '@/components/ui/BottomSheet'
-import { Comment } from '@/types/posts'
+import { CommentWithLikes } from '@/types/posts'
 import { SessionContext } from '@/container/SessionProvider'
 import { Colors } from '@/constants/colors'
 
+import Comment from './Comment'
 import Spacer from '../ui/Spacer'
 
 type Props = {
@@ -20,7 +20,7 @@ type Props = {
 }
 
 const CommentsBottomSheet = ({ show, postId, onClose }: Props) => {
-  const [comments, setComments] = useState<Array<Comment>>([])
+  const [comments, setComments] = useState<Array<CommentWithLikes>>([])
   const [shouldShow, setShouldShow] = useState(false)
 
   const { profile } = useContext(SessionContext)
@@ -53,6 +53,10 @@ const CommentsBottomSheet = ({ show, postId, onClose }: Props) => {
           id,
           name,
           avatar_url
+        ),
+        likes:comments_likes(
+          id,
+          liker_id
         )
       `,
       )
@@ -163,22 +167,19 @@ const CommentsBottomSheet = ({ show, postId, onClose }: Props) => {
         {comments.length ? (
           <View className="gap-4 w-full pb-20">
             {comments.map((comment) => (
-              <View key={comment.id} className="flex-row items-center gap-2">
-                <Image
-                  source={{ uri: comment.author.avatar_url }}
-                  style={{ width: 32, height: 32, borderRadius: 36 }}
-                  contentFit="cover"
-                />
-                <View className="flex-1 gap-1">
-                  <View className="flex-row items-center gap-2">
-                    <Text type="subhead">{comment.author.name}</Text>
-                    <Text type="subhead" style={{ color: Colors.muted }}>
-                      {getRelativeTimeFromNow(comment.created_at)}
-                    </Text>
-                  </View>
-                  <Text type="body">{comment.content}</Text>
-                </View>
-              </View>
+              <Comment
+                key={comment.id}
+                id={comment.id}
+                content={comment.content}
+                createdAt={comment.created_at}
+                currentUserId={profile?.id}
+                author={{
+                  id: comment.author.id,
+                  name: comment.author.name,
+                  avatarUrl: comment.author.avatar_url,
+                }}
+                likes={comment.likes}
+              />
             ))}
           </View>
         ) : (

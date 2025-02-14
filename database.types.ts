@@ -48,11 +48,48 @@ export type Database = {
           },
         ]
       }
+      comments_likes: {
+        Row: {
+          comment_id: number
+          created_at: string
+          id: number
+          liker_id: string
+        }
+        Insert: {
+          comment_id: number
+          created_at?: string
+          id?: number
+          liker_id?: string
+        }
+        Update: {
+          comment_id?: number
+          created_at?: string
+          id?: number
+          liker_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "comments_likes_comment_id_fkey"
+            columns: ["comment_id"]
+            isOneToOne: false
+            referencedRelation: "comments"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "comments_likes_liker_id_fkey"
+            columns: ["liker_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       notifications: {
         Row: {
           body: string | null
           created_at: string
           id: number
+          post_id: number | null
           title: string | null
           user_id: string | null
         }
@@ -60,6 +97,7 @@ export type Database = {
           body?: string | null
           created_at?: string
           id?: number
+          post_id?: number | null
           title?: string | null
           user_id?: string | null
         }
@@ -67,10 +105,18 @@ export type Database = {
           body?: string | null
           created_at?: string
           id?: number
+          post_id?: number | null
           title?: string | null
           user_id?: string | null
         }
         Relationships: [
+          {
+            foreignKeyName: "notifications_post_id_fkey"
+            columns: ["post_id"]
+            isOneToOne: false
+            referencedRelation: "posts"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "notifications_user_id_fkey"
             columns: ["user_id"]
@@ -146,6 +192,18 @@ export type Database = {
     Functions: {
       clear_notifications: {
         Args: Record<PropertyKey, never>
+        Returns: undefined
+      }
+      like_comment: {
+        Args: {
+          arg_comment_id: number
+        }
+        Returns: undefined
+      }
+      unlike_comment: {
+        Args: {
+          arg_comment_id: number
+        }
         Returns: undefined
       }
     }
