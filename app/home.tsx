@@ -163,7 +163,7 @@ const HomeScreen = () => {
       />
       <View className="flex-1 justify-center">
         <PostList
-          data={posts}
+          posts={posts}
           onVisibleItemChange={setBackgroundBlurhash}
           headerHeight={insets.top + headerHeight}
           isRefreshing={isRefreshing}

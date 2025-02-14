@@ -12,7 +12,7 @@ import Post from '../Post'
 import CommentsBottomSheet from '../CommentsBottomSheet'
 
 type Props = {
-  data: Array<PostType>
+  posts: Array<PostType>
   headerHeight: number
   onVisibleItemChange?: (imageBlurhash: string) => void
   isRefreshing: boolean
@@ -22,7 +22,7 @@ type Props = {
 }
 
 const PostList = ({
-  data,
+  posts: data,
   onVisibleItemChange,
   headerHeight,
   isRefreshing,

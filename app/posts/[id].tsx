@@ -18,17 +18,18 @@ import { BlurView } from 'expo-blur'
 import { LinearGradient } from 'expo-linear-gradient'
 
 import { supabase } from '@/libs/supabase'
-import Post from '@/types/posts'
+import { Post, Comment } from '@/types/posts'
 import Text from '@/components/ui/Text'
 import GradientBlur from '@/components/GradientBlur'
 import { Colors } from '@/constants/colors'
-import { Comment } from '@/types/comment'
 import { getRelativeTimeFromNow } from '@/libs/date'
 import Spacer from '@/components/ui/Spacer'
 import { SessionContext } from '@/container/SessionProvider'
 
+type PostWithoutComments = Omit<Post, 'comments'>
+
 const PostScreen = () => {
-  const [post, setPost] = useState<Post | null>(null)
+  const [post, setPost] = useState<PostWithoutComments | null>(null)
   const [comments, setComments] = useState<Array<Comment>>([])
   const [descriptionHeight, setDescriptionHeight] = useState(0)
 
@@ -74,8 +75,7 @@ const PostScreen = () => {
               id,
               name,
               avatar_url
-            ),
-            comments_count: comments(count)
+            )
           `,
         )
         .eq('id', Number(id))
@@ -98,7 +98,6 @@ const PostScreen = () => {
           name: data.author?.name ?? '',
           avatar_url: data.author?.avatar_url ?? '',
         },
-        comments_count: data.comments_count[0].count,
       })
     }
 
@@ -182,7 +181,7 @@ const PostScreen = () => {
             <View className="relative rounded-3xl overflow-hidden">
               <GradientBlur height={descriptionHeight + 50}>
                 <Image
-                  source={`${post.image_url}?quality=50`}
+                  source={post.image_url}
                   placeholder={{ blurhash: post.image_blurhash }}
                   contentFit="cover"
                   style={{ width: '100%', height: Dimensions.get('window').height * 0.5 }}

@@ -1,6 +1,6 @@
 /* eslint-disable react/no-unstable-nested-components */
 import { BlurView } from 'expo-blur'
-import { Alert, StyleSheet, KeyboardAvoidingView } from 'react-native'
+import { Alert, StyleSheet, KeyboardAvoidingView, SafeAreaView } from 'react-native'
 import { router, useLocalSearchParams, useNavigation } from 'expo-router'
 import React, { useCallback, useEffect, useState } from 'react'
 import { Image } from 'expo-image'
@@ -70,39 +70,35 @@ const NewScreen = () => {
   return (
     <>
       <Image
-        key={imageUrl.toString()}
-        source={{ uri: imageUrl.toString() }}
+        source={{ uri: `${imageUrl.toString()}?quality=50&width=500&height=500` }}
         style={StyleSheet.absoluteFill}
         contentFit="cover"
       />
-      <BlurView
-        intensity={80}
-        tint="systemChromeMaterialDark"
-        style={StyleSheet.absoluteFill}
-        className="absolute w-full h-full"
-      />
+      <BlurView intensity={80} tint="systemChromeMaterialDark" style={StyleSheet.absoluteFill} />
       <KeyboardDismissPressable>
         <KeyboardAvoidingView
           behavior="padding"
           keyboardVerticalOffset={100}
-          className="flex-1 mx-4 justify-center">
-          <Image
-            source={{ uri: imageUrl.toString() }}
-            contentFit="cover"
-            style={{
-              aspectRatio: 1,
-              borderRadius: 32,
-            }}
-          />
-          <Spacer />
-          <TextArea
-            value={description}
-            onChangeText={setDescription}
-            placeholder="What's on your mind?"
-            style={{ fontSize: 22, color: Colors.text }}
-            placeholderTextColor="rgba(255, 255, 255, 0.6)"
-            className="h-[100px]"
-          />
+          className="flex-1 mx-4">
+          <SafeAreaView className="flex-1">
+            <Image
+              source={{ uri: imageUrl.toString() }}
+              contentFit="cover"
+              style={{
+                aspectRatio: 1,
+                borderRadius: 32,
+              }}
+            />
+            <Spacer />
+            <TextArea
+              value={description}
+              onChangeText={setDescription}
+              placeholder="What's on your mind?"
+              style={{ fontSize: 22, color: Colors.text }}
+              placeholderTextColor="rgba(255, 255, 255, 0.6)"
+              className="h-[100px]"
+            />
+          </SafeAreaView>
         </KeyboardAvoidingView>
       </KeyboardDismissPressable>
       <FullScreenLoader show={isUploading} title="Posting..." />

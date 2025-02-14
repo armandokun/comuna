@@ -79,7 +79,7 @@ const ImagePickerButton = () => {
           router.push({
             pathname: NEW,
             params: {
-              imageUrl: `${publicUrl}?quality=50&width=500&height=500`,
+              imageUrl: publicUrl,
             },
           })
         }
