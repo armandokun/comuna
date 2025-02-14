@@ -14,9 +14,9 @@ type Props = {
 const GradientBlur = ({ children, height = 100, position = 'bottom' }: Props) => {
   const { colors, locations } = easeGradient({
     colorStops: {
-      0: { color: position === 'bottom' ? 'transparent' : 'rgba(0,0,0,0.99)' },
-      0.5: { color: 'rgba(0,0,0,0.9)' },
-      1: { color: position === 'bottom' ? 'rgba(0,0,0,0.99)' : 'transparent' },
+      0: { color: position === 'bottom' ? 'transparent' : 'rgba(0, 0, 0, 0.9)' },
+      0.5: { color: 'rgba(0, 0, 0, 0.9)' },
+      1: { color: position === 'bottom' ? 'rgba(0, 0, 0, 0.9)' : 'transparent' },
     },
   })
 
@@ -24,7 +24,7 @@ const GradientBlur = ({ children, height = 100, position = 'bottom' }: Props) =>
     <>
       {children}
       <View
-        className={`absolute ${position === 'top' ? 'top-0' : 'bottom-0'} w-full`}
+        className={`absolute w-full ${position === 'top' ? 'top-0' : '-bottom-1'}`} // -bottom-1 iPhone 13 mini fix that caused 1px gap
         style={{ height }}>
         <MaskedView
           maskElement={
