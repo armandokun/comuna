@@ -36,7 +36,7 @@ const GradientBlur = ({ children, height = 100, position = 'bottom' }: Props) =>
           }
           style={[StyleSheet.absoluteFill]}>
           <BlurView
-            intensity={100}
+            intensity={80}
             tint="systemChromeMaterialDark"
             style={[StyleSheet.absoluteFill]}
           />
