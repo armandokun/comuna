@@ -2,6 +2,7 @@ import { Ionicons } from '@expo/vector-icons'
 import { Alert, TouchableOpacity, View } from 'react-native'
 import { Image } from 'expo-image'
 import { useState } from 'react'
+import { router } from 'expo-router'
 
 import { Colors } from '@/constants/colors'
 import { getRelativeTimeFromNow } from '@/libs/date'
@@ -63,6 +64,12 @@ const Comment = ({ id, currentUserId, content, createdAt, author, likes }: Props
     }
   }
 
+  const handleLongPress = () => {
+    if (likesCount === 0) return
+
+    router.push(`/comments/${id}/likes`)
+  }
+
   return (
     <View key={id} className="flex-row items-center gap-2">
       <Image
@@ -79,7 +86,10 @@ const Comment = ({ id, currentUserId, content, createdAt, author, likes }: Props
         </View>
         <Text type="body">{content}</Text>
       </View>
-      <TouchableOpacity className="flex-col items-center gap-1" onPress={handleHeartToggle}>
+      <TouchableOpacity
+        className="flex-col items-center gap-1"
+        onPress={handleHeartToggle}
+        onLongPress={handleLongPress}>
         <Ionicons name={isLiked ? 'heart' : 'heart-outline'} size={20} color={Colors.text} />
         <Text type="footnote" style={{ color: Colors.muted }}>
           {likesCount}
