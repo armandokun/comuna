@@ -77,7 +77,7 @@ const Header = ({ headerRef, headerHeight }: Props) => {
   return (
     <GradientBlur position="top" height={insets.top + headerHeight + 50}>
       <SafeAreaView style={{ position: 'absolute', width: '100%', zIndex: 10 }}>
-        <View ref={headerRef} className="px-4 pb-2 justify-between items-center flex-row">
+        <View ref={headerRef} className="px-4 pb-4 justify-between items-center flex-row">
           <Text type="heading">Comuna</Text>
           <View className="flex-row items-center gap-2">
             <ImagePickerButton />
