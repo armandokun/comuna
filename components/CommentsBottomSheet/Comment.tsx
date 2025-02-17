@@ -82,14 +82,14 @@ const Comment = ({ id, currentUserId, content, createdAt, author, likes }: Props
   }
 
   return (
-    <View key={id} className="flex-row items-center gap-2">
+    <View key={id} className="flex-row items-start gap-2">
       <Image
         source={{ uri: author.avatarUrl }}
-        style={{ width: 32, height: 32, borderRadius: 36 }}
+        style={{ width: 36, height: 36, borderRadius: 36, marginTop: 6 }}
         contentFit="cover"
       />
       <View className="flex-1 gap-1">
-        <View className="flex-row items-center gap-2">
+        <View className="flex-row items-center flex-wrap gap-1">
           <Text type="subhead">{author.name}</Text>
           <Text type="subhead" style={{ color: Colors.muted }}>
             {getRelativeTimeFromNow(createdAt)}

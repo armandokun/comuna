@@ -140,7 +140,7 @@ const CommentsBottomSheet = ({ show, postId, onClose }: Props) => {
     <BottomSheet
       show={shouldShow}
       onBackdropPress={onClose}
-      snapPoints={['90%']}
+      snapPoints={['50%', '90%']}
       enableDynamicSizing={false}
       keyboardBehavior="extend"
       keyboardBlurBehavior="restore"

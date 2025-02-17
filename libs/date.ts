@@ -9,17 +9,17 @@ export const getRelativeTimeFromNow = (timestampDate: string) => {
   const months = Math.floor(days / 30)
   const years = Math.floor(days / 365)
 
-  if (years > 1) return `${years} years ago`
-  if (years === 1) return '1 year ago'
-  if (months > 1) return `${months} months ago`
-  if (months === 1) return '1 month ago'
-  if (weeks > 1) return `${weeks} weeks ago`
-  if (weeks === 1) return '1 week ago'
-  if (days > 1) return `${days} days ago`
-  if (days === 1) return '1 day ago'
-  if (hours > 1) return `${hours} hours ago`
-  if (hours === 1) return '1 hour ago'
-  if (minutes > 1) return `${minutes} minutes ago`
+  if (years > 1) return `${years}y`
+  if (years === 1) return '1y'
+  if (months > 1) return `${months}m`
+  if (months === 1) return '1m'
+  if (weeks > 1) return `${weeks} w`
+  if (weeks === 1) return '1w'
+  if (days > 1) return `${days}d`
+  if (days === 1) return '1d'
+  if (hours > 1) return `${hours}h`
+  if (hours === 1) return '1h'
+  if (minutes > 1) return `${minutes}m`
 
   return 'just now'
 }
