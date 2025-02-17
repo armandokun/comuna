@@ -6,6 +6,7 @@ import * as FileSystem from 'expo-file-system'
 import { router } from 'expo-router'
 import { useState } from 'react'
 import { faker } from '@faker-js/faker'
+import * as ImageManipulator from 'expo-image-manipulator'
 
 import { supabase } from '@/libs/supabase'
 import { NEW } from '@/constants/routes'
@@ -49,7 +50,16 @@ const ImagePickerButton = () => {
         const file = result.assets[0]
         const fileName = `${Date.now()}-${file.fileName}`
 
-        const base64Data = await FileSystem.readAsStringAsync(file.uri, {
+        const manipulatedImage = await ImageManipulator.manipulateAsync(
+          file.uri,
+          [{ resize: { width: 1080, height: 1920 } }],
+          {
+            compress: 0.8,
+            format: ImageManipulator.SaveFormat.JPEG,
+          },
+        )
+
+        const base64Data = await FileSystem.readAsStringAsync(manipulatedImage.uri, {
           encoding: FileSystem.EncodingType.Base64,
         })
 

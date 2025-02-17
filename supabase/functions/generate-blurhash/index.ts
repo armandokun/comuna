@@ -55,6 +55,6 @@ serve(async (req) => {
 
   curl -i --location --request POST 'http://127.0.0.1:54321/functions/v1/generate-blurhash' \
     --header 'Content-Type: application/json' \
-    --data '{"imageUrl":"https://gypcmmyhkdobmzqlisto.supabase.co/storage/v1/object/public/user_content/1739183033647-null"}'
+    --data '{"imageUrl":"https://gypcmmyhkdobmzqlisto.supabase.co/storage/v1/object/public/user_content/1739800311237-IMG_2371-FF23C254-527F-4B67-B6A9-BFE9B0B65576.jpg"}'
 
 */

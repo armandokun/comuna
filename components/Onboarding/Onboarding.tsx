@@ -15,7 +15,7 @@ import * as ImagePicker from 'expo-image-picker'
 import { ImagePickerAsset } from 'expo-image-picker'
 import * as FileSystem from 'expo-file-system'
 import { decode } from 'base64-arraybuffer'
-
+import * as ImageManipulator from 'expo-image-manipulator'
 import { BlurView } from 'expo-blur'
 
 import Carousel from '@/components/ui/Carousel'
@@ -54,7 +54,16 @@ const Onboarding = ({ isVisible, onDismiss }: Props) => {
 
     const fileName = `${Date.now()}-${avatar.uri.split('/').pop()}`
 
-    const base64Data = await FileSystem.readAsStringAsync(avatar.uri, {
+    const manipulatedImage = await ImageManipulator.manipulateAsync(
+      avatar.uri,
+      [{ resize: { width: 100, height: 100 } }],
+      {
+        compress: 0.8,
+        format: ImageManipulator.SaveFormat.JPEG,
+      },
+    )
+
+    const base64Data = await FileSystem.readAsStringAsync(manipulatedImage.uri, {
       encoding: FileSystem.EncodingType.Base64,
     })
 
