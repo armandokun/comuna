@@ -81,12 +81,12 @@ const NewScreen = () => {
         contentFit="cover"
       />
       <BlurView intensity={80} tint="systemChromeMaterialDark" style={StyleSheet.absoluteFill} />
-      <KeyboardDismissPressable>
+      <SafeAreaView style={StyleSheet.absoluteFill}>
         <KeyboardAvoidingView
-          behavior="padding"
-          keyboardVerticalOffset={100}
+          behavior="position"
+          keyboardVerticalOffset={-100}
           className="flex-1 mx-4">
-          <SafeAreaView className="flex-1">
+          <KeyboardDismissPressable>
             <Image
               source={{ uri: imageUrl.toString() }}
               contentFit="cover"
@@ -104,9 +104,9 @@ const NewScreen = () => {
               placeholderTextColor="rgba(255, 255, 255, 0.6)"
               className="h-[100px]"
             />
-          </SafeAreaView>
+          </KeyboardDismissPressable>
         </KeyboardAvoidingView>
-      </KeyboardDismissPressable>
+      </SafeAreaView>
       <FullScreenLoader show={isUploading} title="Posting..." />
     </>
   )
