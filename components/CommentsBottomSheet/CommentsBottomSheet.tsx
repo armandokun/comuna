@@ -4,6 +4,7 @@ import { Image } from 'expo-image'
 import { BottomSheetTextInput } from '@gorhom/bottom-sheet'
 
 import { supabase } from '@/libs/supabase'
+import amplitude from '@/libs/amplitude'
 import Text from '@/components/ui/Text'
 import BottomSheet from '@/components/ui/BottomSheet'
 import { CommentWithLikes } from '@/types/posts'
@@ -113,6 +114,11 @@ const CommentsBottomSheet = ({ show, postId, onClose }: Props) => {
   const handleSubmitComment = async (content: string) => {
     if (!postId) return
     if (!content.trim()) return
+
+    amplitude.track('Engage', {
+      'Engagement Type': 'Add Comment',
+      'Content Type': 'Comment',
+    })
 
     const { error } = await supabase.from('comments').insert({
       post_id: postId,

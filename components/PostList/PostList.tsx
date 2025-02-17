@@ -6,6 +6,7 @@ import Animated, {
 } from 'react-native-reanimated'
 import React, { useEffect, useState } from 'react'
 
+import amplitude from '@/libs/amplitude'
 import { Post as PostType } from '@/types/posts'
 
 import Post from '../Post'
@@ -60,6 +61,10 @@ const PostList = ({
     if (!onVisibleItemChange || !data.length) return
 
     onVisibleItemChange(data[0].image_blurhash)
+
+    amplitude.track('Post Viewed', {
+      'Post ID': data[0].id,
+    })
   }, [data, onVisibleItemChange])
 
   return (

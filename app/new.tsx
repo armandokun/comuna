@@ -6,6 +6,7 @@ import React, { useCallback, useEffect, useState } from 'react'
 import { Image } from 'expo-image'
 import { LinearGradient } from 'expo-linear-gradient'
 
+import amplitude from '@/libs/amplitude'
 import { supabase } from '@/libs/supabase'
 import { Colors } from '@/constants/colors'
 import { HOME } from '@/constants/routes'
@@ -27,24 +28,29 @@ const NewScreen = () => {
     setIsUploading(true)
 
     try {
-      const {
-        data: { blurhash },
-        error: blurhashError,
-      } = await supabase.functions.invoke('generate-blurhash', {
-        body: { imageUrl },
-      })
+      const { data, error: blurhashError } = await supabase.functions.invoke<{ blurhash: string }>(
+        'generate-blurhash',
+        {
+          body: { imageUrl },
+        },
+      )
 
       if (blurhashError) Alert.alert('Error generating blurhash', blurhashError.message)
 
       const { error } = await supabase.from('posts').insert({
         image_url: imageUrl.toString(),
         description,
-        image_blurhash: blurhash,
+        image_blurhash: data?.blurhash,
       })
 
       if (error) Alert.alert('Error uploading image', error.message)
 
       setIsUploading(false)
+
+      amplitude.track('Engage', {
+        'Engagement Type': 'New Post',
+        'Content Type': 'Image',
+      })
 
       router.replace(HOME)
     } catch (error) {

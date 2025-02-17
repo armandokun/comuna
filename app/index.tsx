@@ -5,6 +5,7 @@ import { Ionicons } from '@expo/vector-icons'
 
 import { mockSignIn } from '@/libs/auth'
 import { signInWithApple } from '@/libs/apple'
+import amplitude from '@/libs/amplitude'
 import { HOME } from '@/constants/routes'
 import Text from '@/components/ui/Text'
 import { SessionContext } from '@/container/SessionProvider'
@@ -60,6 +61,12 @@ const LoginScreen = () => {
     },
   ]
 
+  const handleSignIn = (providerName: string, onPress: () => void) => {
+    amplitude.track('Sign In', { provider: providerName })
+
+    onPress()
+  }
+
   return (
     <View className="flex-1 justify-center items-center">
       <View className="gap-4">
@@ -67,7 +74,7 @@ const LoginScreen = () => {
           <TouchableOpacity
             key={provider.name}
             className="rounded-full p-4 flex-row items-center gap-2"
-            onPress={provider.onPress}
+            onPress={() => handleSignIn(provider.name, provider.onPress)}
             style={{ backgroundColor: provider.buttonColor }}>
             <Ionicons name={provider.iconName} size={24} color={provider.iconColor} />
             <Text type="button">Sign in with {provider.name}</Text>

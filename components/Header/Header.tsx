@@ -17,6 +17,7 @@ import { AUTH } from '@/constants/routes'
 import { Colors } from '@/constants/colors'
 import { SessionContext } from '@/container/SessionProvider'
 import { signOut } from '@/libs/auth'
+import amplitude from '@/libs/amplitude'
 import usePushNotifications from '@/hooks/usePushNotifications'
 
 import GradientBlur from '../GradientBlur'
@@ -62,6 +63,8 @@ const Header = ({ headerRef, headerHeight }: Props) => {
   const handleContextMenuPress = async (actionId: string) => {
     switch (actionId) {
       case 'sign-out':
+        amplitude.track('Sign Out')
+
         signOut(() => router.replace(AUTH))
 
         break

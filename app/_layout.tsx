@@ -9,6 +9,7 @@ import { Ionicons } from '@expo/vector-icons'
 import { useEffect } from 'react'
 import * as Notifications from 'expo-notifications'
 
+import amplitude from '@/libs/amplitude'
 import { HOME } from '@/constants/routes'
 import { Colors } from '@/constants/colors'
 import SessionProvider from '@/container/SessionProvider'
@@ -25,6 +26,19 @@ const RootLayout = () => {
     Geist: require('../assets/fonts/Geist-Regular.otf'),
     GeistMono: require('../assets/fonts/GeistMono-Regular.otf'),
   })
+
+  useEffect(() => {
+    if (!navigation) return
+
+    const state = navigation.getState()
+    const currentRoute = state?.routes?.[state.routes.length - 1]?.name
+
+    if (!currentRoute) return
+
+    amplitude.track('Page Viewed', {
+      'Page Name': currentRoute,
+    })
+  }, [navigation])
 
   useEffect(() => {
     const subscription = Notifications.addNotificationResponseReceivedListener((response) => {

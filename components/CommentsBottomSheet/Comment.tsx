@@ -8,6 +8,7 @@ import { Colors } from '@/constants/colors'
 import { getRelativeTimeFromNow } from '@/libs/date'
 import Text from '@/components/ui/Text'
 import { supabase } from '@/libs/supabase'
+import amplitude from '@/libs/amplitude'
 
 type Props = {
   id: number
@@ -38,6 +39,11 @@ const Comment = ({ id, currentUserId, content, createdAt, author, likes }: Props
     if (isLiked) {
       decrementLikesCount()
 
+      amplitude.track('Engage', {
+        'Engagement Type': 'Unlike',
+        'Content Type': 'Comment',
+      })
+
       const { error } = await supabase.rpc('unlike_comment', {
         arg_comment_id: id,
       })
@@ -52,6 +58,11 @@ const Comment = ({ id, currentUserId, content, createdAt, author, likes }: Props
     }
 
     incrementLikesCount()
+
+    amplitude.track('Engage', {
+      'Engagement Type': 'Like',
+      'Content Type': 'Comment',
+    })
 
     const { error } = await supabase.rpc('like_comment', {
       arg_comment_id: id,

@@ -2,6 +2,7 @@ import { Alert } from 'react-native'
 import { Session } from '@supabase/supabase-js'
 import React, { useState, useEffect, ReactNode, useCallback, useMemo } from 'react'
 
+import amplitude from '@/libs/amplitude'
 import { supabase } from '@/libs/supabase'
 import { Profile } from '@/types/profile'
 
@@ -34,16 +35,21 @@ const SessionProvider = ({ children }: Props) => {
   }, [])
 
   const fetchProfile = useCallback(async () => {
-    const { data: profileData, error } = await supabase
+    if (!session?.user) return
+
+    const { data, error } = await supabase
       .from('profiles')
       .select()
       .eq('id', session?.user.id)
+      .single()
 
     if (error) Alert.alert(error.message)
 
-    setProfile(profileData?.[0])
+    amplitude.setUserId(session?.user.id)
+
+    setProfile(data)
     setIsProfileFetched(true)
-  }, [session?.user.id])
+  }, [session?.user])
 
   useEffect(() => {
     if (!session?.user) return
