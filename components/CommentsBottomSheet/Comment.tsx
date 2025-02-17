@@ -102,9 +102,11 @@ const Comment = ({ id, currentUserId, content, createdAt, author, likes }: Props
         onPress={handleHeartToggle}
         onLongPress={handleLongPress}>
         <Ionicons name={isLiked ? 'heart' : 'heart-outline'} size={20} color={Colors.text} />
-        <Text type="footnote" style={{ color: Colors.muted }}>
-          {likesCount}
-        </Text>
+        {likesCount > 0 && (
+          <Text type="footnote" style={{ color: Colors.muted }}>
+            {likesCount}
+          </Text>
+        )}
       </TouchableOpacity>
     </View>
   )
