@@ -77,6 +77,18 @@ const Post = ({ item, onPress }: Props) => {
                     </Text>
                   </View>
                 )}
+                {item.author.name === 'Tadas Audinis' && (
+                  <View className="flex-row items-center gap-1 py-1 pl-2 pr-3 rounded-full overflow-hidden border border-black bg-white">
+                    <Image
+                      source={require('@/assets/images/dr-pepper-badge-icon.gif')}
+                      contentFit="contain"
+                      style={{ width: 24, height: 24 }}
+                    />
+                    <Text type="subhead" style={{ color: Colors.background }}>
+                      dr. pepper
+                    </Text>
+                  </View>
+                )}
               </View>
             </LinearGradient>
           </View>
