@@ -52,7 +52,7 @@ const ImagePickerButton = () => {
 
         const manipulatedImage = await ImageManipulator.manipulateAsync(
           file.uri,
-          [{ resize: { width: 1080, height: 1920 } }],
+          [{ resize: { width: 1080 } }],
           {
             compress: 0.8,
             format: ImageManipulator.SaveFormat.JPEG,

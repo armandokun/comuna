@@ -56,7 +56,7 @@ const Onboarding = ({ isVisible, onDismiss }: Props) => {
 
     const manipulatedImage = await ImageManipulator.manipulateAsync(
       avatar.uri,
-      [{ resize: { width: 100, height: 100 } }],
+      [{ resize: { width: 100 } }],
       {
         compress: 0.8,
         format: ImageManipulator.SaveFormat.JPEG,
