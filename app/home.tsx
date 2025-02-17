@@ -1,4 +1,4 @@
-import { Alert, StyleSheet, View } from 'react-native'
+import { Alert, StyleSheet, View, AppState } from 'react-native'
 import React, { useCallback, useContext, useEffect, useRef, useState } from 'react'
 import { BlurView } from 'expo-blur'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
@@ -30,6 +30,7 @@ const HomeScreen = () => {
   const insets = useSafeAreaInsets()
   const { profile, isProfileFetched } = useContext(SessionContext)
   const headerRef = useRef<View>(null)
+  const appState = useRef(AppState.currentState)
 
   useEffect(() => {
     if (!isProfileFetched) return
@@ -117,14 +118,28 @@ const HomeScreen = () => {
     fetchPosts()
   }, [fetchPosts, posts.length])
 
-  const handleRefresh = async () => {
+  const handleRefresh = useCallback(async () => {
     setIsRefreshing(true)
     setHasMore(true)
 
     await fetchPosts({ refresh: true })
 
     setIsRefreshing(false)
-  }
+  }, [fetchPosts])
+
+  useEffect(() => {
+    const subscription = AppState.addEventListener('change', (nextAppState) => {
+      if (appState.current.match(/inactive|background/) && nextAppState === 'active') {
+        handleRefresh()
+      }
+
+      appState.current = nextAppState
+    })
+
+    return () => {
+      subscription.remove()
+    }
+  }, [handleRefresh])
 
   const handleLoadMore = async () => {
     if (isLoading || !hasMore) return
