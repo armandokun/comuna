@@ -129,7 +129,9 @@ const HomeScreen = () => {
 
     await fetchPosts({ refresh: true })
 
-    setIsRefreshing(false)
+    setTimeout(() => {
+      setIsRefreshing(false)
+    }, 1000)
   }, [fetchPosts])
 
   useEffect(() => {
