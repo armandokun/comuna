@@ -6,6 +6,7 @@ import { SplashScreen } from 'expo-router'
 import { Image } from 'expo-image'
 import Animated, { FadeIn, FadeOut } from 'react-native-reanimated'
 
+import amplitude from '@/libs/amplitude'
 import { supabase } from '@/libs/supabase'
 import { SessionContext } from '@/container/SessionProvider'
 import { Post } from '@/types/posts'
@@ -86,6 +87,14 @@ const HomeScreen = () => {
         return
       }
 
+      if (startIndex === 0) {
+        setBackgroundBlurhash(data[0].image_blurhash)
+
+        amplitude.track('Post Viewed', {
+          'Post ID': data[0].id,
+        })
+      }
+
       const formattedPosts = data.map((post) => ({
         ...post,
         author: {
@@ -104,10 +113,6 @@ const HomeScreen = () => {
       }))
 
       setPosts(refresh ? formattedPosts : [...posts, ...formattedPosts])
-
-      if (data.length > 0 && refresh) {
-        setBackgroundBlurhash(data[0].image_blurhash)
-      }
     },
     [posts],
   )

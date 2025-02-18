@@ -17,8 +17,10 @@ type Props = {
 
 const Post = ({ item, onPress }: Props) => {
   const [descriptionHeight, setDescriptionHeight] = useState(0)
+  const [commentContainerHeight, setCommentContainerHeight] = useState(0)
 
   const descriptionRef = useRef<View>(null)
+  const commentContainerRef = useRef<View>(null)
 
   useEffect(() => {
     if (!descriptionRef.current) return
@@ -28,17 +30,24 @@ const Post = ({ item, onPress }: Props) => {
     })
   }, [])
 
-  const { height } = Dimensions.get('screen')
+  useEffect(() => {
+    if (!commentContainerRef.current) return
 
-  const IMAGE_SIZE = height * 0.62
+    commentContainerRef.current.measure((x, y, width, height, pageX, pageY) => {
+      setCommentContainerHeight(height)
+    })
+  }, [])
+
+  const { height: screenHeight } = Dimensions.get('screen')
+
   const DEFAULT_HEIGHT = 50
-  const COMMENT_CONTAINER_HEIGHT = 90
-  const ITEM_FULL_SIZE = IMAGE_SIZE + COMMENT_CONTAINER_HEIGHT
+  const SAFE_AREA_HEIGHT = 40
+  const IMAGE_SIZE = screenHeight * 0.8 - commentContainerHeight - SAFE_AREA_HEIGHT
 
   return (
     <Animated.View
       style={{
-        height: ITEM_FULL_SIZE,
+        height: IMAGE_SIZE + DEFAULT_HEIGHT,
       }}>
       <Animated.View
         className="rounded-3xl overflow-hidden"
@@ -103,7 +112,7 @@ const Post = ({ item, onPress }: Props) => {
           </View>
         </View>
       </Animated.View>
-      <View className="gap-2 mt-2 px-4" style={{ height: COMMENT_CONTAINER_HEIGHT }}>
+      <View className="gap-2 mt-2 px-4" ref={commentContainerRef}>
         {item.comments?.slice(0, 2).map((comment) => (
           <View key={comment.id} className="flex-row flex-wrap">
             <Text type="footnote">

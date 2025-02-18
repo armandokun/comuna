@@ -1,10 +1,10 @@
-import { Dimensions, RefreshControl } from 'react-native'
+import { Dimensions, RefreshControl, View } from 'react-native'
 import Animated, {
   useSharedValue,
   useAnimatedScrollHandler,
   runOnJS,
 } from 'react-native-reanimated'
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 
 import amplitude from '@/libs/amplitude'
 import { Post as PostType } from '@/types/posts'
@@ -37,35 +37,23 @@ const PostList = ({
 
   const { height } = Dimensions.get('screen')
 
-  const SPACING = 8
-  const COMMENT_CONTAINER_HEIGHT = 90
-  const ITEM_SIZE = height * 0.62 + COMMENT_CONTAINER_HEIGHT
-  const ITEM_FULL_SIZE = ITEM_SIZE + SPACING * 4
+  const ITEM_SIZE = height - headerHeight
 
   const onScroll = useAnimatedScrollHandler((e) => {
-    scrollY.value = e.contentOffset.y / ITEM_FULL_SIZE
+    scrollY.value = e.contentOffset.y / ITEM_SIZE
 
     if (!onVisibleItemChange) return
 
-    const currentIndex = Math.round(scrollY.value)
-    const isValidIndex = currentIndex >= 0 && currentIndex < data.length
+    const assumedIndex = Math.round(scrollY.value)
+    const isValidIndex = assumedIndex >= 0 && assumedIndex < data.length
 
     if (!isValidIndex) return
 
-    runOnJS(onVisibleItemChange)(data[currentIndex].image_blurhash)
-  })
-
-  useEffect(() => {
-    if (!data.length) return
-
-    if (!onVisibleItemChange || !data.length) return
-
-    onVisibleItemChange(data[0].image_blurhash)
-
-    amplitude.track('Post Viewed', {
-      'Post ID': data[0].id,
+    runOnJS(onVisibleItemChange)(data[assumedIndex].image_blurhash)
+    runOnJS(amplitude.track)('Post Viewed', {
+      'Post ID': data[assumedIndex].id,
     })
-  }, [data, onVisibleItemChange])
+  })
 
   return (
     <>
@@ -81,16 +69,25 @@ const PostList = ({
           />
         }
         contentContainerStyle={{
-          gap: SPACING * 4,
-          paddingHorizontal: SPACING * 2,
-          paddingBottom: SPACING * 4,
-          marginTop: headerHeight,
+          paddingTop: headerHeight,
+          paddingHorizontal: 16,
         }}
         onScroll={onScroll}
         scrollEventThrottle={16}
-        snapToInterval={ITEM_FULL_SIZE}
+        pagingEnabled
+        snapToInterval={ITEM_SIZE}
+        snapToAlignment="start"
         decelerationRate="fast"
-        renderItem={({ item }) => <Post item={item} onPress={() => setSelectedPostId(item.id)} />}
+        getItemLayout={(_, index) => ({
+          length: ITEM_SIZE,
+          offset: ITEM_SIZE * index,
+          index,
+        })}
+        renderItem={({ item }) => (
+          <View style={{ height: ITEM_SIZE }}>
+            <Post item={item} onPress={() => setSelectedPostId(item.id)} />
+          </View>
+        )}
         onEndReached={onEndReached}
         onEndReachedThreshold={onEndReachedThreshold}
       />
