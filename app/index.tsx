@@ -8,7 +8,7 @@ import { signInWithApple } from '@/libs/apple'
 import amplitude from '@/libs/amplitude'
 import { HOME } from '@/constants/routes'
 import Text from '@/components/ui/Text'
-import { SessionContext } from '@/container/SessionProvider'
+import { SessionContext } from '@/containers/SessionProvider'
 
 type Provider = {
   name: string

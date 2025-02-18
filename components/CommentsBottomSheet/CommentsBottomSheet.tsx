@@ -8,7 +8,7 @@ import amplitude from '@/libs/amplitude'
 import Text from '@/components/ui/Text'
 import BottomSheet from '@/components/ui/BottomSheet'
 import { CommentWithLikes } from '@/types/posts'
-import { SessionContext } from '@/container/SessionProvider'
+import { SessionContext } from '@/containers/SessionProvider'
 import { Colors } from '@/constants/colors'
 
 import Comment from './Comment'

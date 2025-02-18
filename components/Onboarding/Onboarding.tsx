@@ -21,7 +21,7 @@ import { BlurView } from 'expo-blur'
 import Carousel from '@/components/ui/Carousel'
 import Text from '@/components/ui/Text'
 import { Colors } from '@/constants/colors'
-import { SessionContext } from '@/container/SessionProvider'
+import { SessionContext } from '@/containers/SessionProvider'
 import { supabase } from '@/libs/supabase'
 import usePushNotifications from '@/hooks/usePushNotifications'
 

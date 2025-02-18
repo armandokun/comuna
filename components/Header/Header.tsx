@@ -15,7 +15,7 @@ import { router } from 'expo-router'
 
 import { AUTH } from '@/constants/routes'
 import { Colors } from '@/constants/colors'
-import { SessionContext } from '@/container/SessionProvider'
+import { SessionContext } from '@/containers/SessionProvider'
 import { signOut } from '@/libs/auth'
 import amplitude from '@/libs/amplitude'
 import usePushNotifications from '@/hooks/usePushNotifications'

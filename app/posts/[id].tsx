@@ -23,7 +23,7 @@ import Text from '@/components/ui/Text'
 import GradientBlur from '@/components/GradientBlur'
 import { Colors } from '@/constants/colors'
 import Spacer from '@/components/ui/Spacer'
-import { SessionContext } from '@/container/SessionProvider'
+import { SessionContext } from '@/containers/SessionProvider'
 import Comment from '@/components/CommentsBottomSheet/Comment'
 
 type PostWithoutComments = Omit<Post, 'comments'>

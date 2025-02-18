@@ -12,7 +12,7 @@ import * as Notifications from 'expo-notifications'
 import amplitude from '@/libs/amplitude'
 import { HOME } from '@/constants/routes'
 import { Colors } from '@/constants/colors'
-import SessionProvider from '@/container/SessionProvider'
+import SessionProvider from '@/containers/SessionProvider'
 import HeaderBackground from '@/components/HeaderBackground'
 
 import '../global.css'

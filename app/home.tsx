@@ -8,7 +8,7 @@ import Animated, { FadeIn, FadeOut } from 'react-native-reanimated'
 
 import amplitude from '@/libs/amplitude'
 import { supabase } from '@/libs/supabase'
-import { SessionContext } from '@/container/SessionProvider'
+import { SessionContext } from '@/containers/SessionProvider'
 import { Post } from '@/types/posts'
 
 import PostList from '@/components/PostList'

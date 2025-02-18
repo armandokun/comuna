@@ -4,7 +4,7 @@ import * as Notifications from 'expo-notifications'
 import Constants from 'expo-constants'
 
 import { supabase } from '@/libs/supabase'
-import { SessionContext } from '@/container/SessionProvider'
+import { SessionContext } from '@/containers/SessionProvider'
 
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
