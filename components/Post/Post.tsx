@@ -9,13 +9,15 @@ import { Post as PostType } from '@/types/posts'
 import { Colors } from '@/constants/colors'
 
 import GradientBlur from '../GradientBlur'
+import VideoPost from './Video'
 
 type Props = {
   item: PostType
   onPress: () => void
+  isVisible: boolean
 }
 
-const Post = ({ item, onPress }: Props) => {
+const Post = ({ item, onPress, isVisible }: Props) => {
   const [descriptionHeight, setDescriptionHeight] = useState(0)
   const [commentContainerHeight, setCommentContainerHeight] = useState(0)
 
@@ -56,12 +58,22 @@ const Post = ({ item, onPress }: Props) => {
         }}>
         <View className="relative flex-1">
           <GradientBlur height={descriptionHeight + DEFAULT_HEIGHT}>
-            <Image
-              source={`${item.image_url}?quality=50`}
-              placeholder={{ blurhash: item.image_blurhash }}
-              contentFit="cover"
-              style={{ width: '100%', height: '100%' }}
-            />
+            {item.image_url && (
+              <Image
+                source={`${item.image_url}?quality=50`}
+                placeholder={{ blurhash: item.image_blurhash }}
+                contentFit="cover"
+                style={{ width: '100%', height: '100%' }}
+              />
+            )}
+            {item.video_url && (
+              <VideoPost
+                isVisible={isVisible}
+                videoUrl={item.video_url!}
+                videoThumbnailUrl={item.video_thumbnail_url!}
+                videoThumbnailBlurhash={item.video_thumbnail_blurhash!}
+              />
+            )}
           </GradientBlur>
           <View className="absolute w-full gap-4">
             <LinearGradient colors={['rgba(0,0,0,0.6)', 'transparent']} locations={[0, 1]}>

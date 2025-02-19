@@ -32,6 +32,7 @@ const PostList = ({
   onEndReachedThreshold,
 }: Props) => {
   const [selectedPostId, setSelectedPostId] = useState<number | null>(null)
+  const [visiblePostIndex, setVisiblePostIndex] = useState<number | null>(null)
 
   const scrollY = useSharedValue(0)
 
@@ -49,7 +50,8 @@ const PostList = ({
 
     if (!isValidIndex) return
 
-    runOnJS(onVisibleItemChange)(data[assumedIndex].image_blurhash)
+    runOnJS(setVisiblePostIndex)(assumedIndex)
+    runOnJS(onVisibleItemChange)(data[assumedIndex].image_blurhash || '')
     runOnJS(amplitude.track)('Post Viewed', {
       'Post ID': data[assumedIndex].id,
     })
@@ -83,9 +85,13 @@ const PostList = ({
           offset: ITEM_SIZE * index,
           index,
         })}
-        renderItem={({ item }) => (
+        renderItem={({ item, index }) => (
           <View style={{ height: ITEM_SIZE }}>
-            <Post item={item} onPress={() => setSelectedPostId(item.id)} />
+            <Post
+              item={item}
+              onPress={() => setSelectedPostId(item.id)}
+              isVisible={visiblePostIndex === index}
+            />
           </View>
         )}
         onEndReached={onEndReached}

@@ -20,8 +20,11 @@ type Post = {
   id: number
   created_at: string
   description: string | null
-  image_blurhash: string
-  image_url: string
+  image_blurhash: string | null
+  image_url: string | null
+  video_url: string | null
+  video_thumbnail_url: string | null
+  video_thumbnail_blurhash: string | null
   author: {
     id: string
     name: string

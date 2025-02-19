@@ -10,7 +10,6 @@ import * as ImageManipulator from 'expo-image-manipulator'
 
 import { supabase } from '@/libs/supabase'
 import { NEW } from '@/constants/routes'
-
 import { Colors } from '@/constants/colors'
 
 import ContextMenu from '../ui/ContextMenu'
