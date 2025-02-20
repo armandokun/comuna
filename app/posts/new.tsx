@@ -2,20 +2,20 @@
 import { BlurView } from 'expo-blur'
 import { Alert, StyleSheet, KeyboardAvoidingView, SafeAreaView } from 'react-native'
 import { router, useLocalSearchParams, useNavigation } from 'expo-router'
-import React, { useCallback, useEffect, useState } from 'react'
+import React, { useCallback, useContext, useEffect, useState } from 'react'
 import { Image } from 'expo-image'
 import { LinearGradient } from 'expo-linear-gradient'
 
 import amplitude from '@/libs/amplitude'
 import { supabase } from '@/libs/supabase'
 import { Colors } from '@/constants/colors'
-import { HOME } from '@/constants/routes'
 
 import TextArea from '@/components/ui/TextArea'
 import Spacer from '@/components/ui/Spacer'
 import Button from '@/components/ui/Button'
 import KeyboardDismissPressable from '@/components/ui/KeyboardDismissPressable'
 import FullScreenLoader from '@/components/FullScreenLoader'
+import { CommunityContext } from '@/containers/CommunityProvider'
 
 const NewScreen = () => {
   const [description, setDescription] = useState('')
@@ -23,6 +23,7 @@ const NewScreen = () => {
 
   const { imageUrl } = useLocalSearchParams()
   const navigation = useNavigation()
+  const { selectedComuna } = useContext(CommunityContext)
 
   const uploadPost = useCallback(async () => {
     setIsUploading(true)
@@ -41,6 +42,7 @@ const NewScreen = () => {
         image_url: imageUrl.toString(),
         description,
         image_blurhash: data?.blurhash,
+        community_id: selectedComuna?.id,
       })
 
       if (error) Alert.alert('Error uploading image', error.message)
@@ -52,13 +54,13 @@ const NewScreen = () => {
         'Content Type': 'Image',
       })
 
-      router.replace(HOME)
+      router.back()
     } catch (error) {
       setIsUploading(false)
 
       Alert.alert('Error uploading image', (error as Error).message)
     }
-  }, [description, imageUrl])
+  }, [description, imageUrl, selectedComuna?.id])
 
   useEffect(() => {
     navigation.setOptions({

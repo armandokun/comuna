@@ -13,6 +13,7 @@ import amplitude from '@/libs/amplitude'
 import { HOME } from '@/constants/routes'
 import { Colors } from '@/constants/colors'
 import SessionProvider from '@/containers/SessionProvider'
+import CommunityProvider from '@/containers/CommunityProvider'
 import HeaderBackground from '@/components/HeaderBackground'
 
 import '../global.css'
@@ -68,48 +69,58 @@ const RootLayout = () => {
     <GestureHandlerRootView className="flex-1">
       <BottomSheetModalProvider>
         <SessionProvider>
-          <Stack
-            screenOptions={{
-              headerShown: false,
-              headerTransparent: true,
-              headerTintColor: Colors.text,
-              headerBackground: HeaderBackground,
-            }}>
-            <Stack.Screen name="+not-found" />
-            <Stack.Screen name="home" />
-            <Stack.Screen
-              name="new"
-              options={{ presentation: 'modal', headerTitle: 'New Post', headerShown: true }}
-            />
-            <Stack.Screen name="index" />
-            <Stack.Screen
-              name="posts/[id]"
-              options={{
-                presentation: 'modal',
-                headerTitle: '',
-                headerShown: true,
-                headerRight: () => (
-                  <TouchableOpacity onPress={handleGoBack}>
-                    <Ionicons name="close-circle" size={36} color={Colors.text} />
-                  </TouchableOpacity>
-                ),
-              }}
-            />
-            <Stack.Screen
-              name="comments/[id]/likes"
-              options={{
-                presentation: 'transparentModal',
-                headerTitle: 'Likes',
-                headerShown: true,
-                headerRight: () => (
-                  <TouchableOpacity onPress={handleGoBack}>
-                    <Ionicons name="close-circle" size={36} color={Colors.text} />
-                  </TouchableOpacity>
-                ),
-              }}
-            />
-          </Stack>
-          <StatusBar style="light" />
+          <CommunityProvider>
+            <Stack
+              screenOptions={{
+                headerShown: false,
+                headerTransparent: true,
+                headerTintColor: Colors.text,
+                headerBackground: HeaderBackground,
+              }}>
+              <Stack.Screen name="+not-found" />
+              <Stack.Screen name="home" />
+              <Stack.Screen
+                name="posts/new"
+                options={{ presentation: 'modal', headerTitle: 'New Post', headerShown: true }}
+              />
+              <Stack.Screen name="index" />
+              <Stack.Screen
+                name="posts/[id]"
+                options={{
+                  presentation: 'modal',
+                  headerTitle: '',
+                  headerShown: true,
+                  headerRight: () => (
+                    <TouchableOpacity onPress={handleGoBack}>
+                      <Ionicons name="close-circle" size={36} color={Colors.text} />
+                    </TouchableOpacity>
+                  ),
+                }}
+              />
+              <Stack.Screen
+                name="comments/[id]/likes"
+                options={{
+                  presentation: 'transparentModal',
+                  headerTitle: 'Likes',
+                  headerShown: true,
+                  headerRight: () => (
+                    <TouchableOpacity onPress={handleGoBack}>
+                      <Ionicons name="close-circle" size={36} color={Colors.text} />
+                    </TouchableOpacity>
+                  ),
+                }}
+              />
+              <Stack.Screen
+                name="communities/new"
+                options={{
+                  presentation: 'transparentModal',
+                  headerTitle: 'New Comuna',
+                  headerShown: true,
+                }}
+              />
+            </Stack>
+            <StatusBar style="light" />
+          </CommunityProvider>
         </SessionProvider>
       </BottomSheetModalProvider>
     </GestureHandlerRootView>

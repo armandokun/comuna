@@ -84,6 +84,74 @@ export type Database = {
           },
         ]
       }
+      communities: {
+        Row: {
+          created_at: string
+          id: number
+          manager_id: string | null
+          name: string
+        }
+        Insert: {
+          created_at?: string
+          id?: number
+          manager_id?: string | null
+          name: string
+        }
+        Update: {
+          created_at?: string
+          id?: number
+          manager_id?: string | null
+          name?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: 'communities_manager_id_fkey'
+            columns: ['manager_id']
+            isOneToOne: false
+            referencedRelation: 'profiles'
+            referencedColumns: ['id']
+          },
+        ]
+      }
+      community_members: {
+        Row: {
+          community_id: number
+          created_at: string
+          id: number
+          is_manager: boolean
+          user_id: string | null
+        }
+        Insert: {
+          community_id: number
+          created_at?: string
+          id?: number
+          is_manager?: boolean
+          user_id?: string | null
+        }
+        Update: {
+          community_id?: number
+          created_at?: string
+          id?: number
+          is_manager?: boolean
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: 'community_members_community_id_fkey'
+            columns: ['community_id']
+            isOneToOne: false
+            referencedRelation: 'communities'
+            referencedColumns: ['id']
+          },
+          {
+            foreignKeyName: 'community_members_user_id_fkey'
+            columns: ['user_id']
+            isOneToOne: false
+            referencedRelation: 'profiles'
+            referencedColumns: ['id']
+          },
+        ]
+      }
       notifications: {
         Row: {
           body: string | null
@@ -129,6 +197,7 @@ export type Database = {
       posts: {
         Row: {
           author_id: string | null
+          community_id: number
           created_at: string
           description: string | null
           id: number
@@ -140,6 +209,7 @@ export type Database = {
         }
         Insert: {
           author_id?: string | null
+          community_id?: number
           created_at?: string
           description?: string | null
           id?: number
@@ -151,6 +221,7 @@ export type Database = {
         }
         Update: {
           author_id?: string | null
+          community_id?: number
           created_at?: string
           description?: string | null
           id?: number
@@ -166,6 +237,13 @@ export type Database = {
             columns: ['author_id']
             isOneToOne: false
             referencedRelation: 'profiles'
+            referencedColumns: ['id']
+          },
+          {
+            foreignKeyName: 'posts_community_id_fkey'
+            columns: ['community_id']
+            isOneToOne: false
+            referencedRelation: 'communities'
             referencedColumns: ['id']
           },
         ]

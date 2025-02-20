@@ -1,4 +1,4 @@
-import { Alert, StyleSheet, View, AppState } from 'react-native'
+import { Alert, StyleSheet, View, AppState, ActivityIndicator } from 'react-native'
 import React, { useCallback, useContext, useEffect, useRef, useState } from 'react'
 import { BlurView } from 'expo-blur'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
@@ -9,11 +9,15 @@ import Animated, { FadeIn, FadeOut } from 'react-native-reanimated'
 import amplitude from '@/libs/amplitude'
 import { supabase } from '@/libs/supabase'
 import { SessionContext } from '@/containers/SessionProvider'
+import { CommunityContext } from '@/containers/CommunityProvider'
 import { Post } from '@/types/posts'
 
 import PostList from '@/components/PostList'
 import Onboarding from '@/components/Onboarding'
 import Header from '@/components/Header'
+import Text from '@/components/ui/Text'
+import Spacer from '@/components/ui/Spacer'
+import ImagePickerButton from '@/components/ImagePickerButton'
 
 const POSTS_PER_BATCH = 5
 const POSTS_PER_BATCH_INDEX = POSTS_PER_BATCH - 1
@@ -29,6 +33,7 @@ const HomeScreen = () => {
   const [isLoading, setIsLoading] = useState(false)
 
   const insets = useSafeAreaInsets()
+  const { selectedComuna } = useContext(CommunityContext)
   const { profile, isProfileFetched } = useContext(SessionContext)
   const headerRef = useRef<View>(null)
   const appState = useRef(AppState.currentState)
@@ -49,6 +54,10 @@ const HomeScreen = () => {
 
   const fetchPosts = useCallback(
     async ({ refresh = false }: { refresh?: boolean } = {}) => {
+      if (!selectedComuna?.id) return
+
+      setIsLoading(true)
+
       const startIndex = refresh ? 0 : posts.length
       const endIndex = refresh ? POSTS_PER_BATCH_INDEX : posts.length + POSTS_PER_BATCH_INDEX
 
@@ -72,11 +81,14 @@ const HomeScreen = () => {
           )
         `,
         )
+        .eq('community_id', selectedComuna.id)
         .order('created_at', { ascending: false })
         .range(startIndex, endIndex)
 
       if (error) {
         Alert.alert('Error fetching posts', error.message)
+
+        setIsLoading(false)
 
         return
       }
@@ -84,14 +96,19 @@ const HomeScreen = () => {
       if (data.length === 0) {
         setHasMore(false)
 
+        if (refresh) setPosts([])
+
+        setIsLoading(false)
+
         return
       }
 
       if (startIndex === 0) {
-        setBackgroundBlurhash(data[0].image_blurhash)
+        setBackgroundBlurhash(data[0].image_blurhash ?? '')
 
         amplitude.track('Post Viewed', {
           'Post ID': data[0].id,
+          'Community ID': selectedComuna.id,
         })
       }
 
@@ -113,15 +130,11 @@ const HomeScreen = () => {
       }))
 
       setPosts(refresh ? formattedPosts : [...posts, ...formattedPosts])
+
+      setIsLoading(false)
     },
-    [posts],
+    [posts, selectedComuna?.id],
   )
-
-  useEffect(() => {
-    if (posts.length) return
-
-    fetchPosts()
-  }, [fetchPosts, posts.length])
 
   const handleRefresh = useCallback(async () => {
     setIsRefreshing(true)
@@ -133,6 +146,13 @@ const HomeScreen = () => {
       setIsRefreshing(false)
     }, 1000)
   }, [fetchPosts])
+
+  useEffect(() => {
+    if (!selectedComuna?.id) return
+    if (isLoading || isRefreshing) return
+
+    fetchPosts({ refresh: true })
+  }, [selectedComuna?.id]) // TODO: Fix infinite loading when applying all dependencies
 
   useEffect(() => {
     const subscription = AppState.addEventListener('change', (nextAppState) => {
@@ -183,6 +203,11 @@ const HomeScreen = () => {
         style={StyleSheet.absoluteFill}
         className="absolute w-full h-full"
       />
+      {isLoading && (
+        <View className="absolute inset-0 justify-center items-center">
+          <ActivityIndicator size="large" color="white" />
+        </View>
+      )}
       <View className="flex-1 justify-center">
         <PostList
           posts={posts}
@@ -192,6 +217,15 @@ const HomeScreen = () => {
           handleRefresh={handleRefresh}
           onEndReached={handleLoadMore}
           onEndReachedThreshold={0.7}
+          emptyState={
+            <View className="w-full h-[80vh] items-center justify-center">
+              <Text type="title3">No posts yet</Text>
+              <Spacer size="xsmall" />
+              <Text type="body">Be the first to post in this community.</Text>
+              <Spacer size="xsmall" />
+              <ImagePickerButton buttonType="button" />
+            </View>
+          }
         />
       </View>
       <Header headerRef={headerRef} headerHeight={headerHeight} />

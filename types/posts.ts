@@ -18,6 +18,7 @@ type CommentWithLikes = Comment & {
 
 type Post = {
   id: number
+  community_id: number
   created_at: string
   description: string | null
   image_blurhash: string | null

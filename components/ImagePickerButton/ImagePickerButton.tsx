@@ -1,4 +1,4 @@
-import { Alert, Platform, TouchableOpacity } from 'react-native'
+import { Alert, Platform, TouchableOpacity, View } from 'react-native'
 import { Ionicons } from '@expo/vector-icons'
 import * as ImagePicker from 'expo-image-picker'
 import { decode } from 'base64-arraybuffer'
@@ -9,13 +9,18 @@ import { faker } from '@faker-js/faker'
 import * as ImageManipulator from 'expo-image-manipulator'
 
 import { supabase } from '@/libs/supabase'
-import { NEW } from '@/constants/routes'
+import { NEW_POST } from '@/constants/routes'
 import { Colors } from '@/constants/colors'
 
 import ContextMenu from '../ui/ContextMenu'
 import FullScreenLoader from '../FullScreenLoader'
+import Text from '../ui/Text'
 
-const ImagePickerButton = () => {
+type Props = {
+  buttonType?: 'icon' | 'button'
+}
+
+const ImagePickerButton = ({ buttonType = 'icon' }: Props) => {
   const [isLoading, setIsLoading] = useState(false)
 
   const pickOrCapturePhoto = async (type: 'camera' | 'gallery') => {
@@ -86,7 +91,7 @@ const ImagePickerButton = () => {
 
         if (publicUrl) {
           router.push({
-            pathname: NEW,
+            pathname: NEW_POST,
             params: {
               imageUrl: publicUrl,
             },
@@ -138,7 +143,15 @@ const ImagePickerButton = () => {
           ]}
           onPress={handleContextMenuPress}
           shouldOpenOnLongPress={false}>
-          <Ionicons name="add-circle" size={48} color="white" />
+          {buttonType === 'icon' ? (
+            <Ionicons name="add-circle" size={40} color="white" />
+          ) : (
+            <View className="px-4 py-1 bg-text rounded-full mt-2">
+              <Text type="button" style={{ color: Colors.background }}>
+                Add Post
+              </Text>
+            </View>
+          )}
         </ContextMenu>
       </TouchableOpacity>
       <FullScreenLoader show={isLoading} title="Loading..." />

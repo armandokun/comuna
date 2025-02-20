@@ -1,4 +1,4 @@
-import { Dimensions, RefreshControl, View } from 'react-native'
+import { Dimensions, FlatListProps, RefreshControl, View } from 'react-native'
 import Animated, {
   useSharedValue,
   useAnimatedScrollHandler,
@@ -20,6 +20,7 @@ type Props = {
   handleRefresh: () => void
   onEndReached: () => void
   onEndReachedThreshold: number
+  emptyState?: FlatListProps<PostType>['ListEmptyComponent']
 }
 
 const PostList = ({
@@ -30,6 +31,7 @@ const PostList = ({
   handleRefresh,
   onEndReached,
   onEndReachedThreshold,
+  emptyState,
 }: Props) => {
   const [selectedPostId, setSelectedPostId] = useState<number | null>(null)
   const [visiblePostIndex, setVisiblePostIndex] = useState<number | null>(null)
@@ -80,6 +82,7 @@ const PostList = ({
         snapToInterval={ITEM_SIZE}
         snapToAlignment="start"
         decelerationRate="fast"
+        ListEmptyComponent={emptyState}
         getItemLayout={(_, index) => ({
           length: ITEM_SIZE,
           offset: ITEM_SIZE * index,

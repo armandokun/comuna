@@ -12,13 +12,17 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { Image } from 'expo-image'
 import * as Notifications from 'expo-notifications'
 import { router } from 'expo-router'
+import { Ionicons } from '@expo/vector-icons'
+import AsyncStorage from '@react-native-async-storage/async-storage'
 
-import { AUTH } from '@/constants/routes'
+import { AUTH, NEW_COMMUNITY } from '@/constants/routes'
 import { Colors } from '@/constants/colors'
 import { SessionContext } from '@/containers/SessionProvider'
+import { CommunityContext } from '@/containers/CommunityProvider'
 import { signOut } from '@/libs/auth'
 import amplitude from '@/libs/amplitude'
 import usePushNotifications from '@/hooks/usePushNotifications'
+import { SELECTED_COMMUNITY_KEY } from '@/containers/CommunityProvider/CommunityProvider'
 
 import GradientBlur from '../GradientBlur'
 import ImagePickerButton from '../ImagePickerButton'
@@ -36,6 +40,7 @@ const Header = ({ headerRef, headerHeight }: Props) => {
   const [appState, setAppState] = useState<AppStateStatus | null>(null)
 
   const { profile } = useContext(SessionContext)
+  const { comunas, selectedComuna, setSelectedComuna } = useContext(CommunityContext)
 
   const insets = useSafeAreaInsets()
   const { checkPermissions, registerForPushNotifications } = usePushNotifications()
@@ -60,7 +65,7 @@ const Header = ({ headerRef, headerHeight }: Props) => {
     AppState.addEventListener('change', handleAppStateChange)
   }, [appState, checkPermissions])
 
-  const handleContextMenuPress = async (actionId: string) => {
+  const handleProfileContextMenuPress = async (actionId: string) => {
     switch (actionId) {
       case 'sign-out':
         amplitude.track('Sign Out')
@@ -77,18 +82,68 @@ const Header = ({ headerRef, headerHeight }: Props) => {
     }
   }
 
+  const handleCommunityContextMenuPress = async (actionId: string) => {
+    if (!comunas.length) return
+
+    switch (actionId) {
+      case 'new-community':
+        router.push(NEW_COMMUNITY)
+
+        break
+      default:
+        setSelectedComuna(comunas.find((comuna) => comuna.id === Number(actionId)) || null)
+
+        await AsyncStorage.setItem(SELECTED_COMMUNITY_KEY, actionId)
+
+        break
+    }
+  }
+
   return (
     <GradientBlur position="top" height={insets.top + headerHeight + 50}>
       <SafeAreaView style={{ position: 'absolute', width: '100%', zIndex: 10 }}>
         <View ref={headerRef} className="px-4 pb-4 justify-between items-center flex-row">
-          <Text type="heading">Comuna</Text>
+          <TouchableOpacity>
+            <ContextMenu
+              itemId={0}
+              shouldOpenOnLongPress={false}
+              onPress={handleCommunityContextMenuPress}
+              actions={[
+                ...comunas.map((comuna) => ({
+                  id: comuna.id.toString(),
+                  title: `#${comuna.name}`,
+                  imageColor: Colors.text,
+                })),
+                {
+                  id: 'divider1',
+                  title: '',
+                  displayInline: true,
+                  subactions: [
+                    {
+                      id: 'new-community',
+                      title: 'New Comuna',
+                      image: Platform.select({
+                        ios: 'plus',
+                        android: 'ic_menu_add',
+                      }),
+                      imageColor: Colors.text,
+                    },
+                  ],
+                },
+              ]}>
+              <View className="flex-row items-center">
+                <Text type="title1">#{selectedComuna?.name}</Text>
+                <Ionicons name="chevron-down" size={24} color="rgba(255, 255, 255, 0.7)" />
+              </View>
+            </ContextMenu>
+          </TouchableOpacity>
           <View className="flex-row items-center gap-2">
             <ImagePickerButton />
             <TouchableOpacity>
               <ContextMenu
-                itemId={0}
+                itemId={1}
                 shouldOpenOnLongPress={false}
-                onPress={handleContextMenuPress}
+                onPress={handleProfileContextMenuPress}
                 actions={[
                   {
                     id: 'notifications',
@@ -116,7 +171,7 @@ const Header = ({ headerRef, headerHeight }: Props) => {
                 <Image
                   source={{ uri: `${profile?.avatar_url}?width=50&height=50` }}
                   contentFit="cover"
-                  style={{ width: 42, height: 42, borderRadius: 42 }}
+                  style={{ width: 36, height: 36, borderRadius: 36 }}
                 />
               </ContextMenu>
             </TouchableOpacity>
