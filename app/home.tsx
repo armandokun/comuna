@@ -1,4 +1,4 @@
-import { Alert, StyleSheet, View, AppState, ActivityIndicator } from 'react-native'
+import { Alert, StyleSheet, View, AppState, ActivityIndicator, FlatList } from 'react-native'
 import React, { useCallback, useContext, useEffect, useRef, useState } from 'react'
 import { BlurView } from 'expo-blur'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
@@ -37,6 +37,7 @@ const HomeScreen = () => {
   const { profile, isProfileFetched } = useContext(SessionContext)
   const headerRef = useRef<View>(null)
   const appState = useRef(AppState.currentState)
+  const flatListRef = useRef<FlatList>(null)
 
   useEffect(() => {
     if (!isProfileFetched) return
@@ -55,6 +56,7 @@ const HomeScreen = () => {
   const fetchPosts = useCallback(
     async ({ refresh = false }: { refresh?: boolean } = {}) => {
       if (!selectedComuna?.id) return
+      if (!refresh && isLoading) return
 
       setIsLoading(true)
 
@@ -93,9 +95,13 @@ const HomeScreen = () => {
         return
       }
 
-      if (data.length === 0) {
+      if (data.length < POSTS_PER_BATCH) {
         setHasMore(false)
+      } else {
+        setHasMore(true)
+      }
 
+      if (data.length === 0) {
         if (refresh) setPosts([])
 
         setIsLoading(false)
@@ -151,6 +157,8 @@ const HomeScreen = () => {
     if (!selectedComuna?.id) return
     if (isLoading || isRefreshing) return
 
+    flatListRef.current?.scrollToOffset({ offset: 0, animated: false })
+
     fetchPosts({ refresh: true })
   }, [selectedComuna?.id]) // TODO: Fix infinite loading when applying all dependencies
 
@@ -169,6 +177,8 @@ const HomeScreen = () => {
   }, [handleRefresh])
 
   const handleLoadMore = async () => {
+    console.log('load more')
+
     if (isLoading || !hasMore) return
 
     setIsLoading(true)
@@ -210,6 +220,7 @@ const HomeScreen = () => {
       )}
       <View className="flex-1 justify-center">
         <PostList
+          ref={flatListRef}
           posts={posts}
           onVisibleItemChange={setBackgroundBlurhash}
           headerHeight={insets.top + headerHeight}
