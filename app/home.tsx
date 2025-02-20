@@ -177,8 +177,6 @@ const HomeScreen = () => {
   }, [handleRefresh])
 
   const handleLoadMore = async () => {
-    console.log('load more')
-
     if (isLoading || !hasMore) return
 
     setIsLoading(true)
