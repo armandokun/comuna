@@ -86,18 +86,6 @@ const Post = ({ item, onPress, isVisible }: Props) => {
                 <Text type="subhead" className="text-white">
                   {item.author.name}
                 </Text>
-                {item.author.name === 'Ignas Hermanas' && (
-                  <View className="flex-row items-center gap-1 py-1 pl-2 pr-3 rounded-full overflow-hidden border border-black bg-white">
-                    <Image
-                      source={require('@/assets/images/badge-icon.gif')}
-                      contentFit="cover"
-                      style={{ width: 24, height: 24 }}
-                    />
-                    <Text type="subhead" style={{ color: Colors.background }}>
-                      grand mecenat
-                    </Text>
-                  </View>
-                )}
                 {item.author.name === 'Tadas Audinis' && (
                   <View className="flex-row items-center gap-1 py-1 pl-2 pr-3 rounded-full overflow-hidden border border-black bg-white">
                     <Image
