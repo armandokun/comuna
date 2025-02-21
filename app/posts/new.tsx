@@ -86,15 +86,17 @@ const NewScreen = () => {
       <SafeAreaView style={StyleSheet.absoluteFill}>
         <KeyboardAvoidingView
           behavior="position"
-          keyboardVerticalOffset={-100}
+          keyboardVerticalOffset={-50}
           className="flex-1 mx-4">
           <KeyboardDismissPressable>
             <Image
               source={{ uri: imageUrl.toString() }}
               contentFit="cover"
               style={{
-                aspectRatio: 1,
+                aspectRatio: 9 / 14,
                 borderRadius: 32,
+                width: '80%',
+                margin: 'auto',
               }}
             />
             <Spacer />
@@ -104,7 +106,7 @@ const NewScreen = () => {
               placeholder="What's on your mind?"
               style={{ fontSize: 22, color: Colors.text }}
               placeholderTextColor="rgba(255, 255, 255, 0.6)"
-              className="h-[100px]"
+              className="h-[100px] text-center"
             />
           </KeyboardDismissPressable>
         </KeyboardAvoidingView>
