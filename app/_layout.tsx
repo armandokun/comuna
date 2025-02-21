@@ -118,6 +118,21 @@ const RootLayout = () => {
                   headerShown: true,
                 }}
               />
+              <Stack.Screen
+                name="communities/about"
+                options={{
+                  presentation: 'modal',
+                  headerShown: true,
+                  contentStyle: {
+                    backgroundColor: 'transparent',
+                  },
+                  headerLeft: () => (
+                    <TouchableOpacity onPress={handleGoBack}>
+                      <Ionicons name="close-circle" size={36} color={Colors.text} />
+                    </TouchableOpacity>
+                  ),
+                }}
+              />
             </Stack>
             <StatusBar style="light" />
           </CommunityProvider>

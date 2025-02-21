@@ -141,7 +141,7 @@ const Header = ({ headerRef, headerHeight }: Props) => {
           </TouchableOpacity>
           <View className="flex-row items-center gap-2">
             <TouchableOpacity onPress={() => router.push(ABOUT_COMMUNITY)}>
-              <Ionicons name="information-circle" size={40} color="white" />
+              <Ionicons name="information-circle-outline" size={40} color={Colors.text} />
             </TouchableOpacity>
             <ImagePickerButton />
             <TouchableOpacity>

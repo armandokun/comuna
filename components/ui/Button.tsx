@@ -55,7 +55,7 @@ const Button = ({
         <Ionicons
           name={iconName}
           size={type === 'flat' ? iconSizes[size] + 12 : iconSizes[size]}
-          color={type === 'filled' ? Colors.background : Colors.primary}
+          color={type === 'filled' ? Colors.background : Colors.text}
           style={{ marginRight: title ? 8 : 0 }}
         />
       )}
@@ -72,7 +72,7 @@ const Button = ({
         <Ionicons
           name={iconName}
           size={type === 'flat' ? iconSizes[size] + 4 : iconSizes[size]}
-          color={type === 'filled' ? Colors.background : Colors.primary}
+          color={type === 'filled' ? Colors.background : Colors.text}
         />
       )}
     </TouchableOpacity>

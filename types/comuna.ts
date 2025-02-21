@@ -3,4 +3,11 @@ type Comuna = {
   name: string
 }
 
-export type { Comuna }
+type ComunaMember = {
+  id: string
+  is_manager: boolean
+  name: string | null
+  avatar_url: string | null
+}
+
+export type { Comuna, ComunaMember }
