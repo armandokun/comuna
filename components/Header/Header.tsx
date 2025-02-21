@@ -141,10 +141,10 @@ const Header = ({ headerRef, headerHeight }: Props) => {
           </TouchableOpacity>
           <View className="flex-row items-center gap-2">
             <TouchableOpacity onPress={() => router.push(ABOUT_COMMUNITY)}>
-              <Ionicons name="information-circle-outline" size={40} color={Colors.text} />
+              <Ionicons name="people-circle-outline" size={40} color={Colors.text} />
             </TouchableOpacity>
             <ImagePickerButton />
-            <TouchableOpacity>
+            <TouchableOpacity className="pl-1">
               <ContextMenu
                 itemId={1}
                 shouldOpenOnLongPress={false}
