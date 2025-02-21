@@ -102,7 +102,10 @@ const HomeScreen = () => {
       }
 
       if (data.length === 0) {
-        if (refresh) setPosts([])
+        if (refresh) {
+          setPosts([])
+          setBackgroundBlurhash('')
+        }
 
         setIsLoading(false)
 
@@ -198,7 +201,11 @@ const HomeScreen = () => {
         exiting={FadeOut.duration(250).delay(200)}
         style={StyleSheet.absoluteFill}>
         <Image
-          source={{ blurhash: backgroundBlurhash }}
+          source={
+            backgroundBlurhash
+              ? { blurhash: backgroundBlurhash }
+              : require('@/assets/images/onboarding-background.png')
+          }
           style={StyleSheet.absoluteFill}
           contentFit="cover"
           transition={250}

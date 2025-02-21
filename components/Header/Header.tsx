@@ -17,12 +17,12 @@ import AsyncStorage from '@react-native-async-storage/async-storage'
 
 import { AUTH, NEW_COMMUNITY } from '@/constants/routes'
 import { Colors } from '@/constants/colors'
+import { SELECTED_COMMUNITY_KEY } from '@/constants/async-storage'
 import { SessionContext } from '@/containers/SessionProvider'
 import { CommunityContext } from '@/containers/CommunityProvider'
 import { signOut } from '@/libs/auth'
 import amplitude from '@/libs/amplitude'
 import usePushNotifications from '@/hooks/usePushNotifications'
-import { SELECTED_COMMUNITY_KEY } from '@/containers/CommunityProvider/CommunityProvider'
 
 import GradientBlur from '../GradientBlur'
 import ImagePickerButton from '../ImagePickerButton'

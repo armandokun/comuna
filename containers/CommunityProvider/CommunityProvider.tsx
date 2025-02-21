@@ -5,6 +5,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage'
 
 import { supabase } from '@/libs/supabase'
 import { Comuna } from '@/types/comuna'
+import { SELECTED_COMMUNITY_KEY } from '@/constants/async-storage'
 
 import { CommunityContext } from './CommunityContext'
 import { SessionContext } from '../SessionProvider'
@@ -12,8 +13,6 @@ import { SessionContext } from '../SessionProvider'
 type Props = {
   children: ReactNode
 }
-
-export const SELECTED_COMMUNITY_KEY = '@selected_community_id'
 
 const CommunityProvider = ({ children }: Props) => {
   const [comunas, setComunas] = useState<Array<Comuna>>([])
@@ -77,6 +76,7 @@ const CommunityProvider = ({ children }: Props) => {
   const values = useMemo(
     () => ({
       comunas,
+      setComunas,
       selectedComuna,
       setSelectedComuna,
     }),

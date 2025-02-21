@@ -113,7 +113,7 @@ const RootLayout = () => {
               <Stack.Screen
                 name="communities/new"
                 options={{
-                  presentation: 'transparentModal',
+                  presentation: 'modal',
                   headerTitle: 'New Comuna',
                   headerShown: true,
                 }}
