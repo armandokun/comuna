@@ -15,7 +15,7 @@ import { router } from 'expo-router'
 import { Ionicons } from '@expo/vector-icons'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 
-import { AUTH, NEW_COMMUNITY } from '@/constants/routes'
+import { ABOUT_COMMUNITY, AUTH, NEW_COMMUNITY } from '@/constants/routes'
 import { Colors } from '@/constants/colors'
 import { SELECTED_COMMUNITY_KEY } from '@/constants/async-storage'
 import { SessionContext } from '@/containers/SessionProvider'
@@ -132,12 +132,17 @@ const Header = ({ headerRef, headerHeight }: Props) => {
                 },
               ]}>
               <View className="flex-row items-center">
-                <Text type="title1">#{selectedComuna?.name}</Text>
+                <Text type="title1" className="max-w-[190px]" numberOfLines={1}>
+                  #{selectedComuna?.name}
+                </Text>
                 <Ionicons name="chevron-down" size={24} color="rgba(255, 255, 255, 0.7)" />
               </View>
             </ContextMenu>
           </TouchableOpacity>
           <View className="flex-row items-center gap-2">
+            <TouchableOpacity onPress={() => router.push(ABOUT_COMMUNITY)}>
+              <Ionicons name="information-circle" size={40} color="white" />
+            </TouchableOpacity>
             <ImagePickerButton />
             <TouchableOpacity>
               <ContextMenu
