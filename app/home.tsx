@@ -201,11 +201,7 @@ const HomeScreen = () => {
         exiting={FadeOut.duration(250).delay(200)}
         style={StyleSheet.absoluteFill}>
         <Image
-          source={
-            backgroundBlurhash
-              ? { blurhash: backgroundBlurhash }
-              : require('@/assets/images/onboarding-background.png')
-          }
+          source={{ blurhash: backgroundBlurhash }}
           style={StyleSheet.absoluteFill}
           contentFit="cover"
           transition={250}
