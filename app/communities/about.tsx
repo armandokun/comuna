@@ -239,7 +239,12 @@ const AboutCommunityScreen = () => {
       <SafeAreaView className="flex-1">
         <ScrollView className="px-4">
           <Spacer />
-          {isCurrentUserManager && <InviteLinkSection />}
+          {isCurrentUserManager && (
+            <>
+              <InviteLinkSection />
+              <Spacer size="medium" />
+            </>
+          )}
           {manager && (
             <>
               <Text
