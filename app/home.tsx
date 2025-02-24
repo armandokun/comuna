@@ -230,13 +230,16 @@ const HomeScreen = () => {
           onEndReached={handleLoadMore}
           onEndReachedThreshold={0.7}
           emptyState={
-            <View className="w-full h-[80vh] items-center justify-center">
+            <BlurView
+              intensity={80}
+              tint="systemChromeMaterialDark"
+              className="w-full h-[75vh] items-center justify-center rounded-3xl overflow-hidden">
               <Text type="title3">No posts yet</Text>
               <Spacer size="xsmall" />
               <Text type="body">Be the first to post in this community.</Text>
               <Spacer size="xsmall" />
               <ImagePickerButton buttonType="button" />
-            </View>
+            </BlurView>
           }
         />
       </View>
