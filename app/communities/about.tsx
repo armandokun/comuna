@@ -16,10 +16,12 @@ import ContextMenu from '@/components/ui/ContextMenu'
 import { SessionContext } from '@/containers/SessionProvider'
 import { HOME } from '@/constants/routes'
 import { SELECTED_COMMUNITY_KEY } from '@/constants/async-storage'
+import InviteLinkSection from '@/components/InviteLinkSection'
 
 const AboutCommunityScreen = () => {
   const [members, setMembers] = useState<Array<ComunaMember>>([])
   const [isExpanded, setIsExpanded] = useState(false)
+  const [manager, setManager] = useState<ComunaMember | null>(null)
 
   const { selectedComuna, setComunas, comunas, setSelectedComuna } = useContext(CommunityContext)
   const { profile } = useContext(SessionContext)
@@ -60,7 +62,10 @@ const AboutCommunityScreen = () => {
       is_manager: community.manager_id === member?.id,
     }))
 
-    if (formattedMembers) setMembers(formattedMembers)
+    if (formattedMembers) {
+      setMembers(formattedMembers)
+      setManager(formattedMembers.find((member) => member.is_manager) ?? null)
+    }
   }, [selectedComuna?.id])
 
   useEffect(() => {
@@ -87,7 +92,8 @@ const AboutCommunityScreen = () => {
     fetchMembers()
   }
 
-  const isCurrentUserManager = members.find((member) => member.id === profile?.id)?.is_manager
+  const isCurrentUserManager =
+    members.find((member) => member.id === profile?.id)?.is_manager && manager?.id === profile?.id
 
   const handleLeaveCommunity = async () => {
     if (!selectedComuna?.id || !profile?.id) return
@@ -233,12 +239,74 @@ const AboutCommunityScreen = () => {
       <SafeAreaView className="flex-1">
         <ScrollView className="px-4">
           <Spacer />
+          {manager && (
+            <>
+              <InviteLinkSection />
+              <Spacer size="medium" />
+              <Text
+                type="footnote"
+                style={{
+                  textTransform: 'uppercase',
+                  color: 'rgba(255, 255, 255, 0.7)',
+                  fontWeight: 400,
+                  marginLeft: 16,
+                  marginBottom: 8,
+                  flex: 1,
+                }}>
+                Manager
+              </Text>
+              <BlurView
+                key={manager.id}
+                tint="light"
+                intensity={30}
+                className="rounded-xl flex-row items-center justify-between w-full p-4 overflow-hidden">
+                <View className="flex-row items-center gap-2">
+                  <Image
+                    key={manager.id}
+                    source={{ uri: manager.avatar_url }}
+                    contentFit="cover"
+                    style={{ width: 30, height: 30, borderRadius: 30 }}
+                  />
+                  <Text type="body">{manager.name}</Text>
+                </View>
+                {isCurrentUserManager && (
+                  <TouchableOpacity>
+                    <ContextMenu
+                      itemId={Number(manager.id)}
+                      shouldOpenOnLongPress={false}
+                      actions={[
+                        {
+                          id: `leave-${manager.id}`,
+                          title: 'Leave',
+                          image: Platform.select({
+                            ios: 'rectangle.portrait.and.arrow.right',
+                            android: 'ic_menu_close_clear_cancel',
+                          }),
+                          imageColor: Colors.systemDestructive,
+                          attributes: {
+                            destructive: true,
+                          },
+                        },
+                      ]}
+                      onPress={(actionId) => handleMemberMenuPress(manager.id, actionId)}>
+                      <Ionicons
+                        name="ellipsis-horizontal"
+                        size={24}
+                        color="rgba(255, 255, 255, 0.5)"
+                      />
+                    </ContextMenu>
+                  </TouchableOpacity>
+                )}
+              </BlurView>
+            </>
+          )}
+          <Spacer size="medium" />
           <View className="flex-row items-center justify-between">
             <Text
-              type="subhead"
+              type="footnote"
               style={{
                 textTransform: 'uppercase',
-                color: Colors.text,
+                color: 'rgba(255, 255, 255, 0.7)',
                 fontWeight: 400,
                 marginLeft: 16,
                 marginBottom: 8,
@@ -264,7 +332,7 @@ const AboutCommunityScreen = () => {
                   key={member.id}
                   tint="light"
                   intensity={30}
-                  className="rounded-lg flex-row items-center justify-between w-full p-4 overflow-hidden">
+                  className="rounded-xl flex-row items-center justify-between w-full p-4 overflow-hidden">
                   <View className="flex-row items-center gap-2">
                     <Image
                       key={member.id}
@@ -281,7 +349,7 @@ const AboutCommunityScreen = () => {
                       )}
                     </View>
                   </View>
-                  {(isCurrentUserManager || member.id === profile?.id) && (
+                  {isCurrentUserManager && (
                     <TouchableOpacity>
                       <ContextMenu
                         itemId={Number(member.id)}

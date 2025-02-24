@@ -14,7 +14,10 @@
       "usesAppleSignIn": true,
       "infoPlist": {
         "ITSAppUsesNonExemptEncryption": "NO"
-      }
+      },
+      "associatedDomains": [
+        "applinks:comuna.in"
+      ]
     },
     "android": {
       "adaptiveIcon": {
@@ -24,7 +27,24 @@
       "permissions": [
         "android.permission.RECORD_AUDIO"
       ],
-      "package": "com.comuna.app"
+      "package": "com.comuna.app",
+      "intentFilters": [
+        {
+          "action": "VIEW",
+          "autoVerify": true,
+          "data": [
+            {
+              "scheme": "https",
+              "host": "comuna.in",
+              "pathPrefix": "/"
+            }
+          ],
+          "category": [
+            "BROWSABLE",
+            "DEFAULT"
+          ]
+        }
+      ]
     },
     "web": {
       "bundler": "metro",

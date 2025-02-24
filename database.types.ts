@@ -88,19 +88,19 @@ export type Database = {
         Row: {
           created_at: string
           id: number
-          manager_id: string | null
+          manager_id: string
           name: string
         }
         Insert: {
           created_at?: string
           id?: number
-          manager_id?: string | null
+          manager_id?: string
           name: string
         }
         Update: {
           created_at?: string
           id?: number
-          manager_id?: string | null
+          manager_id?: string
           name?: string
         }
         Relationships: [
@@ -113,26 +113,68 @@ export type Database = {
           },
         ]
       }
+      community_invite_links: {
+        Row: {
+          community_id: number
+          created_at: string
+          creator_id: string
+          expires_at: string
+          id: number
+          is_active: boolean
+          link_hash: string
+        }
+        Insert: {
+          community_id: number
+          created_at?: string
+          creator_id?: string
+          expires_at?: string
+          id?: number
+          is_active?: boolean
+          link_hash: string
+        }
+        Update: {
+          community_id?: number
+          created_at?: string
+          creator_id?: string
+          expires_at?: string
+          id?: number
+          is_active?: boolean
+          link_hash?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: 'community_invite_links_community_id_fkey'
+            columns: ['community_id']
+            isOneToOne: false
+            referencedRelation: 'communities'
+            referencedColumns: ['id']
+          },
+          {
+            foreignKeyName: 'community_invite_links_creator_id_fkey'
+            columns: ['creator_id']
+            isOneToOne: false
+            referencedRelation: 'profiles'
+            referencedColumns: ['id']
+          },
+        ]
+      }
       community_members: {
         Row: {
           community_id: number
           created_at: string
           id: number
-          is_manager: boolean
           user_id: string | null
         }
         Insert: {
           community_id: number
           created_at?: string
           id?: number
-          is_manager?: boolean
           user_id?: string | null
         }
         Update: {
           community_id?: number
           created_at?: string
           id?: number
-          is_manager?: boolean
           user_id?: string | null
         }
         Relationships: [
