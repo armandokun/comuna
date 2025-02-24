@@ -239,10 +239,9 @@ const AboutCommunityScreen = () => {
       <SafeAreaView className="flex-1">
         <ScrollView className="px-4">
           <Spacer />
+          {isCurrentUserManager && <InviteLinkSection />}
           {manager && (
             <>
-              <InviteLinkSection />
-              <Spacer size="medium" />
               <Text
                 type="footnote"
                 style={{
@@ -349,7 +348,7 @@ const AboutCommunityScreen = () => {
                       )}
                     </View>
                   </View>
-                  {isCurrentUserManager && (
+                  {(isCurrentUserManager || member.id === profile?.id) && (
                     <TouchableOpacity>
                       <ContextMenu
                         itemId={Number(member.id)}
