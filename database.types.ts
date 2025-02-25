@@ -87,18 +87,21 @@ export type Database = {
       communities: {
         Row: {
           created_at: string
+          description: string
           id: number
           manager_id: string
           name: string
         }
         Insert: {
           created_at?: string
+          description?: string
           id?: number
           manager_id?: string
           name: string
         }
         Update: {
           created_at?: string
+          description?: string
           id?: number
           manager_id?: string
           name?: string
@@ -163,18 +166,21 @@ export type Database = {
           community_id: number
           created_at: string
           id: number
+          is_approved: boolean
           user_id: string | null
         }
         Insert: {
           community_id: number
           created_at?: string
           id?: number
+          is_approved?: boolean
           user_id?: string | null
         }
         Update: {
           community_id?: number
           created_at?: string
           id?: number
+          is_approved?: boolean
           user_id?: string | null
         }
         Relationships: [

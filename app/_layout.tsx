@@ -15,6 +15,8 @@ import { Colors } from '@/constants/colors'
 import SessionProvider from '@/containers/SessionProvider'
 import CommunityProvider from '@/containers/CommunityProvider'
 import HeaderBackground from '@/components/HeaderBackground'
+import { useInviteLink } from '@/hooks/useInviteLink'
+import InviteSheet from '@/components/InviteSheet'
 
 import '../global.css'
 
@@ -27,6 +29,8 @@ const RootLayout = () => {
     Geist: require('../assets/fonts/Geist-Regular.otf'),
     GeistMono: require('../assets/fonts/GeistMono-Regular.otf'),
   })
+
+  const { isInviteSheetOpen, closeInviteSheet, communityId } = useInviteLink()
 
   useEffect(() => {
     if (!navigation) return
@@ -126,6 +130,7 @@ const RootLayout = () => {
                   contentStyle: {
                     backgroundColor: 'transparent',
                   },
+                  headerTitle: '',
                   headerLeft: () => (
                     <TouchableOpacity onPress={handleGoBack}>
                       <Ionicons name="close-circle" size={36} color={Colors.text} />
@@ -134,6 +139,13 @@ const RootLayout = () => {
                 }}
               />
             </Stack>
+            {isInviteSheetOpen && (
+              <InviteSheet
+                show={isInviteSheetOpen}
+                onClose={closeInviteSheet}
+                communityId={communityId}
+              />
+            )}
             <StatusBar style="light" />
           </CommunityProvider>
         </SessionProvider>

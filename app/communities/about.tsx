@@ -1,7 +1,7 @@
 import { useCallback, useContext, useEffect, useState } from 'react'
 import { View, SafeAreaView, Alert, ScrollView, TouchableOpacity, Platform } from 'react-native'
 import { Image } from 'expo-image'
-import { router, useNavigation } from 'expo-router'
+import { router } from 'expo-router'
 import { BlurView } from 'expo-blur'
 import { Ionicons } from '@expo/vector-icons'
 import AsyncStorage from '@react-native-async-storage/async-storage'
@@ -22,16 +22,10 @@ const AboutCommunityScreen = () => {
   const [members, setMembers] = useState<Array<ComunaMember>>([])
   const [isExpanded, setIsExpanded] = useState(false)
   const [manager, setManager] = useState<ComunaMember | null>(null)
+  const [pendingRequests, setPendingRequests] = useState<Array<ComunaMember>>([])
 
   const { selectedComuna, setComunas, comunas, setSelectedComuna } = useContext(CommunityContext)
   const { profile } = useContext(SessionContext)
-  const navigation = useNavigation()
-
-  useEffect(() => {
-    navigation.setOptions({
-      headerTitle: `#${selectedComuna?.name}`,
-    })
-  }, [navigation, selectedComuna?.name])
 
   const fetchMembers = useCallback(async () => {
     if (!selectedComuna?.id) return
@@ -40,8 +34,11 @@ const AboutCommunityScreen = () => {
       .from('community_members')
       .select(
         `
+        is_approved,
         community:communities(
-          manager_id
+          manager_id,
+          name,
+          description
         ),
         member:profiles(
           id,
@@ -55,16 +52,18 @@ const AboutCommunityScreen = () => {
 
     if (error) Alert.alert('Error', error.message)
 
-    const formattedMembers = data?.map(({ member, community }) => ({
+    const formattedMembers = data?.map(({ is_approved: isApproved, member, community }) => ({
       id: member?.id!,
       name: member?.name!,
       avatar_url: member?.avatar_url!,
       is_manager: community.manager_id === member?.id,
+      is_approved: isApproved,
     }))
 
     if (formattedMembers) {
-      setMembers(formattedMembers)
+      setMembers(formattedMembers.filter((member) => member.is_approved))
       setManager(formattedMembers.find((member) => member.is_manager) ?? null)
+      setPendingRequests(formattedMembers.filter((member) => !member.is_approved))
     }
   }, [selectedComuna?.id])
 
@@ -138,10 +137,15 @@ const AboutCommunityScreen = () => {
     const isLastMember = members.length === 1
 
     if (isLastMember) {
-      await AsyncStorage.removeItem(SELECTED_COMMUNITY_KEY)
+      const otherComunas = comunas.filter((comuna) => comuna.id !== selectedComuna?.id)
 
-      setComunas(comunas.filter((comuna) => comuna.id !== selectedComuna?.id))
-      setSelectedComuna(comunas[0])
+      if (otherComunas) {
+        setComunas(otherComunas)
+
+        await AsyncStorage.setItem(SELECTED_COMMUNITY_KEY, otherComunas[0].id.toString())
+
+        setSelectedComuna(otherComunas[0])
+      }
     }
 
     router.replace(HOME)
@@ -172,8 +176,27 @@ const AboutCommunityScreen = () => {
     fetchMembers()
   }
 
+  const handleApproveMember = async (memberId: string) => {
+    if (!selectedComuna?.id) return
+
+    const { error } = await supabase
+      .from('community_members')
+      .update({ is_approved: true })
+      .eq('community_id', selectedComuna?.id)
+      .eq('user_id', memberId)
+
+    if (error) {
+      Alert.alert('Error approving member', error.message)
+
+      return
+    }
+
+    fetchMembers()
+  }
+
   const handleMemberMenuPress = (memberId: string, actionId: string) => {
-    const member = members.find((person) => person.id === memberId)
+    const allMembers = [...members, ...pendingRequests]
+    const member = allMembers.find((person) => person.id === memberId)
 
     switch (actionId) {
       case `leave-${memberId}`:
@@ -227,6 +250,23 @@ const AboutCommunityScreen = () => {
           ],
         )
         break
+      case `approve-${memberId}`:
+        Alert.alert(
+          'Approve member',
+          `Are you sure you want to approve ${member?.name} to #${selectedComuna?.name}?`,
+          [
+            {
+              text: 'Cancel',
+              style: 'cancel',
+            },
+            {
+              text: 'Approve',
+              style: 'destructive',
+              onPress: () => handleApproveMember(memberId),
+            },
+          ],
+        )
+        break
     }
   }
 
@@ -238,73 +278,108 @@ const AboutCommunityScreen = () => {
     <BlurView tint="systemChromeMaterialDark" intensity={90} className="flex-1">
       <SafeAreaView className="flex-1">
         <ScrollView className="px-4">
-          <Spacer />
+          <View className="px-4 items-center justify-center">
+            <Spacer size="medium" />
+            <Text type="title1">#{selectedComuna?.name}</Text>
+            <Spacer size="xsmall" />
+            <Text type="body" className="text-center" style={{ color: 'rgba(255, 255, 255, 0.7)' }}>
+              {selectedComuna?.description || 'No description'}
+            </Text>
+            <Spacer size="medium" />
+            <Text type="subhead" style={{ color: 'rgba(255, 255, 255, 0.7)' }}>
+              Managed by
+            </Text>
+            <Spacer size="xxsmall" />
+            <View className="flex-row items-center gap-2">
+              <Image
+                source={{ uri: manager?.avatar_url }}
+                style={{
+                  width: 32,
+                  height: 32,
+                  borderRadius: 16,
+                }}
+              />
+              <Text type="body" className="text-muted">
+                {manager?.name}
+              </Text>
+            </View>
+          </View>
+          <Spacer size="medium" />
           {isCurrentUserManager && (
             <>
               <InviteLinkSection />
               <Spacer size="medium" />
+              {pendingRequests.length && (
+                <>
+                  <Text
+                    type="footnote"
+                    style={{
+                      textTransform: 'uppercase',
+                      color: 'rgba(255, 255, 255, 0.7)',
+                      fontWeight: 400,
+                      marginLeft: 16,
+                      marginBottom: 8,
+                      flex: 1,
+                    }}>
+                    Pending requests ({pendingRequests.length})
+                  </Text>
+                  {pendingRequests.map((member) => (
+                    <BlurView
+                      key={member.id}
+                      tint="light"
+                      intensity={30}
+                      className="rounded-xl flex-row items-center justify-between w-full p-4 overflow-hidden">
+                      <View className="flex-row items-center gap-2">
+                        <Image
+                          key={member.id}
+                          source={{ uri: member.avatar_url }}
+                          contentFit="cover"
+                          style={{ width: 30, height: 30, borderRadius: 30 }}
+                        />
+                        <Text type="body">{member.name}</Text>
+                      </View>
+                      <TouchableOpacity>
+                        <ContextMenu
+                          itemId={Number(member.id)}
+                          shouldOpenOnLongPress={false}
+                          actions={[
+                            {
+                              id: `approve-${member.id}`,
+                              title: 'Approve',
+                              image: Platform.select({
+                                ios: 'checkmark',
+                                android: 'ic_menu_check',
+                              }),
+                              imageColor: Colors.text,
+                            },
+                            {
+                              id: `remove-${member.id}`,
+                              title: 'Reject',
+                              image: Platform.select({
+                                ios: 'xmark',
+                                android: 'ic_menu_close_clear_cancel',
+                              }),
+                              imageColor: Colors.systemDestructive,
+                              attributes: {
+                                destructive: true,
+                              },
+                            },
+                          ]}
+                          onPress={(actionId) => handleMemberMenuPress(member.id, actionId)}>
+                          <Ionicons
+                            name="ellipsis-horizontal"
+                            size={24}
+                            color="rgba(255, 255, 255, 0.5)"
+                          />
+                        </ContextMenu>
+                      </TouchableOpacity>
+                    </BlurView>
+                  ))}
+                </>
+              )}
             </>
           )}
-          {manager && (
-            <>
-              <Text
-                type="footnote"
-                style={{
-                  textTransform: 'uppercase',
-                  color: 'rgba(255, 255, 255, 0.7)',
-                  fontWeight: 400,
-                  marginLeft: 16,
-                  marginBottom: 8,
-                  flex: 1,
-                }}>
-                Manager
-              </Text>
-              <BlurView
-                key={manager.id}
-                tint="light"
-                intensity={30}
-                className="rounded-xl flex-row items-center justify-between w-full p-4 overflow-hidden">
-                <View className="flex-row items-center gap-2">
-                  <Image
-                    key={manager.id}
-                    source={{ uri: manager.avatar_url }}
-                    contentFit="cover"
-                    style={{ width: 30, height: 30, borderRadius: 30 }}
-                  />
-                  <Text type="body">{manager.name}</Text>
-                </View>
-                {isCurrentUserManager && (
-                  <TouchableOpacity>
-                    <ContextMenu
-                      itemId={Number(manager.id)}
-                      shouldOpenOnLongPress={false}
-                      actions={[
-                        {
-                          id: `leave-${manager.id}`,
-                          title: 'Leave',
-                          image: Platform.select({
-                            ios: 'rectangle.portrait.and.arrow.right',
-                            android: 'ic_menu_close_clear_cancel',
-                          }),
-                          imageColor: Colors.systemDestructive,
-                          attributes: {
-                            destructive: true,
-                          },
-                        },
-                      ]}
-                      onPress={(actionId) => handleMemberMenuPress(manager.id, actionId)}>
-                      <Ionicons
-                        name="ellipsis-horizontal"
-                        size={24}
-                        color="rgba(255, 255, 255, 0.5)"
-                      />
-                    </ContextMenu>
-                  </TouchableOpacity>
-                )}
-              </BlurView>
-            </>
-          )}
-          <Spacer size="medium" />
+          <Spacer size="small" />
           <View className="flex-row items-center justify-between">
             <Text
               type="footnote"

@@ -174,7 +174,7 @@ const InviteLinkSection = () => {
       <Spacer size="xsmall" />
       <View className="pl-4">
         <Text type="footnote" style={{ color: Colors.muted }}>
-          By regenerating the link, the previous invite links will be deactivated.
+          By regenerating the invite link, the previous ones will be deactivated.
         </Text>
       </View>
     </>

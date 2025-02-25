@@ -16,7 +16,7 @@
         "ITSAppUsesNonExemptEncryption": "NO"
       },
       "associatedDomains": [
-        "applinks:comuna.in"
+        "applinks:comuna-web.vercel.app"
       ]
     },
     "android": {
@@ -35,8 +35,8 @@
           "data": [
             {
               "scheme": "https",
-              "host": "comuna.in",
-              "pathPrefix": "/"
+              "host": "comuna-web.vercel.app",
+              "pathPrefix": "/invite"
             }
           ],
           "category": [

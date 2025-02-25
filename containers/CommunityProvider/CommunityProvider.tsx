@@ -1,5 +1,5 @@
 import { Alert } from 'react-native'
-import React, { useState, useEffect, ReactNode, useMemo, useContext } from 'react'
+import React, { useState, useEffect, ReactNode, useMemo, useContext, useCallback } from 'react'
 
 import AsyncStorage from '@react-native-async-storage/async-storage'
 
@@ -44,34 +44,60 @@ const CommunityProvider = ({ children }: Props) => {
     fetchSelectedComuna()
   }, [comunas, selectedComuna])
 
+  const fetchComunas = useCallback(async () => {
+    if (!profile?.id) return
+
+    const { data, error } = await supabase
+      .from('community_members')
+      .select(
+        `
+        is_approved,
+        community:communities (
+          id,
+          name,
+          description
+        )
+      `,
+      )
+      .eq('user_id', profile.id)
+
+    if (error) {
+      Alert.alert('Error fetching comunas', error.message)
+
+      return
+    }
+
+    const communities = data.filter((item) => item.is_approved).map((item) => item.community)
+    setComunas(communities)
+  }, [profile?.id])
+
   useEffect(() => {
     if (!profile?.id) return
 
-    const fetchComunas = async () => {
-      const { data, error } = await supabase
-        .from('community_members')
-        .select(
-          `
-          community:communities (
-            id,
-            name
-          )
-        `,
-        )
-        .eq('user_id', profile.id)
-
-      if (error) {
-        Alert.alert('Error fetching comunas', error.message)
-
-        return
-      }
-
-      const communities = data.map((item) => item.community)
-      setComunas(communities)
-    }
-
     fetchComunas()
-  }, [profile?.id])
+  }, [fetchComunas, profile?.id])
+
+  useEffect(() => {
+    if (!profile?.id) return
+
+    const subscription = supabase
+      .channel('community_members')
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'community_members',
+          filter: `user_id=eq.${profile?.id}`,
+        },
+        () => fetchComunas(),
+      )
+      .subscribe()
+
+    return () => {
+      subscription.unsubscribe()
+    }
+  }, [fetchComunas, profile?.id])
 
   const values = useMemo(
     () => ({

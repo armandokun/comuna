@@ -95,7 +95,7 @@ const BottomSheet = ({
       onDismiss={onBackdropPress}
       backdropComponent={BackDrop}
       backgroundComponent={Background}
-      footerComponent={Footer}
+      footerComponent={footer ? Footer : undefined}
       snapPoints={['90%']}
       handleIndicatorStyle={{ backgroundColor: Colors.muted }}
       {...props}>
