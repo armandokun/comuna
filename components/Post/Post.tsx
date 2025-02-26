@@ -3,6 +3,7 @@ import { LinearGradient } from 'expo-linear-gradient'
 import React, { useEffect, useRef, useState } from 'react'
 import { Image } from 'expo-image'
 import Animated from 'react-native-reanimated'
+import { SnapbackZoom } from 'react-native-zoom-toolkit'
 
 import Text from '@/components/ui/Text'
 import { Post as PostType } from '@/types/posts'
@@ -20,9 +21,11 @@ type Props = {
 const Post = ({ item, onPress, isVisible }: Props) => {
   const [descriptionHeight, setDescriptionHeight] = useState(0)
   const [commentContainerHeight, setCommentContainerHeight] = useState(0)
+  const [imageDimensions, setImageDimensions] = useState({ width: 0, height: 0 })
 
   const descriptionRef = useRef<View>(null)
   const commentContainerRef = useRef<View>(null)
+  const imageContainerRef = useRef<View>(null)
 
   useEffect(() => {
     if (!descriptionRef.current) return
@@ -46,6 +49,14 @@ const Post = ({ item, onPress, isVisible }: Props) => {
   const SAFE_AREA_HEIGHT = 40
   const IMAGE_SIZE = screenHeight * 0.8 - commentContainerHeight - SAFE_AREA_HEIGHT
 
+  useEffect(() => {
+    if (!imageContainerRef.current) return
+
+    imageContainerRef.current.measure((x, y, width, height, pageX, pageY) => {
+      setImageDimensions({ width, height: IMAGE_SIZE })
+    })
+  }, [IMAGE_SIZE])
+
   return (
     <Animated.View
       style={{
@@ -56,15 +67,20 @@ const Post = ({ item, onPress, isVisible }: Props) => {
         style={{
           height: IMAGE_SIZE,
         }}>
-        <View className="relative flex-1">
+        <View className="relative flex-1" ref={imageContainerRef}>
           <GradientBlur height={descriptionHeight + DEFAULT_HEIGHT}>
             {item.image_url && (
-              <Image
-                source={`${item.image_url}?quality=50`}
-                placeholder={{ blurhash: item.image_blurhash }}
-                contentFit="cover"
-                style={{ width: '100%', height: '100%' }}
-              />
+              <SnapbackZoom>
+                <Image
+                  source={`${item.image_url}?quality=50`}
+                  placeholder={{ blurhash: item.image_blurhash }}
+                  contentFit="cover"
+                  style={{
+                    width: imageDimensions.width || '100%',
+                    height: imageDimensions.height || '100%',
+                  }}
+                />
+              </SnapbackZoom>
             )}
             {item.video_url && (
               <VideoPost
