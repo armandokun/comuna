@@ -9,6 +9,7 @@ import { LinearGradient } from 'expo-linear-gradient'
 import amplitude from '@/libs/amplitude'
 import { supabase } from '@/libs/supabase'
 import { Colors } from '@/constants/colors'
+import { HOME } from '@/constants/routes'
 
 import TextArea from '@/components/ui/TextArea'
 import Spacer from '@/components/ui/Spacer'
@@ -54,7 +55,7 @@ const NewScreen = () => {
         'Content Type': 'Image',
       })
 
-      router.back()
+      router.replace(HOME)
     } catch (error) {
       setIsUploading(false)
 
