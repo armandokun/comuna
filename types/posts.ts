@@ -5,6 +5,7 @@ type Comment = {
   author: {
     id: string
     name: string
+    username: string
     avatar_url: string
   }
 }
@@ -29,6 +30,7 @@ type Post = {
   author: {
     id: string
     name: string
+    username: string
     avatar_url: string
   }
   comments: Array<Comment> | null

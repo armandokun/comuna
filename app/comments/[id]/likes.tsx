@@ -7,16 +7,13 @@ import { BlurView } from 'expo-blur'
 
 import { supabase } from '@/libs/supabase'
 import Text from '@/components/ui/Text'
+import { Profile } from '@/types/profile'
 
-type Profile = {
-  id: string
-  name: string | null
-  avatar_url: string | null
-}
+type User = Omit<Profile, 'expo_push_token'>
 
 const LikesScreen = () => {
   const { id } = useLocalSearchParams<{ id: string }>()
-  const [profiles, setProfiles] = useState<Array<Profile>>([])
+  const [profiles, setProfiles] = useState<Array<User>>([])
 
   useEffect(() => {
     const fetchProfiles = async () => {
@@ -27,6 +24,7 @@ const LikesScreen = () => {
           profiles (
             id,
             name,
+            username,
             avatar_url
           )
         `,
@@ -45,14 +43,14 @@ const LikesScreen = () => {
     fetchProfiles()
   }, [id])
 
-  const renderProfile = ({ item }: { item: Profile }) => (
+  const renderProfile = ({ item }: { item: User }) => (
     <View className="flex-row items-center gap-3 px-4 py-2">
       <Image
         source={{ uri: item.avatar_url }}
         style={{ width: 44, height: 44, borderRadius: 22 }}
         contentFit="cover"
       />
-      <Text type="body">{item.name}</Text>
+      <Text type="body">{item.name ?? item.username}</Text>
     </View>
   )
 

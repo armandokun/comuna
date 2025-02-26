@@ -25,6 +25,7 @@ type CommunityMember = {
   is_approved: boolean
   member_details: {
     name: string | null
+    username: string | null
     avatar_url: string | null
   }
 }
@@ -32,6 +33,7 @@ type CommunityMember = {
 type Community = Comuna & {
   creator: {
     name: string | null
+    username: string | null
     avatar_url: string | null
   }
   community_members: Array<CommunityMember> | null
@@ -53,12 +55,13 @@ const InviteSheet = ({ show, onClose, communityId }: Props) => {
         .select(
           `
           *,
-          creator: profiles(name, avatar_url),
+          creator: profiles(name, username, avatar_url),
           community_members(
             user_id,
             is_approved,
             member_details: profiles(
               name,
+              username,
               avatar_url
             )
           )
@@ -168,7 +171,7 @@ const InviteSheet = ({ show, onClose, communityId }: Props) => {
               }}
             />
             <Text type="body" className="text-muted">
-              {community?.creator?.name}
+              {community?.creator?.name ?? community?.creator?.username}
             </Text>
           </View>
           <Spacer size="medium" />

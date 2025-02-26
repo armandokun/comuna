@@ -42,8 +42,8 @@ const HomeScreen = () => {
   useEffect(() => {
     if (!isProfileFetched) return
 
-    if (!profile?.name) setShowOnboarding(true)
-  }, [profile?.name, isProfileFetched])
+    if (!profile?.username) setShowOnboarding(true)
+  }, [profile?.username, isProfileFetched])
 
   useEffect(() => {
     if (headerRef.current) {
@@ -71,6 +71,7 @@ const HomeScreen = () => {
           author: profiles (
             id,
             name,
+            username,
             avatar_url
           ),
           comments: comments (
@@ -78,6 +79,7 @@ const HomeScreen = () => {
             author: profiles (
               id,
               name,
+              username,
               avatar_url
             )
           )
@@ -126,6 +128,7 @@ const HomeScreen = () => {
         author: {
           id: post.author?.id ?? '',
           name: post.author?.name ?? '',
+          username: post.author?.username ?? '',
           avatar_url: post.author?.avatar_url ?? '',
         },
         comments: post.comments.map((comment) => ({
@@ -133,6 +136,7 @@ const HomeScreen = () => {
           author: {
             id: comment.author?.id ?? '',
             name: comment.author?.name ?? '',
+            username: comment.author?.username ?? '',
             avatar_url: comment.author?.avatar_url ?? '',
           },
         })),

@@ -74,6 +74,7 @@ const PostScreen = () => {
             author: profiles (
               id,
               name,
+              username,
               avatar_url
             )
           `,
@@ -96,6 +97,7 @@ const PostScreen = () => {
         author: {
           id: data.author?.id ?? '',
           name: data.author?.name ?? '',
+          username: data.author?.username ?? '',
           avatar_url: data.author?.avatar_url ?? '',
         },
       })
@@ -113,6 +115,7 @@ const PostScreen = () => {
       author:profiles(
         id,
         name,
+        username,
         avatar_url
       ),
       likes:comments_likes(
@@ -131,6 +134,7 @@ const PostScreen = () => {
         author: {
           ...comment.author,
           name: comment.author.name ?? '',
+          username: comment.author.username ?? '',
           avatar_url: comment.author.avatar_url ?? '',
         },
       }))
@@ -199,7 +203,7 @@ const PostScreen = () => {
                       contentFit="cover"
                       style={{ width: 32, height: 32, borderRadius: 32 }}
                     />
-                    <Text type="subhead">{post.author.name}</Text>
+                    <Text type="subhead">{post.author.name ?? post.author.username}</Text>
                   </View>
                 </LinearGradient>
               </View>
@@ -221,7 +225,7 @@ const PostScreen = () => {
                     createdAt={comment.created_at}
                     author={{
                       id: comment.author.id,
-                      name: comment.author.name,
+                      name: comment.author.name ?? comment.author.username,
                       avatarUrl: comment.author.avatar_url,
                     }}
                     likes={comment.likes}

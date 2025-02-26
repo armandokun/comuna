@@ -53,6 +53,7 @@ const CommentsBottomSheet = ({ show, postId, onClose }: Props) => {
         author:profiles(
           id,
           name,
+          username,
           avatar_url
         ),
         likes:comments_likes(
@@ -71,6 +72,7 @@ const CommentsBottomSheet = ({ show, postId, onClose }: Props) => {
         author: {
           ...comment.author,
           name: comment.author.name ?? '',
+          username: comment.author.username ?? '',
           avatar_url: comment.author.avatar_url ?? '',
         },
       }))
@@ -182,6 +184,7 @@ const CommentsBottomSheet = ({ show, postId, onClose }: Props) => {
                 author={{
                   id: comment.author.id,
                   name: comment.author.name,
+                  username: comment.author.username,
                   avatarUrl: comment.author.avatar_url,
                 }}
                 likes={comment.likes}

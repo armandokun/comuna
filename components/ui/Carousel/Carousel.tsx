@@ -21,7 +21,7 @@ type Props = {
     mediaPosition?: 'top' | 'bottom'
     media?: ReactNode
     actionLabel?: string
-    onActionPress?: () => Promise<void> | void
+    onActionPress?: (onPress: () => void) => Promise<void> | void
     actionDisabled?: boolean
   }>
   onSlideChange?: (index: number) => void
@@ -54,15 +54,21 @@ const Carousel = ({ slides, onSlideChange, onSkip }: Props) => {
     if (!scrollViewRef.current) return
     if (slides[activeIndex].actionDisabled) return
 
-    if (slides[activeIndex].onActionPress) {
-      if (slides[activeIndex].onActionPress instanceof Promise) {
-        await slides[activeIndex].onActionPress()
-      } else {
-        slides[activeIndex].onActionPress()
-      }
+    const scrollToNextSlide = () => {
+      scrollViewRef.current?.scrollTo({ x: scrollX.value + SCREEN_WIDTH, animated: true })
     }
 
-    scrollViewRef.current.scrollTo({ x: scrollX.value + SCREEN_WIDTH, animated: true })
+    if (slides[activeIndex].onActionPress) {
+      if (slides[activeIndex].onActionPress instanceof Promise) {
+        await slides[activeIndex].onActionPress(scrollToNextSlide)
+      } else {
+        slides[activeIndex].onActionPress(scrollToNextSlide)
+      }
+
+      return
+    }
+
+    scrollToNextSlide()
   }
 
   return (

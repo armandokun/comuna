@@ -8,6 +8,7 @@ type ComunaMember = {
   id: string
   is_manager: boolean
   name: string | null
+  username: string | null
   avatar_url: string | null
   is_approved: boolean
 }

@@ -43,6 +43,7 @@ const AboutCommunityScreen = () => {
         member:profiles(
           id,
           name,
+          username,
           avatar_url
         )
       `,
@@ -54,7 +55,8 @@ const AboutCommunityScreen = () => {
 
     const formattedMembers = data?.map(({ is_approved: isApproved, member, community }) => ({
       id: member?.id!,
-      name: member?.name!,
+      name: member?.name || null,
+      username: member?.username || null,
       avatar_url: member?.avatar_url!,
       is_manager: community.manager_id === member?.id,
       is_approved: isApproved,
@@ -219,7 +221,7 @@ const AboutCommunityScreen = () => {
       case `manager-${memberId}`:
         Alert.alert(
           'Promote to manager',
-          `Are you sure you want to give manager role to ${member?.name}? There can be only ONE manager in this community.`,
+          `Are you sure you want to give manager role to ${member?.name ?? member?.username}? There can be only ONE manager in this community.`,
           [
             {
               text: 'Cancel',
@@ -236,7 +238,7 @@ const AboutCommunityScreen = () => {
       case `remove-${memberId}`:
         Alert.alert(
           'Remove member',
-          `Are you sure you want to remove ${member?.name} from #${selectedComuna?.name}?`,
+          `Are you sure you want to remove ${member?.name ?? member?.username} from #${selectedComuna?.name}?`,
           [
             {
               text: 'Cancel',
@@ -253,7 +255,7 @@ const AboutCommunityScreen = () => {
       case `approve-${memberId}`:
         Alert.alert(
           'Approve member',
-          `Are you sure you want to approve ${member?.name} to #${selectedComuna?.name}?`,
+          `Are you sure you want to approve ${member?.name ?? member?.username} to #${selectedComuna?.name}?`,
           [
             {
               text: 'Cancel',
@@ -300,7 +302,7 @@ const AboutCommunityScreen = () => {
                 }}
               />
               <Text type="body" className="text-muted">
-                {manager?.name}
+                {manager?.name ?? manager?.username}
               </Text>
             </View>
           </View>
@@ -336,7 +338,7 @@ const AboutCommunityScreen = () => {
                           contentFit="cover"
                           style={{ width: 30, height: 30, borderRadius: 30 }}
                         />
-                        <Text type="body">{member.name}</Text>
+                        <Text type="body">{member.name ?? member.username}</Text>
                       </View>
                       <TouchableOpacity>
                         <ContextMenu
@@ -420,7 +422,7 @@ const AboutCommunityScreen = () => {
                       style={{ width: 30, height: 30, borderRadius: 30 }}
                     />
                     <View>
-                      <Text type="body">{member.name}</Text>
+                      <Text type="body">{member.name ?? member.username}</Text>
                       {member.is_manager && (
                         <Text type="subhead" style={{ color: Colors.muted }}>
                           Manager

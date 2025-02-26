@@ -84,7 +84,7 @@ const Post = ({ item, onPress, isVisible }: Props) => {
                   style={{ width: 32, height: 32, borderRadius: 32 }}
                 />
                 <Text type="subhead" className="text-white">
-                  {item.author.name}
+                  {item.author.name ?? item.author.username}
                 </Text>
                 {item.author.name === 'Tadas Audinis' && (
                   <View className="flex-row items-center gap-1 py-1 pl-2 pr-3 rounded-full overflow-hidden border border-black bg-white">

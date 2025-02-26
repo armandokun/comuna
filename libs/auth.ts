@@ -16,7 +16,7 @@ export const signOut = async (onSignOut: () => void) => {
 
 export const mockSignIn = async () => {
   const { data, error } = await supabase.auth.signInWithPassword({
-    email: 'test@example.com',
+    email: 'new@example.com',
     password: 'password123',
   })
 

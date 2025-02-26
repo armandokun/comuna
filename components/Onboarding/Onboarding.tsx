@@ -25,8 +25,9 @@ import { SessionContext } from '@/containers/SessionProvider'
 import { supabase } from '@/libs/supabase'
 import usePushNotifications from '@/hooks/usePushNotifications'
 
-import Spacer from '../ui/Spacer'
 import ContextMenu from '../ui/ContextMenu'
+
+const MIN_USERNAME_LENGTH = 6
 
 type Props = {
   isVisible: boolean
@@ -34,21 +35,61 @@ type Props = {
 }
 
 const Onboarding = ({ isVisible, onDismiss }: Props) => {
-  const [firstName, setFirstName] = useState('')
-  const [lastName, setLastName] = useState('')
+  const [username, setUsername] = useState('')
   const [avatar, setAvatar] = useState<ImagePickerAsset | null>(null)
   const [isLoading, setIsLoading] = useState(false)
   const [notificationsEnabled, setNotificationsEnabled] = useState(false)
 
   const { profile } = useContext(SessionContext)
-  const lastNameInput = useRef<TextInput>(null)
+  const usernameInput = useRef<TextInput>(null)
 
   const { registerForPushNotifications, checkPermissions } = usePushNotifications()
 
-  const submitProfileDetails = async () => {
-    const name = `${firstName.trim()} ${lastName.trim()}`
+  const submitUsername = async (onPress: () => void) => {
+    if (!username.trim() || !profile?.id) return
 
-    if (!name.trim().includes(' ') || !avatar?.uri || !profile?.id) return
+    setIsLoading(true)
+
+    const { data, error: existingUsernameError } = await supabase
+      .from('profiles')
+      .select('username, id')
+      .eq('username', username)
+
+    if (data?.length) {
+      if (data[0].id === profile.id) {
+        onPress()
+
+        setIsLoading(false)
+
+        return
+      }
+
+      Alert.alert('Username already taken', 'Please choose another username.')
+
+      setIsLoading(false)
+
+      return
+    }
+
+    if (existingUsernameError) {
+      Alert.alert('Error checking username', existingUsernameError.message)
+
+      setIsLoading(false)
+
+      return
+    }
+
+    const { error } = await supabase.from('profiles').update({ username }).eq('id', profile.id)
+
+    if (error) Alert.alert('Error updating profile details', error.message)
+
+    onPress()
+
+    setIsLoading(false)
+  }
+
+  const submitProfileAvatar = async (onPress: () => void) => {
+    if (!avatar?.uri || !profile?.id) return
 
     setIsLoading(true)
 
@@ -83,10 +124,12 @@ const Onboarding = ({ isVisible, onDismiss }: Props) => {
 
     const { error } = await supabase
       .from('profiles')
-      .update({ name, avatar_url: publicUrl })
+      .update({ avatar_url: publicUrl })
       .eq('id', profile.id)
 
-    if (error) Alert.alert('Error updating profile details', error.message)
+    if (error) Alert.alert('Error updating profile picture', error.message)
+
+    onPress()
 
     setIsLoading(false)
   }
@@ -150,7 +193,7 @@ const Onboarding = ({ isVisible, onDismiss }: Props) => {
     setNotificationsEnabled(false)
   }
 
-  const isDismissReady = firstName.trim() && lastName.trim() && avatar?.uri
+  const isDismissReady = username.trim() && avatar?.uri
 
   return (
     <Modal visible={isVisible} onDismiss={onDismiss} animationType="fade">
@@ -159,58 +202,55 @@ const Onboarding = ({ isVisible, onDismiss }: Props) => {
           slides={[
             {
               title: 'Welcome to Comuna!',
-              subtitle: 'Your shitwall is waiting for you.\nPress "Get Started" to begin.',
+              subtitle: 'Press "Get Started" to begin.',
               actionLabel: 'Get Started',
             },
             {
-              title: 'Enter your full name.',
+              title: 'Enter your username.',
               subtitle: 'This will be used to identify you in the app.',
               mediaPosition: 'bottom',
-              actionDisabled: !firstName.trim() || !lastName.trim(),
+              actionDisabled: !username.trim() || username.length <= MIN_USERNAME_LENGTH,
+              onActionPress: async (onPress: () => void) => {
+                await submitUsername(onPress)
+              },
               media: (
-                <>
+                <BlurView
+                  tint="systemChromeMaterialDark"
+                  intensity={60}
+                  className="flex-row items-center justify-center px-4 rounded-3xl overflow-hidden"
+                  style={{ width: Dimensions.get('window').width * 0.9 }}>
                   <TextInput
+                    className="text-center h-20"
+                    style={{ fontSize: 28, color: 'rgba(255, 255, 255, 0.7)' }}
+                    placeholder="@"
+                    editable={false}
+                    placeholderTextColor="rgba(255, 255, 255, 0.7)"
+                  />
+                  <TextInput
+                    ref={usernameInput}
+                    placeholder="username"
+                    value={username}
+                    onChangeText={setUsername}
+                    maxLength={20}
+                    autoCapitalize="none"
+                    autoComplete="off"
                     autoCorrect={false}
-                    returnKeyType="next"
-                    className="text-center"
-                    onSubmitEditing={() => lastNameInput.current?.focus()}
-                    placeholder="First Name"
-                    placeholderTextColor="rgba(255, 255, 255, 0.5)"
-                    value={firstName}
-                    onChangeText={setFirstName}
+                    className="text-text text-center h-20"
+                    placeholderTextColor="rgba(255, 255, 255, 0.7)"
                     style={{
-                      fontSize: 24,
-                      fontWeight: 'bold',
+                      fontSize: 28,
                       color: Colors.text,
-                      width: Dimensions.get('window').width * 0.8,
                     }}
                   />
-                  <Spacer />
-                  <TextInput
-                    ref={lastNameInput}
-                    autoCorrect={false}
-                    returnKeyType="done"
-                    className="text-center"
-                    placeholder="Last Name"
-                    placeholderTextColor="rgba(255, 255, 255, 0.5)"
-                    value={lastName}
-                    onChangeText={setLastName}
-                    style={{
-                      fontSize: 24,
-                      fontWeight: 'bold',
-                      color: Colors.text,
-                      width: Dimensions.get('window').width * 0.8,
-                    }}
-                  />
-                </>
+                </BlurView>
               ),
             },
             {
               title: 'Add a profile picture.',
               subtitle: 'Let your people know how do you look like.',
               actionLabel: isLoading ? 'Preparing...' : 'Continue',
-              onActionPress: async () => {
-                await submitProfileDetails()
+              onActionPress: async (onPress: () => void) => {
+                await submitProfileAvatar(onPress)
               },
               mediaPosition: 'bottom',
               actionDisabled: isLoading || !avatar?.uri,
