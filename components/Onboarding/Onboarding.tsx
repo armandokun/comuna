@@ -89,7 +89,11 @@ const Onboarding = ({ isVisible, onDismiss }: Props) => {
   }
 
   const submitProfileAvatar = async (onPress: () => void) => {
-    if (!avatar?.uri || !profile?.id) return
+    if (!profile?.id) return
+
+    if (profile.avatar_url && !avatar) onPress()
+
+    if (!avatar) return
 
     setIsLoading(true)
 
@@ -193,7 +197,7 @@ const Onboarding = ({ isVisible, onDismiss }: Props) => {
     setNotificationsEnabled(false)
   }
 
-  const isDismissReady = username.trim() && avatar?.uri
+  const isDismissReady = username.trim() && (avatar?.uri || profile?.avatar_url)
 
   return (
     <Modal visible={isVisible} onDismiss={onDismiss} animationType="fade">
@@ -253,7 +257,7 @@ const Onboarding = ({ isVisible, onDismiss }: Props) => {
                 await submitProfileAvatar(onPress)
               },
               mediaPosition: 'bottom',
-              actionDisabled: isLoading || !avatar?.uri,
+              actionDisabled: isLoading || (!avatar?.uri && !profile?.avatar_url),
               media: (
                 <TouchableOpacity>
                   <ContextMenu
@@ -281,9 +285,9 @@ const Onboarding = ({ isVisible, onDismiss }: Props) => {
                     ]}
                     onPress={handleContextMenuPress}>
                     <View className="size-32 items-center justify-center rounded-full border border-dashed border-white">
-                      {avatar ? (
+                      {avatar || profile?.avatar_url ? (
                         <Image
-                          source={{ uri: avatar.uri }}
+                          source={{ uri: avatar ? avatar.uri : profile?.avatar_url! }}
                           className="size-32 rounded-full border-2 border-white"
                         />
                       ) : (
