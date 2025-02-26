@@ -203,7 +203,7 @@ const PostScreen = () => {
                       contentFit="cover"
                       style={{ width: 32, height: 32, borderRadius: 32 }}
                     />
-                    <Text type="subhead">{post.author.name ?? post.author.username}</Text>
+                    <Text type="subhead">{post.author.username || post.author.name}</Text>
                   </View>
                 </LinearGradient>
               </View>
@@ -225,7 +225,8 @@ const PostScreen = () => {
                     createdAt={comment.created_at}
                     author={{
                       id: comment.author.id,
-                      name: comment.author.name ?? comment.author.username,
+                      name: comment.author.name,
+                      username: comment.author.username,
                       avatarUrl: comment.author.avatar_url,
                     }}
                     likes={comment.likes}

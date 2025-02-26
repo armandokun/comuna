@@ -171,7 +171,7 @@ const InviteSheet = ({ show, onClose, communityId }: Props) => {
               }}
             />
             <Text type="body" className="text-muted">
-              {community?.creator?.name ?? community?.creator?.username}
+              {community?.creator?.username || community?.creator?.name}
             </Text>
           </View>
           <Spacer size="medium" />

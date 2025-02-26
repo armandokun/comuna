@@ -84,7 +84,7 @@ const Post = ({ item, onPress, isVisible }: Props) => {
                   style={{ width: 32, height: 32, borderRadius: 32 }}
                 />
                 <Text type="subhead" className="text-white">
-                  {item.author.name ?? item.author.username}
+                  {item.author.username || item.author.name}
                 </Text>
                 {item.author.name === 'Tadas Audinis' && (
                   <View className="flex-row items-center gap-1 py-1 pl-2 pr-3 rounded-full overflow-hidden border border-black bg-white">
@@ -117,7 +117,7 @@ const Post = ({ item, onPress, isVisible }: Props) => {
           <View key={comment.id} className="flex-row flex-wrap">
             <Text type="footnote">
               <Text type="footnote" className="font-semibold">
-                {comment.author.name}
+                {comment.author.username || comment.author.name}
               </Text>
               <Text type="footnote"> {comment.content}</Text>
             </Text>

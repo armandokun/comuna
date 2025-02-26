@@ -221,7 +221,7 @@ const AboutCommunityScreen = () => {
       case `manager-${memberId}`:
         Alert.alert(
           'Promote to manager',
-          `Are you sure you want to give manager role to ${member?.name ?? member?.username}? There can be only ONE manager in this community.`,
+          `Are you sure you want to give manager role to ${member?.username || member?.name}? There can be only ONE manager in this community.`,
           [
             {
               text: 'Cancel',
@@ -238,7 +238,7 @@ const AboutCommunityScreen = () => {
       case `remove-${memberId}`:
         Alert.alert(
           'Remove member',
-          `Are you sure you want to remove ${member?.name ?? member?.username} from #${selectedComuna?.name}?`,
+          `Are you sure you want to remove ${member?.username || member?.name} from #${selectedComuna?.name}?`,
           [
             {
               text: 'Cancel',
@@ -255,7 +255,7 @@ const AboutCommunityScreen = () => {
       case `approve-${memberId}`:
         Alert.alert(
           'Approve member',
-          `Are you sure you want to approve ${member?.name ?? member?.username} to #${selectedComuna?.name}?`,
+          `Are you sure you want to approve ${member?.username || member?.name} to #${selectedComuna?.name}?`,
           [
             {
               text: 'Cancel',
@@ -302,7 +302,7 @@ const AboutCommunityScreen = () => {
                 }}
               />
               <Text type="body" className="text-muted">
-                {manager?.name ?? manager?.username}
+                {manager?.username || manager?.name}
               </Text>
             </View>
           </View>
@@ -338,7 +338,7 @@ const AboutCommunityScreen = () => {
                           contentFit="cover"
                           style={{ width: 30, height: 30, borderRadius: 30 }}
                         />
-                        <Text type="body">{member.name ?? member.username}</Text>
+                        <Text type="body">{member.username || member.name}</Text>
                       </View>
                       <TouchableOpacity>
                         <ContextMenu
@@ -422,7 +422,7 @@ const AboutCommunityScreen = () => {
                       style={{ width: 30, height: 30, borderRadius: 30 }}
                     />
                     <View>
-                      <Text type="body">{member.name ?? member.username}</Text>
+                      <Text type="body">{member.username || member.name}</Text>
                       {member.is_manager && (
                         <Text type="subhead" style={{ color: Colors.muted }}>
                           Manager

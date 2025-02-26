@@ -50,7 +50,7 @@ const LikesScreen = () => {
         style={{ width: 44, height: 44, borderRadius: 22 }}
         contentFit="cover"
       />
-      <Text type="body">{item.name ?? item.username}</Text>
+      <Text type="body">{item.username ?? item.name}</Text>
     </View>
   )
 

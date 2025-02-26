@@ -91,7 +91,7 @@ const Comment = ({ id, currentUserId, content, createdAt, author, likes }: Props
       />
       <View className="flex-1 gap-1">
         <View className="flex-row items-center flex-wrap gap-1">
-          <Text type="subhead">{author.name ?? author.username}</Text>
+          <Text type="subhead">{author.username || author.name}</Text>
           <Text type="subhead" style={{ color: Colors.muted }}>
             {getRelativeTimeFromNow(createdAt)}
           </Text>
