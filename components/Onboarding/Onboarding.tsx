@@ -50,6 +50,19 @@ const Onboarding = ({ isVisible, onDismiss }: Props) => {
 
     setIsLoading(true)
 
+    const usernameRegex = /^[a-zA-Z0-9._-]+$/
+
+    if (!usernameRegex.test(username)) {
+      Alert.alert(
+        'Please use only latin characters and numbers.',
+        'Special characters are not allowed, except dots (.), dashes (-) and underscores (_).',
+      )
+
+      setIsLoading(false)
+
+      return
+    }
+
     const { data, error: existingUsernameError } = await supabase
       .from('profiles')
       .select('username, id')
@@ -234,7 +247,7 @@ const Onboarding = ({ isVisible, onDismiss }: Props) => {
                     ref={usernameInput}
                     placeholder="username"
                     value={username}
-                    onChangeText={setUsername}
+                    onChangeText={(text) => setUsername(text.toLowerCase())}
                     maxLength={20}
                     autoCapitalize="none"
                     autoComplete="off"
