@@ -17,6 +17,7 @@ import { SessionContext } from '@/containers/SessionProvider'
 import { HOME } from '@/constants/routes'
 import { SELECTED_COMMUNITY_KEY } from '@/constants/async-storage'
 import InviteLinkSection from '@/components/InviteLinkSection'
+import Label from '@/components/ui/Label'
 
 const AboutCommunityScreen = () => {
   const [members, setMembers] = useState<Array<ComunaMember>>([])
@@ -196,6 +197,48 @@ const AboutCommunityScreen = () => {
     fetchMembers()
   }
 
+  const handleApprovePress = (memberId: string) => {
+    const allMembers = [...members, ...pendingRequests]
+    const member = allMembers.find((person) => person.id === memberId)
+
+    Alert.alert(
+      'Approve member',
+      `Are you sure you want to approve ${member?.username || member?.name} to #${selectedComuna?.name}?`,
+      [
+        {
+          text: 'Cancel',
+          style: 'cancel',
+        },
+        {
+          text: 'Approve',
+          style: 'default',
+          onPress: () => handleApproveMember(memberId),
+        },
+      ],
+    )
+  }
+
+  const handleDeclinePress = (memberId: string) => {
+    const allMembers = [...members, ...pendingRequests]
+    const member = allMembers.find((person) => person.id === memberId)
+
+    Alert.alert(
+      'Decline member',
+      `Are you sure you want to decline ${member?.username || member?.name} invitation to #${selectedComuna?.name}?`,
+      [
+        {
+          text: 'Cancel',
+          style: 'cancel',
+        },
+        {
+          text: 'Decline',
+          style: 'destructive',
+          onPress: () => handleRemoveMember(memberId),
+        },
+      ],
+    )
+  }
+
   const handleMemberMenuPress = (memberId: string, actionId: string) => {
     const allMembers = [...members, ...pendingRequests]
     const member = allMembers.find((person) => person.id === memberId)
@@ -252,23 +295,6 @@ const AboutCommunityScreen = () => {
           ],
         )
         break
-      case `approve-${memberId}`:
-        Alert.alert(
-          'Approve member',
-          `Are you sure you want to approve ${member?.username || member?.name} to #${selectedComuna?.name}?`,
-          [
-            {
-              text: 'Cancel',
-              style: 'cancel',
-            },
-            {
-              text: 'Approve',
-              style: 'destructive',
-              onPress: () => handleApproveMember(memberId),
-            },
-          ],
-        )
-        break
     }
   }
 
@@ -309,18 +335,7 @@ const AboutCommunityScreen = () => {
               <Spacer size="medium" />
               {pendingRequests.length && (
                 <>
-                  <Text
-                    type="footnote"
-                    style={{
-                      textTransform: 'uppercase',
-                      color: 'rgba(255, 255, 255, 0.7)',
-                      fontWeight: 400,
-                      marginLeft: 16,
-                      marginBottom: 8,
-                      flex: 1,
-                    }}>
-                    Pending requests ({pendingRequests.length})
-                  </Text>
+                  <Label title={`Pending approval (${pendingRequests.length})`} />
                   {pendingRequests.map((member) => (
                     <BlurView
                       key={member.id}
@@ -336,41 +351,22 @@ const AboutCommunityScreen = () => {
                         />
                         <Text type="body">{member.username || member.name}</Text>
                       </View>
-                      <TouchableOpacity>
-                        <ContextMenu
-                          itemId={Number(member.id)}
-                          shouldOpenOnLongPress={false}
-                          actions={[
-                            {
-                              id: `approve-${member.id}`,
-                              title: 'Approve',
-                              image: Platform.select({
-                                ios: 'checkmark',
-                                android: 'ic_menu_check',
-                              }),
-                              imageColor: Colors.text,
-                            },
-                            {
-                              id: `remove-${member.id}`,
-                              title: 'Reject',
-                              image: Platform.select({
-                                ios: 'xmark',
-                                android: 'ic_menu_close_clear_cancel',
-                              }),
-                              imageColor: Colors.systemDestructive,
-                              attributes: {
-                                destructive: true,
-                              },
-                            },
-                          ]}
-                          onPress={(actionId) => handleMemberMenuPress(member.id, actionId)}>
+                      <View className="flex-row gap-3">
+                        <TouchableOpacity onPress={() => handleApprovePress(member.id)}>
                           <Ionicons
-                            name="ellipsis-horizontal"
-                            size={24}
-                            color="rgba(255, 255, 255, 0.5)"
+                            name="checkmark-circle"
+                            size={32}
+                            color={Colors.systemSuccess}
                           />
-                        </ContextMenu>
-                      </TouchableOpacity>
+                        </TouchableOpacity>
+                        <TouchableOpacity onPress={() => handleDeclinePress(member.id)}>
+                          <Ionicons
+                            name="close-circle"
+                            size={32}
+                            color={Colors.systemDestructive}
+                          />
+                        </TouchableOpacity>
+                      </View>
                     </BlurView>
                   ))}
                 </>
@@ -379,18 +375,7 @@ const AboutCommunityScreen = () => {
           )}
           <Spacer size="small" />
           <View className="flex-row items-center justify-between">
-            <Text
-              type="footnote"
-              style={{
-                textTransform: 'uppercase',
-                color: 'rgba(255, 255, 255, 0.7)',
-                fontWeight: 400,
-                marginLeft: 16,
-                marginBottom: 8,
-                flex: 1,
-              }}>
-              Members ({members.length})
-            </Text>
+            <Label title={`Members (${members.length})`} />
             {members.length > 3 && (
               <TouchableOpacity onPress={toggleAccordion} className="flex-row items-center">
                 <Ionicons
@@ -402,90 +387,88 @@ const AboutCommunityScreen = () => {
               </TouchableOpacity>
             )}
           </View>
-          <View>
-            <View className="flex-row flex-wrap gap-2">
-              {displayedMembers.map((member) => (
-                <BlurView
-                  key={member.id}
-                  tint="light"
-                  intensity={30}
-                  className="rounded-xl flex-row items-center justify-between w-full p-4 overflow-hidden">
-                  <View className="flex-row items-center gap-2">
-                    <Image
-                      key={member.id}
-                      source={{ uri: member.avatar_url }}
-                      contentFit="cover"
-                      style={{ width: 30, height: 30, borderRadius: 30 }}
-                    />
-                    <View>
-                      <Text type="body">{member.username || member.name}</Text>
-                      {member.is_manager && (
-                        <Text type="subhead" style={{ color: Colors.muted }}>
-                          Manager
-                        </Text>
-                      )}
-                    </View>
+          <View className="flex-row flex-wrap gap-2">
+            {displayedMembers.map((member) => (
+              <BlurView
+                key={member.id}
+                tint="light"
+                intensity={30}
+                className="rounded-xl flex-row items-center justify-between w-full p-4 overflow-hidden">
+                <View className="flex-row items-center gap-2">
+                  <Image
+                    key={member.id}
+                    source={{ uri: member.avatar_url }}
+                    contentFit="cover"
+                    style={{ width: 30, height: 30, borderRadius: 30 }}
+                  />
+                  <View>
+                    <Text type="body">{member.username || member.name}</Text>
+                    {member.is_manager && (
+                      <Text type="subhead" style={{ color: Colors.muted }}>
+                        Manager
+                      </Text>
+                    )}
                   </View>
-                  {(isCurrentUserManager || member.id === profile?.id) && (
-                    <TouchableOpacity>
-                      <ContextMenu
-                        itemId={Number(member.id)}
-                        shouldOpenOnLongPress={false}
-                        actions={[
-                          ...(member.id === profile?.id
-                            ? [
-                                {
-                                  id: `leave-${member.id}`,
-                                  title: 'Leave',
-                                  image: Platform.select({
-                                    ios: 'rectangle.portrait.and.arrow.right',
-                                    android: 'ic_menu_close_clear_cancel',
-                                  }),
-                                  imageColor: Colors.systemDestructive,
-                                  attributes: {
-                                    destructive: true,
-                                  },
+                </View>
+                {(isCurrentUserManager || member.id === profile?.id) && (
+                  <TouchableOpacity>
+                    <ContextMenu
+                      itemId={Number(member.id)}
+                      shouldOpenOnLongPress={false}
+                      actions={[
+                        ...(member.id === profile?.id
+                          ? [
+                              {
+                                id: `leave-${member.id}`,
+                                title: 'Leave',
+                                image: Platform.select({
+                                  ios: 'rectangle.portrait.and.arrow.right',
+                                  android: 'ic_menu_close_clear_cancel',
+                                }),
+                                imageColor: Colors.systemDestructive,
+                                attributes: {
+                                  destructive: true,
                                 },
-                              ]
-                            : []),
-                          ...(isCurrentUserManager && !member.is_manager
-                            ? [
-                                {
-                                  id: `manager-${member.id}`,
-                                  title: 'Promote to manager',
-                                  image: Platform.select({
-                                    ios: 'star',
-                                    android: 'ic_menu_star',
-                                  }),
-                                  imageColor: Colors.text,
+                              },
+                            ]
+                          : []),
+                        ...(isCurrentUserManager && !member.is_manager
+                          ? [
+                              {
+                                id: `manager-${member.id}`,
+                                title: 'Promote to manager',
+                                image: Platform.select({
+                                  ios: 'star',
+                                  android: 'ic_menu_star',
+                                }),
+                                imageColor: Colors.text,
+                              },
+                              {
+                                id: `remove-${member.id}`,
+                                title: 'Remove',
+                                image: Platform.select({
+                                  ios: 'trash',
+                                  android: 'ic_menu_delete',
+                                }),
+                                imageColor: Colors.systemDestructive,
+                                attributes: {
+                                  destructive: true,
                                 },
-                                {
-                                  id: `remove-${member.id}`,
-                                  title: 'Remove',
-                                  image: Platform.select({
-                                    ios: 'trash',
-                                    android: 'ic_menu_delete',
-                                  }),
-                                  imageColor: Colors.systemDestructive,
-                                  attributes: {
-                                    destructive: true,
-                                  },
-                                },
-                              ]
-                            : []),
-                        ]}
-                        onPress={(actionId) => handleMemberMenuPress(member.id, actionId)}>
-                        <Ionicons
-                          name="ellipsis-horizontal"
-                          size={24}
-                          color="rgba(255, 255, 255, 0.5)"
-                        />
-                      </ContextMenu>
-                    </TouchableOpacity>
-                  )}
-                </BlurView>
-              ))}
-            </View>
+                              },
+                            ]
+                          : []),
+                      ]}
+                      onPress={(actionId) => handleMemberMenuPress(member.id, actionId)}>
+                      <Ionicons
+                        name="ellipsis-horizontal"
+                        size={24}
+                        color="rgba(255, 255, 255, 0.5)"
+                      />
+                    </ContextMenu>
+                  </TouchableOpacity>
+                )}
+              </BlurView>
+            ))}
           </View>
         </ScrollView>
       </SafeAreaView>

@@ -70,7 +70,8 @@ const RootLayout = () => {
   }
 
   return (
-    <GestureHandlerRootView className="flex-1">
+    <GestureHandlerRootView style={{ flex: 1 }}>
+      <StatusBar style="light" />
       <BottomSheetModalProvider>
         <SessionProvider>
           <CommunityProvider>
@@ -146,7 +147,6 @@ const RootLayout = () => {
                 communityId={communityId}
               />
             )}
-            <StatusBar style="light" />
           </CommunityProvider>
         </SessionProvider>
       </BottomSheetModalProvider>

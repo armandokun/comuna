@@ -9,6 +9,7 @@ const Colors = {
   muted: '#A3A3A3',
   disabled: '#49484D',
   systemDestructive: '#FF453A',
+  systemSuccess: '#34C759',
 }
 
 export { Colors }
