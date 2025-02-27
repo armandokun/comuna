@@ -1,5 +1,5 @@
 import { useCallback, useContext, useEffect, useState } from 'react'
-import { View, SafeAreaView, Alert, ScrollView, TouchableOpacity, Platform } from 'react-native'
+import { View, Alert, ScrollView, TouchableOpacity, Platform, SafeAreaView } from 'react-native'
 import { Image } from 'expo-image'
 import { router } from 'expo-router'
 import { BlurView } from 'expo-blur'
@@ -279,14 +279,10 @@ const AboutCommunityScreen = () => {
   return (
     <BlurView tint="systemChromeMaterialDark" intensity={90} className="flex-1">
       <SafeAreaView className="flex-1">
-        <ScrollView className="px-4">
+        <ScrollView className="px-4" contentContainerClassName="pb-32">
           <View className="px-4 items-center justify-center">
             <Spacer size="medium" />
             <Text type="title1">#{selectedComuna?.name}</Text>
-            <Spacer size="xsmall" />
-            <Text type="body" className="text-center" style={{ color: 'rgba(255, 255, 255, 0.7)' }}>
-              {selectedComuna?.description || 'No description'}
-            </Text>
             <Spacer size="medium" />
             <Text type="subhead" style={{ color: 'rgba(255, 255, 255, 0.7)' }}>
               Managed by
@@ -491,7 +487,6 @@ const AboutCommunityScreen = () => {
               ))}
             </View>
           </View>
-          <Spacer />
         </ScrollView>
       </SafeAreaView>
     </BlurView>
