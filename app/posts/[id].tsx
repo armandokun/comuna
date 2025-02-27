@@ -11,7 +11,7 @@ import {
   Animated,
   SafeAreaView,
 } from 'react-native'
-import { useLocalSearchParams } from 'expo-router'
+import { SplashScreen, useLocalSearchParams } from 'expo-router'
 import React, { useCallback, useContext, useEffect, useRef, useState } from 'react'
 import { Image } from 'expo-image'
 import { BlurView } from 'expo-blur'
@@ -64,6 +64,10 @@ const PostScreen = () => {
     })
   }, [])
 
+  const closeSplashScreen = async () => {
+    await SplashScreen.hideAsync()
+  }
+
   useEffect(() => {
     const fetchPost = async () => {
       const { data, error } = await supabase
@@ -101,6 +105,8 @@ const PostScreen = () => {
           avatar_url: data.author?.avatar_url ?? '',
         },
       })
+
+      closeSplashScreen()
     }
 
     fetchPost()
@@ -180,7 +186,7 @@ const PostScreen = () => {
         style={StyleSheet.absoluteFill}
       />
       <BlurView intensity={80} tint="systemChromeMaterialDark" style={StyleSheet.absoluteFill} />
-      <KeyboardAvoidingView behavior="padding" className="flex-1" keyboardVerticalOffset={60}>
+      <KeyboardAvoidingView behavior="padding" className="flex-1">
         <SafeAreaView className="flex-1">
           <Animated.ScrollView
             ref={scrollViewRef}

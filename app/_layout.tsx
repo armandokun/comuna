@@ -91,8 +91,8 @@ const RootLayout = () => {
               <Stack.Screen
                 name="posts/[id]"
                 options={{
-                  presentation: 'modal',
                   headerTitle: '',
+                  headerBackTitle: 'Home',
                   headerShown: true,
                   headerRight: () => (
                     <TouchableOpacity onPress={handleGoBack}>
