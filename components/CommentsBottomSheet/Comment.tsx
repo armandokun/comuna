@@ -8,7 +8,7 @@ import { Colors } from '@/constants/colors'
 import { getRelativeTimeFromNow } from '@/libs/date'
 import Text from '@/components/ui/Text'
 import { supabase } from '@/libs/supabase'
-import amplitude from '@/libs/amplitude'
+import mixpanel from '@/libs/mixpanel'
 
 type Props = {
   id: number
@@ -40,9 +40,10 @@ const Comment = ({ id, currentUserId, content, createdAt, author, likes }: Props
     if (isLiked) {
       decrementLikesCount()
 
-      amplitude.track('Engage', {
-        'Engagement Type': 'Unlike',
+      mixpanel.track('Engage', {
         'Content Type': 'Comment',
+        'Engagement Type': 'Unlike',
+        'Comment Id': id.toString(),
       })
 
       const { error } = await supabase.rpc('unlike_comment', {
@@ -60,9 +61,10 @@ const Comment = ({ id, currentUserId, content, createdAt, author, likes }: Props
 
     incrementLikesCount()
 
-    amplitude.track('Engage', {
-      'Engagement Type': 'Like',
+    mixpanel.track('Engage', {
       'Content Type': 'Comment',
+      'Engagement Type': 'Like',
+      'Comment Id': id.toString(),
     })
 
     const { error } = await supabase.rpc('like_comment', {

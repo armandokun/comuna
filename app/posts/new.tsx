@@ -6,7 +6,7 @@ import React, { useCallback, useContext, useEffect, useState } from 'react'
 import { Image } from 'expo-image'
 import { LinearGradient } from 'expo-linear-gradient'
 
-import amplitude from '@/libs/amplitude'
+import mixpanel from '@/libs/mixpanel'
 import { supabase } from '@/libs/supabase'
 import { Colors } from '@/constants/colors'
 import { HOME } from '@/constants/routes'
@@ -39,20 +39,25 @@ const NewScreen = () => {
 
       if (blurhashError) Alert.alert('Error generating blurhash', blurhashError.message)
 
-      const { error } = await supabase.from('posts').insert({
-        image_url: imageUrl.toString(),
-        description,
-        image_blurhash: data?.blurhash,
-        community_id: selectedComuna?.id,
-      })
+      const { data: postData, error } = await supabase
+        .from('posts')
+        .insert({
+          image_url: imageUrl.toString(),
+          description,
+          image_blurhash: data?.blurhash,
+          community_id: selectedComuna?.id,
+        })
+        .select('id')
+        .single()
 
       if (error) Alert.alert('Error uploading image', error.message)
 
       setIsUploading(false)
 
-      amplitude.track('Engage', {
+      mixpanel.track('Engage', {
+        'Content Type': 'Post',
         'Engagement Type': 'New Post',
-        'Content Type': 'Image',
+        'Post Id': postData?.id,
       })
 
       router.replace(HOME)

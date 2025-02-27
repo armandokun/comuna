@@ -6,7 +6,7 @@ import { SplashScreen } from 'expo-router'
 import { Image } from 'expo-image'
 import Animated, { FadeIn, FadeOut } from 'react-native-reanimated'
 
-import amplitude from '@/libs/amplitude'
+import mixpanel from '@/libs/mixpanel'
 import { supabase } from '@/libs/supabase'
 import { SessionContext } from '@/containers/SessionProvider'
 import { CommunityContext } from '@/containers/CommunityProvider'
@@ -117,9 +117,10 @@ const HomeScreen = () => {
       if (startIndex === 0) {
         setBackgroundBlurhash(data[0].image_blurhash ?? '')
 
-        amplitude.track('Post Viewed', {
-          'Post ID': data[0].id,
-          'Community ID': selectedComuna.id,
+        mixpanel.track('Engage', {
+          'Content Type': 'Post',
+          'Engagement Type': 'View',
+          'Post Id': data[0].id,
         })
       }
 

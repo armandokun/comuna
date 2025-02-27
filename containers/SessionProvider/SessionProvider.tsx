@@ -2,7 +2,7 @@ import { Alert } from 'react-native'
 import { Session } from '@supabase/supabase-js'
 import React, { useState, useEffect, ReactNode, useCallback, useMemo } from 'react'
 
-import amplitude from '@/libs/amplitude'
+import mixpanel from '@/libs/mixpanel'
 import { supabase } from '@/libs/supabase'
 import { Profile } from '@/types/profile'
 
@@ -45,7 +45,7 @@ const SessionProvider = ({ children }: Props) => {
 
     if (error) Alert.alert(error.message)
 
-    amplitude.setUserId(session?.user.id)
+    mixpanel.identify(session?.user.id)
 
     setProfile(data)
     setIsProfileFetched(true)

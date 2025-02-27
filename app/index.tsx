@@ -3,9 +3,9 @@ import { router, SplashScreen } from 'expo-router'
 import React, { ComponentProps, useContext, useEffect } from 'react'
 import { Ionicons } from '@expo/vector-icons'
 
+import mixpanel from '@/libs/mixpanel'
 import { mockSignIn } from '@/libs/auth'
 import { signInWithApple } from '@/libs/apple'
-import amplitude from '@/libs/amplitude'
 import { HOME } from '@/constants/routes'
 import Text from '@/components/ui/Text'
 import { SessionContext } from '@/containers/SessionProvider'
@@ -62,7 +62,7 @@ const LoginScreen = () => {
   ]
 
   const handleSignIn = (providerName: string, onPress: () => void) => {
-    amplitude.track('Sign In', { provider: providerName })
+    mixpanel.track('Sign In', { Provider: providerName })
 
     onPress()
   }

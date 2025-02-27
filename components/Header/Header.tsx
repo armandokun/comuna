@@ -21,7 +21,7 @@ import { SELECTED_COMMUNITY_KEY } from '@/constants/async-storage'
 import { SessionContext } from '@/containers/SessionProvider'
 import { CommunityContext } from '@/containers/CommunityProvider'
 import { signOut } from '@/libs/auth'
-import amplitude from '@/libs/amplitude'
+import mixpanel from '@/libs/mixpanel'
 import usePushNotifications from '@/hooks/usePushNotifications'
 
 import GradientBlur from '../GradientBlur'
@@ -68,7 +68,7 @@ const Header = ({ headerRef, headerHeight }: Props) => {
   const handleProfileContextMenuPress = async (actionId: string) => {
     switch (actionId) {
       case 'sign-out':
-        amplitude.track('Sign Out')
+        mixpanel.track('Sign Out')
 
         signOut(() => router.replace(AUTH))
 

@@ -4,7 +4,7 @@ import { Image } from 'expo-image'
 import { BottomSheetTextInput } from '@gorhom/bottom-sheet'
 
 import { supabase } from '@/libs/supabase'
-import amplitude from '@/libs/amplitude'
+import mixpanel from '@/libs/mixpanel'
 import Text from '@/components/ui/Text'
 import BottomSheet from '@/components/ui/BottomSheet'
 import { CommentWithLikes } from '@/types/posts'
@@ -117,9 +117,10 @@ const CommentsBottomSheet = ({ show, postId, onClose }: Props) => {
     if (!postId) return
     if (!content.trim()) return
 
-    amplitude.track('Engage', {
-      'Engagement Type': 'Add Comment',
+    mixpanel.track('Engage', {
       'Content Type': 'Comment',
+      'Engagement Type': 'Add Comment',
+      'Post Id': postId.toString(),
     })
 
     const { error } = await supabase.from('comments').insert({

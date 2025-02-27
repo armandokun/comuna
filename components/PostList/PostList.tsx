@@ -4,10 +4,11 @@ import Animated, {
   useAnimatedScrollHandler,
   runOnJS,
 } from 'react-native-reanimated'
-import React, { ForwardedRef, forwardRef, useState } from 'react'
+import React, { ForwardedRef, forwardRef, useEffect, useState } from 'react'
 
-import amplitude from '@/libs/amplitude'
 import { Post as PostType } from '@/types/posts'
+
+import mixpanel from '@/libs/mixpanel'
 
 import Post from '../Post'
 import CommentsBottomSheet from '../CommentsBottomSheet'
@@ -46,6 +47,17 @@ const PostList = forwardRef(
 
     const ITEM_SIZE = height - headerHeight
 
+    useEffect(() => {
+      if (!visiblePostIndex || visiblePostIndex === 0) return
+      if (!data[visiblePostIndex]) return
+
+      mixpanel.track('Engage', {
+        'Content Type': 'Post',
+        'Engagement Type': 'View',
+        'Post Id': data[visiblePostIndex].id.toString(),
+      })
+    }, [data, visiblePostIndex])
+
     const onScroll = useAnimatedScrollHandler((e) => {
       scrollY.value = e.contentOffset.y / ITEM_SIZE
 
@@ -58,9 +70,6 @@ const PostList = forwardRef(
 
       runOnJS(setVisiblePostIndex)(assumedIndex)
       runOnJS(onVisibleItemChange)(data[assumedIndex].image_blurhash || '')
-      runOnJS(amplitude.track)('Post Viewed', {
-        'Post ID': data[assumedIndex].id,
-      })
     })
 
     return (

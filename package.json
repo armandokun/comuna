@@ -20,7 +20,6 @@
     "preset": "jest-expo"
   },
   "dependencies": {
-    "@amplitude/analytics-react-native": "^1.4.11",
     "@expo/vector-icons": "^14.0.2",
     "@faker-js/faker": "^9.4.0",
     "@gorhom/bottom-sheet": "^5.1.1",
@@ -56,6 +55,7 @@
     "expo-system-ui": "~4.0.8",
     "expo-video": "~2.0.5",
     "expo-web-browser": "~14.0.2",
+    "mixpanel-react-native": "^3.0.8",
     "nativewind": "^4.1.23",
     "react": "18.3.1",
     "react-dom": "18.3.1",

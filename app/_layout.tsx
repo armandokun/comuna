@@ -9,7 +9,7 @@ import { Ionicons } from '@expo/vector-icons'
 import { useEffect } from 'react'
 import * as Notifications from 'expo-notifications'
 
-import amplitude from '@/libs/amplitude'
+import mixpanel from '@/libs/mixpanel'
 import { HOME } from '@/constants/routes'
 import { Colors } from '@/constants/colors'
 import SessionProvider from '@/containers/SessionProvider'
@@ -40,7 +40,7 @@ const RootLayout = () => {
 
     if (!currentRoute) return
 
-    amplitude.track('Page Viewed', {
+    mixpanel.track('Page View', {
       'Page Name': currentRoute,
     })
   }, [navigation])
