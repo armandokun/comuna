@@ -85,10 +85,10 @@ const Comment = ({ id, currentUserId, content, createdAt, author, likes }: Props
   }
 
   return (
-    <View key={id} className="flex-row items-start gap-2">
+    <View key={id} className="flex-row items-center gap-2">
       <Image
         source={{ uri: author.avatarUrl }}
-        style={{ width: 36, height: 36, borderRadius: 36, marginTop: 6 }}
+        style={{ width: 36, height: 36, borderRadius: 36, marginTop: 6, alignSelf: 'flex-start' }}
         contentFit="cover"
       />
       <View className="flex-1 gap-1">
