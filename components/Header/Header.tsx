@@ -100,7 +100,7 @@ const Header = ({ headerRef, headerHeight }: Props) => {
   }
 
   return (
-    <GradientBlur position="top" height={insets.top + headerHeight + 50}>
+    <GradientBlur position="top" height={insets.top + headerHeight + 25}>
       <SafeAreaView style={{ position: 'absolute', width: '100%', zIndex: 10 }}>
         <View ref={headerRef} className="px-4 pb-4 justify-between items-center flex-row">
           <TouchableOpacity>

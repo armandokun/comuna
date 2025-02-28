@@ -1,16 +1,24 @@
-import { Dimensions, TouchableOpacity, View } from 'react-native'
+import { Alert, Dimensions, Platform, TouchableOpacity, View } from 'react-native'
 import { LinearGradient } from 'expo-linear-gradient'
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useContext, useEffect, useRef, useState } from 'react'
 import { Image } from 'expo-image'
 import Animated from 'react-native-reanimated'
 import { SnapbackZoom } from 'react-native-zoom-toolkit'
+import { Ionicons } from '@expo/vector-icons'
+
+import { router } from 'expo-router'
 
 import Text from '@/components/ui/Text'
 import { Post as PostType } from '@/types/posts'
 import { Colors } from '@/constants/colors'
+import { SessionContext } from '@/containers/SessionProvider'
+import { supabase } from '@/libs/supabase'
+
+import { HOME } from '@/constants/routes'
 
 import GradientBlur from '../GradientBlur'
 import VideoPost from './Video'
+import ContextMenu from '../ui/ContextMenu'
 
 type Props = {
   item: PostType
@@ -22,6 +30,8 @@ const Post = ({ item, onPress, isVisible }: Props) => {
   const [descriptionHeight, setDescriptionHeight] = useState(0)
   const [commentContainerHeight, setCommentContainerHeight] = useState(0)
   const [imageDimensions, setImageDimensions] = useState({ width: 0, height: 0 })
+
+  const { profile } = useContext(SessionContext)
 
   const descriptionRef = useRef<View>(null)
   const commentContainerRef = useRef<View>(null)
@@ -56,6 +66,26 @@ const Post = ({ item, onPress, isVisible }: Props) => {
       setImageDimensions({ width, height: IMAGE_SIZE })
     })
   }, [IMAGE_SIZE])
+
+  const deletePost = async () => {
+    const { error } = await supabase.from('posts').delete().eq('id', item.id)
+
+    if (error) Alert.alert('Error deleting post', error.message)
+
+    router.replace(HOME)
+  }
+
+  const handleContextMenuPress = (actionId: string) => {
+    switch (actionId) {
+      case `delete-${item.id}`:
+        Alert.alert('Delete post', 'Are you sure you want to delete this post?', [
+          { text: 'Cancel', style: 'cancel' },
+          { text: 'Delete', style: 'destructive', onPress: deletePost },
+        ])
+
+        break
+    }
+  }
 
   return (
     <Animated.View
@@ -93,26 +123,42 @@ const Post = ({ item, onPress, isVisible }: Props) => {
           </GradientBlur>
           <View className="absolute w-full gap-4">
             <LinearGradient colors={['rgba(0,0,0,0.6)', 'transparent']} locations={[0, 1]}>
-              <View className="flex-row items-center gap-2 p-4">
-                <Image
-                  source={{ uri: `${item.author.avatar_url}?width=32&height=32` }}
-                  contentFit="cover"
-                  style={{ width: 32, height: 32, borderRadius: 32 }}
-                />
-                <Text type="subhead" className="text-white">
-                  {item.author.username || item.author.name}
-                </Text>
-                {item.author.name === 'Tadas Audinis' && (
-                  <View className="flex-row items-center gap-1 py-1 pl-2 pr-3 rounded-full overflow-hidden border border-black bg-white">
-                    <Image
-                      source={require('@/assets/images/dr-pepper-badge-icon.gif')}
-                      contentFit="contain"
-                      style={{ width: 24, height: 24 }}
-                    />
-                    <Text type="subhead" style={{ color: Colors.background }}>
-                      dr. pepper
-                    </Text>
-                  </View>
+              <View className="flex-row items-center justify-between p-4">
+                <View className="flex-row items-center gap-2">
+                  <Image
+                    source={{ uri: `${item.author.avatar_url}?width=32&height=32` }}
+                    contentFit="cover"
+                    style={{ width: 32, height: 32, borderRadius: 32 }}
+                  />
+                  <Text type="subhead" style={{ color: 'white' }}>
+                    {item.author.username || item.author.name}
+                  </Text>
+                </View>
+                {item.author.id === profile?.id && (
+                  <TouchableOpacity className="p-1 rounded-full">
+                    <ContextMenu
+                      itemId={item.id}
+                      onPress={handleContextMenuPress}
+                      shouldOpenOnLongPress={false}
+                      actions={[
+                        {
+                          id: `delete-${item.id}`,
+                          title: 'Delete',
+                          image: Platform.select({
+                            ios: 'trash',
+                            android: 'ic_menu_delete',
+                          }),
+                          imageColor: Colors.systemDestructive,
+                          attributes: {
+                            destructive: true,
+                          },
+                        },
+                      ]}>
+                      <View className="p-1 rounded-full">
+                        <Ionicons name="ellipsis-horizontal" size={24} color="white" />
+                      </View>
+                    </ContextMenu>
+                  </TouchableOpacity>
                 )}
               </View>
             </LinearGradient>
