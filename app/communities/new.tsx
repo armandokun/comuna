@@ -41,10 +41,12 @@ const NewCommunityScreen = () => {
 
       setIsLoading(true)
 
+      const communityName = name.trim().toLowerCase()
+
       const { data, error } = await supabase
         .from('communities')
         .insert({
-          name,
+          name: communityName,
         })
         .select()
         .single()
