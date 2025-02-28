@@ -1,28 +1,16 @@
-import { RefObject, useContext, useEffect, useState } from 'react'
-import {
-  Platform,
-  TouchableOpacity,
-  SafeAreaView,
-  View,
-  Linking,
-  AppState,
-  AppStateStatus,
-} from 'react-native'
+import { RefObject, useContext } from 'react'
+import { Platform, TouchableOpacity, SafeAreaView, View } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { Image } from 'expo-image'
-import * as Notifications from 'expo-notifications'
 import { router } from 'expo-router'
 import { Ionicons } from '@expo/vector-icons'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 
-import { ABOUT_COMMUNITY, AUTH, NEW_COMMUNITY } from '@/constants/routes'
+import { ABOUT_COMMUNITY, NEW_COMMUNITY, PROFILE_SETTINGS } from '@/constants/routes'
 import { Colors } from '@/constants/colors'
 import { SELECTED_COMMUNITY_KEY } from '@/constants/async-storage'
 import { SessionContext } from '@/containers/SessionProvider'
 import { CommunityContext } from '@/containers/CommunityProvider'
-import { signOut } from '@/libs/auth'
-import mixpanel from '@/libs/mixpanel'
-import usePushNotifications from '@/hooks/usePushNotifications'
 
 import GradientBlur from '../GradientBlur'
 import ImagePickerButton from '../ImagePickerButton'
@@ -35,52 +23,10 @@ type Props = {
 }
 
 const Header = ({ headerRef, headerHeight }: Props) => {
-  const [notificationStatus, setNotificationStatus] =
-    useState<Notifications.PermissionStatus | null>(null)
-  const [appState, setAppState] = useState<AppStateStatus | null>(null)
-
   const { profile } = useContext(SessionContext)
   const { comunas, selectedComuna, setSelectedComuna } = useContext(CommunityContext)
 
   const insets = useSafeAreaInsets()
-  const { checkPermissions, registerForPushNotifications } = usePushNotifications()
-
-  useEffect(() => {
-    const getNotificationStatus = async () => {
-      const status = await checkPermissions()
-
-      setNotificationStatus(status ?? null)
-    }
-
-    getNotificationStatus()
-
-    const handleAppStateChange = (nextAppState: typeof AppState.currentState) => {
-      if (appState?.match(/inactive|background/) && nextAppState === 'active') {
-        getNotificationStatus()
-      }
-
-      setAppState(nextAppState)
-    }
-
-    AppState.addEventListener('change', handleAppStateChange)
-  }, [appState, checkPermissions])
-
-  const handleProfileContextMenuPress = async (actionId: string) => {
-    switch (actionId) {
-      case 'sign-out':
-        mixpanel.track('Sign Out')
-
-        signOut(() => router.replace(AUTH))
-
-        break
-      case 'notifications':
-        await registerForPushNotifications(profile?.id!)
-
-        Linking.openSettings()
-
-        break
-    }
-  }
 
   const handleCommunityContextMenuPress = async (actionId: string) => {
     if (!comunas.length) return
@@ -144,41 +90,12 @@ const Header = ({ headerRef, headerHeight }: Props) => {
               <Ionicons name="people-circle-outline" size={40} color={Colors.text} />
             </TouchableOpacity>
             <ImagePickerButton />
-            <TouchableOpacity className="pl-1">
-              <ContextMenu
-                itemId={1}
-                shouldOpenOnLongPress={false}
-                onPress={handleProfileContextMenuPress}
-                actions={[
-                  {
-                    id: 'notifications',
-                    title: 'Notifications',
-                    image: Platform.select({
-                      ios: 'bell',
-                      android: 'ic_menu_manage_all',
-                    }),
-                    state: notificationStatus === 'granted' ? 'on' : 'off',
-                    imageColor: Colors.text,
-                  },
-                  {
-                    id: 'sign-out',
-                    title: 'Sign out',
-                    image: Platform.select({
-                      ios: 'rectangle.portrait.and.arrow.right',
-                      android: 'ic_menu_logout',
-                    }),
-                    imageColor: Colors.systemDestructive,
-                    attributes: {
-                      destructive: true,
-                    },
-                  },
-                ]}>
-                <Image
-                  source={{ uri: `${profile?.avatar_url}?width=50&height=50` }}
-                  contentFit="cover"
-                  style={{ width: 36, height: 36, borderRadius: 36 }}
-                />
-              </ContextMenu>
+            <TouchableOpacity className="pl-1" onPress={() => router.push(PROFILE_SETTINGS)}>
+              <Image
+                source={{ uri: `${profile?.avatar_url}?width=50&height=50` }}
+                contentFit="cover"
+                style={{ width: 36, height: 36, borderRadius: 36 }}
+              />
             </TouchableOpacity>
           </View>
         </View>

@@ -18,6 +18,7 @@ const Content = ({ size, onPress, prefix, title, subtitle, suffix }: Props) => {
       case 'medium':
         return 12
       case 'large':
+        return 16
       case 'small':
         return 4
       case 'tiny':
@@ -28,10 +29,9 @@ const Content = ({ size, onPress, prefix, title, subtitle, suffix }: Props) => {
   }
 
   return (
-    <View className="flex-row items-center justify-between" style={{ paddingVertical: getSize() }}>
+    <View className="flex-row items-center justify-between" style={{ padding: getSize() }}>
       <View pointerEvents={onPress ? 'none' : 'auto'}>{prefix}</View>
       <Spacer orientation="horizontal" size="xsmall" />
-      <Spacer orientation="horizontal" size="xxsmall" />
       <View className="flex-1">
         {title}
         {subtitle}

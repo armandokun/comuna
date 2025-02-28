@@ -203,6 +203,44 @@ export type Database = {
           },
         ]
       }
+      feedback: {
+        Row: {
+          build: string | null
+          created_at: string
+          feedback: string | null
+          id: number
+          type: string | null
+          user_id: string | null
+          version: string | null
+        }
+        Insert: {
+          build?: string | null
+          created_at?: string
+          feedback?: string | null
+          id?: number
+          type?: string | null
+          user_id?: string | null
+          version?: string | null
+        }
+        Update: {
+          build?: string | null
+          created_at?: string
+          feedback?: string | null
+          id?: number
+          type?: string | null
+          user_id?: string | null
+          version?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: 'feedback_user_id_fkey'
+            columns: ['user_id']
+            isOneToOne: false
+            referencedRelation: 'profiles'
+            referencedColumns: ['id']
+          },
+        ]
+      }
       notifications: {
         Row: {
           body: string | null

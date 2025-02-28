@@ -139,6 +139,38 @@ const RootLayout = () => {
                   ),
                 }}
               />
+              <Stack.Screen
+                name="profile/settings/index"
+                options={{
+                  presentation: 'modal',
+                  headerShown: true,
+                  headerTitle: 'Settings',
+                  headerLeft: () => (
+                    <TouchableOpacity onPress={handleGoBack}>
+                      <Ionicons name="close-circle" size={36} color={Colors.text} />
+                    </TouchableOpacity>
+                  ),
+                  contentStyle: {
+                    backgroundColor: 'transparent',
+                  },
+                }}
+              />
+              <Stack.Screen
+                name="profile/settings/feedback"
+                options={{
+                  presentation: 'modal',
+                  headerShown: true,
+                  headerTitle: 'Feedback',
+                  contentStyle: {
+                    backgroundColor: 'transparent',
+                  },
+                  headerLeft: () => (
+                    <TouchableOpacity onPress={handleGoBack}>
+                      <Ionicons name="close-circle" size={36} color={Colors.text} />
+                    </TouchableOpacity>
+                  ),
+                }}
+              />
             </Stack>
             {isInviteSheetOpen && (
               <InviteSheet
