@@ -52,11 +52,7 @@ const CommunityProvider = ({ children }: Props) => {
       .select(
         `
         is_approved,
-        community:communities (
-          id,
-          name,
-          description
-        )
+        community: communities(*)
       `,
       )
       .eq('user_id', profile.id)

@@ -137,19 +137,13 @@ const AboutCommunityScreen = () => {
       return
     }
 
-    const isLastMember = members.length === 1
+    const otherComunas = comunas.filter((comuna) => comuna.id !== selectedComuna?.id)
 
-    if (isLastMember) {
-      const otherComunas = comunas.filter((comuna) => comuna.id !== selectedComuna?.id)
+    setComunas(otherComunas)
 
-      if (otherComunas) {
-        setComunas(otherComunas)
+    await AsyncStorage.setItem(SELECTED_COMMUNITY_KEY, otherComunas[0].id.toString())
 
-        await AsyncStorage.setItem(SELECTED_COMMUNITY_KEY, otherComunas[0].id.toString())
-
-        setSelectedComuna(otherComunas[0])
-      }
-    }
+    setSelectedComuna(otherComunas[0])
 
     router.replace(HOME)
   }

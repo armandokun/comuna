@@ -2,6 +2,7 @@ type Comuna = {
   id: number
   name: string
   description: string
+  requires_member_approval: boolean
 }
 
 type ComunaMember = {

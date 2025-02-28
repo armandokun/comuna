@@ -83,9 +83,11 @@ const InviteSheet = ({ show, onClose, communityId }: Props) => {
 
     setIsRequesting(true)
 
-    const { error } = await supabase
-      .from('community_members')
-      .insert({ community_id: communityId, user_id: profile?.id, is_approved: false })
+    const { error } = await supabase.from('community_members').insert({
+      community_id: communityId,
+      user_id: profile?.id,
+      is_approved: !community?.requires_member_approval,
+    })
 
     if (error) Alert.alert('Error requesting to join community', error.message)
 
@@ -94,12 +96,22 @@ const InviteSheet = ({ show, onClose, communityId }: Props) => {
   }
 
   const getActionButton = () => {
-    const isMemberAlready = community?.community_members?.some(
+    const isAlreadyMember = community?.community_members?.some(
       (member) => member.user_id === profile?.id,
     )
     const isRequestedToJoin = community?.community_members?.some(
       (member) => member.user_id === profile?.id && !member.is_approved,
     )
+
+    if (hasRequested && !community?.requires_member_approval) {
+      return (
+        <View className="flex-row items-center gap-2 my-4">
+          <Text type="body" style={{ color: 'rgba(255, 255, 255, 0.7)' }} className="text-center">
+            Congratulations! 🎉 You are now a member of this community.
+          </Text>
+        </View>
+      )
+    }
 
     if (isRequestedToJoin || hasRequested) {
       return (
@@ -113,7 +125,7 @@ const InviteSheet = ({ show, onClose, communityId }: Props) => {
       )
     }
 
-    if (isMemberAlready) {
+    if (isAlreadyMember) {
       return (
         <View className="flex-row items-center gap-2 my-4">
           <Text type="body" style={{ color: 'rgba(255, 255, 255, 0.7)' }}>
@@ -131,12 +143,14 @@ const InviteSheet = ({ show, onClose, communityId }: Props) => {
             className="flex-row items-center gap-2 bg-text p-2 px-4 rounded-full">
             <Ionicons name="enter-outline" size={26} color={Colors.background} />
             <Text type="button" style={{ color: Colors.background }}>
-              Request to Join
+              {community?.requires_member_approval ? 'Request to Join' : 'Join'}
             </Text>
           </TouchableOpacity>
         </View>
         <Text type="footnote" style={{ color: 'rgba(255, 255, 255, 0.7)' }} className="text-center">
-          Once you request to join, the community manager will review your request.
+          {community?.requires_member_approval
+            ? 'Once you request to join, the community manager will review your request.'
+            : 'Once you join, you will be able to see the community posts and interact with the community members.'}
         </Text>
       </>
     )
@@ -144,17 +158,15 @@ const InviteSheet = ({ show, onClose, communityId }: Props) => {
 
   if (!communityId) return null
 
+  const requiresMemberApproval = community?.requires_member_approval
+
   return (
     <>
-      <BottomSheet show={show} onBackdropPress={onClose}>
+      <BottomSheet show={show} onBackdropPress={onClose} enableDynamicSizing snapPoints={undefined}>
         <View className="flex-1 px-4 items-center justify-center">
           <Spacer size="medium" />
           <Text type="title1" className="text-white">
             #{community?.name}
-          </Text>
-          <Spacer size="xsmall" />
-          <Text type="body" className="text-center" style={{ color: 'rgba(255, 255, 255, 0.7)' }}>
-            {community?.description || 'No description'}
           </Text>
           <Spacer size="medium" />
           <Text type="subhead" style={{ color: 'rgba(255, 255, 255, 0.7)' }}>
@@ -177,8 +189,12 @@ const InviteSheet = ({ show, onClose, communityId }: Props) => {
           <Spacer size="medium" />
           {getActionButton()}
         </View>
+        <Spacer />
       </BottomSheet>
-      <FullScreenLoader title="Requesting to join community..." show={isRequesting} />
+      <FullScreenLoader
+        title={requiresMemberApproval ? 'Requesting to join community...' : 'Joining community...'}
+        show={isRequesting}
+      />
     </>
   )
 }
