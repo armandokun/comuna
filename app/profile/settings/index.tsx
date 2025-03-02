@@ -114,11 +114,13 @@ const Settings = () => {
                 style={{ width: 50, height: 50, borderRadius: 25 }}
               />
             }
-            title={<Text type="title3">{profile?.name}</Text>}
+            title={<Text type="title3">{profile?.name || profile?.username}</Text>}
             subtitle={
-              <Text type="body" style={{ color: 'rgba(255, 255, 255, 0.7)' }}>
-                @{profile?.username}
-              </Text>
+              profile?.name ? (
+                <Text type="body" style={{ color: 'rgba(255, 255, 255, 0.7)' }}>
+                  @{profile?.username}
+                </Text>
+              ) : null
             }
           />
         </BlurView>
