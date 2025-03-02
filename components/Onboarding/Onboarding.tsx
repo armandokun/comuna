@@ -40,7 +40,7 @@ const Onboarding = ({ isVisible, onDismiss }: Props) => {
   const [isLoading, setIsLoading] = useState(false)
   const [notificationsEnabled, setNotificationsEnabled] = useState(false)
 
-  const { profile } = useContext(SessionContext)
+  const { profile, setProfileUsername, setProfileAvatar } = useContext(SessionContext)
   const usernameInput = useRef<TextInput>(null)
 
   const { registerForPushNotifications, checkPermissions } = usePushNotifications()
@@ -80,6 +80,8 @@ const Onboarding = ({ isVisible, onDismiss }: Props) => {
       Alert.alert('Username already taken', 'Please choose another username.')
 
       setIsLoading(false)
+
+      setProfileUsername(username)
 
       return
     }
@@ -147,6 +149,8 @@ const Onboarding = ({ isVisible, onDismiss }: Props) => {
     if (error) Alert.alert('Error updating profile picture', error.message)
 
     onPress()
+
+    setProfileAvatar(publicUrl)
 
     setIsLoading(false)
   }

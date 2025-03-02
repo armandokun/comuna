@@ -18,6 +18,24 @@ const SessionProvider = ({ children }: Props) => {
   const [isSessionFetched, setIsSessionFetched] = useState(false)
   const [isProfileFetched, setIsProfileFetched] = useState(false)
 
+  const setProfileUsername = useCallback(
+    (username: string) => {
+      if (!profile) return
+
+      setProfile({ ...profile, username })
+    },
+    [profile],
+  )
+
+  const setProfileAvatar = useCallback(
+    (avatar: string) => {
+      if (!profile) return
+
+      setProfile({ ...profile, avatar_url: avatar })
+    },
+    [profile],
+  )
+
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session: sessionData } }) => {
       setSession(sessionData)
@@ -84,8 +102,10 @@ const SessionProvider = ({ children }: Props) => {
       isSessionFetched,
       profile,
       isProfileFetched,
+      setProfileUsername,
+      setProfileAvatar,
     }),
-    [session, isSessionFetched, profile, isProfileFetched],
+    [session, isSessionFetched, profile, isProfileFetched, setProfileUsername, setProfileAvatar],
   )
 
   return <SessionContext.Provider value={values}>{children}</SessionContext.Provider>

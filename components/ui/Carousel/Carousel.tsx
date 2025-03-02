@@ -37,8 +37,6 @@ const Carousel = ({ slides, onSlideChange, onSkip }: Props) => {
   const [activeIndex, setActiveIndex] = useState(0)
   const [backgroundImage, setBackgroundImage] = useState<string | null>(null)
 
-  console.log({ activeIndex })
-
   const scrollX = useSharedValue(0)
   const scrollViewRef = useRef<Animated.ScrollView>(null)
 
@@ -105,6 +103,7 @@ const Carousel = ({ slides, onSlideChange, onSkip }: Props) => {
             ref={scrollViewRef}
             horizontal
             pagingEnabled
+            scrollEnabled={false}
             onScroll={scrollHandler}
             scrollEventThrottle={16}
             showsHorizontalScrollIndicator={false}>
