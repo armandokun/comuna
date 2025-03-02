@@ -87,7 +87,7 @@ const NewCommunityScreen = () => {
   return (
     <>
       <Image
-        source={require('@/assets/images/onboarding-background.png')}
+        source={require('@/assets/images/onboarding-background-1.png')}
         style={StyleSheet.absoluteFillObject}
         contentFit="cover"
       />

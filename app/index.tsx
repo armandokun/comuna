@@ -106,7 +106,7 @@ const LoginScreen = () => {
         />
       </Animated.View>
       <BlurView intensity={80} tint="systemMaterialDark" style={StyleSheet.absoluteFill} />
-      <View className="flex-1 justify-center">
+      <Animated.View className="flex-1 justify-center">
         <Marquee
           direction="horizontal"
           spacing={16}
@@ -165,7 +165,7 @@ const LoginScreen = () => {
             ))}
           </View>
         </Stagger>
-      </View>
+      </Animated.View>
     </View>
   )
 }

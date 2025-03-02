@@ -5,7 +5,7 @@ import Text from '../Text'
 import Spacer from '../Spacer'
 
 type Props = {
-  title: string
+  title?: string
   subtitle?: string
   media?: ReactNode
   mediaPosition?: 'top' | 'bottom'
@@ -14,9 +14,11 @@ type Props = {
 const Slide = ({ title, subtitle, mediaPosition, media }: Props) => (
   <View className="justify-center items-center flex-1 p-6">
     {mediaPosition === 'top' && media}
-    <Text className="items-center text-center" type="heading">
-      {title}
-    </Text>
+    {title && (
+      <Text className="items-center text-center" type="heading">
+        {title}
+      </Text>
+    )}
     {subtitle && (
       <>
         <Spacer size="small" />

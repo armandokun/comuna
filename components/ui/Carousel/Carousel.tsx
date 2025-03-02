@@ -4,7 +4,10 @@ import Animated, {
   useSharedValue,
   useAnimatedScrollHandler,
   runOnJS,
+  FadeIn,
+  FadeOut,
 } from 'react-native-reanimated'
+import { Image } from 'expo-image'
 import { SafeAreaView } from 'react-native-safe-area-context'
 
 import { BlurView } from 'expo-blur'
@@ -16,13 +19,15 @@ const { width: SCREEN_WIDTH } = Dimensions.get('window')
 
 type Props = {
   slides: Array<{
-    title: string
+    id: string
+    title?: string
     subtitle?: string
     mediaPosition?: 'top' | 'bottom'
     media?: ReactNode
     actionLabel?: string
     onActionPress?: (onPress: () => void) => Promise<void> | void
     actionDisabled?: boolean
+    backgroundImage: string
   }>
   onSlideChange?: (index: number) => void
   onSkip?: () => void
@@ -30,6 +35,9 @@ type Props = {
 
 const Carousel = ({ slides, onSlideChange, onSkip }: Props) => {
   const [activeIndex, setActiveIndex] = useState(0)
+  const [backgroundImage, setBackgroundImage] = useState<string | null>(null)
+
+  console.log({ activeIndex })
 
   const scrollX = useSharedValue(0)
   const scrollViewRef = useRef<Animated.ScrollView>(null)
@@ -39,6 +47,12 @@ const Carousel = ({ slides, onSlideChange, onSkip }: Props) => {
 
     onSlideChange(activeIndex)
   }, [activeIndex, onSlideChange])
+
+  useEffect(() => {
+    if (!slides[activeIndex].backgroundImage) return
+
+    setBackgroundImage(slides[activeIndex].backgroundImage)
+  }, [activeIndex, slides])
 
   const scrollHandler = useAnimatedScrollHandler({
     onScroll: (event) => {
@@ -73,12 +87,18 @@ const Carousel = ({ slides, onSlideChange, onSkip }: Props) => {
 
   return (
     <>
-      <Animated.Image
-        className="absolute inset-0 w-full h-full"
-        source={require('@/assets/images/onboarding-background.png')}
-        resizeMode="cover"
-      />
-      <BlurView intensity={80} tint="systemChromeMaterialDark" style={StyleSheet.absoluteFill} />
+      <Animated.View
+        entering={FadeIn.duration(400)}
+        exiting={FadeOut.duration(250).delay(200)}
+        style={StyleSheet.absoluteFill}>
+        <Image
+          source={backgroundImage || require('@/assets/images/onboarding-background-1.png')}
+          style={StyleSheet.absoluteFill}
+          contentFit="cover"
+          transition={250}
+        />
+      </Animated.View>
+      <BlurView intensity={80} tint="systemMaterialDark" style={StyleSheet.absoluteFill} />
       <SafeAreaView className="flex-1">
         <Animated.View className="flex-1">
           <Animated.ScrollView
@@ -89,7 +109,7 @@ const Carousel = ({ slides, onSlideChange, onSkip }: Props) => {
             scrollEventThrottle={16}
             showsHorizontalScrollIndicator={false}>
             {slides.map((slide) => (
-              <View key={slide.title} style={{ width: SCREEN_WIDTH }}>
+              <View key={slide.id} style={{ width: SCREEN_WIDTH }}>
                 <Slide
                   title={slide.title}
                   subtitle={slide.subtitle}

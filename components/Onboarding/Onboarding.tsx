@@ -218,14 +218,11 @@ const Onboarding = ({ isVisible, onDismiss }: Props) => {
         <Carousel
           slides={[
             {
-              title: 'Welcome to Comuna!',
-              subtitle: 'Press "Get Started" to begin.',
-              actionLabel: 'Get Started',
-            },
-            {
+              id: 'username',
               title: 'Enter your username.',
               subtitle: 'This will be used to identify you in the app.',
               mediaPosition: 'bottom',
+              backgroundImage: require('@/assets/images/onboarding-background-1.png'),
               actionDisabled: !username.trim() || username.length <= MIN_USERNAME_LENGTH,
               onActionPress: async (onPress: () => void) => {
                 await submitUsername(onPress)
@@ -263,12 +260,14 @@ const Onboarding = ({ isVisible, onDismiss }: Props) => {
               ),
             },
             {
+              id: 'avatar',
               title: 'Add a profile picture.',
               subtitle: 'Let your people know how do you look like.',
               actionLabel: isLoading ? 'Preparing...' : 'Continue',
               onActionPress: async (onPress: () => void) => {
                 await submitProfileAvatar(onPress)
               },
+              backgroundImage: require('@/assets/images/onboarding-background-3.png'),
               mediaPosition: 'bottom',
               actionDisabled: isLoading || (!avatar?.uri && !profile?.avatar_url),
               media: (
@@ -312,12 +311,14 @@ const Onboarding = ({ isVisible, onDismiss }: Props) => {
               ),
             },
             {
+              id: 'notifications',
               title: 'Enable notifications.',
               subtitle: 'Know when your friends post something new.',
               actionLabel: notificationsEnabled ? 'Start Exploring' : 'Not now',
               onActionPress: onDismiss,
               actionDisabled: !isDismissReady,
               mediaPosition: 'bottom',
+              backgroundImage: require('@/assets/images/onboarding-background-4.png'),
               media: (
                 <BlurView
                   intensity={80}
