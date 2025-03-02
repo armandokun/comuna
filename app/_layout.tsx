@@ -21,6 +21,9 @@ import InviteSheet from '@/components/InviteSheet'
 import '../global.css'
 
 SplashScreen.preventAutoHideAsync()
+SplashScreen.setOptions({
+  fade: true,
+})
 
 const RootLayout = () => {
   const navigation = useNavigation()
