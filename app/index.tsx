@@ -1,5 +1,5 @@
 import { Dimensions, Platform, StyleSheet, TouchableOpacity, View } from 'react-native'
-import { router, SplashScreen } from 'expo-router'
+import { Link, router, SplashScreen } from 'expo-router'
 import React, { ComponentProps, useContext, useEffect } from 'react'
 import { Ionicons } from '@expo/vector-icons'
 import { Marquee } from '@animatereactnative/marquee'
@@ -18,6 +18,7 @@ import mixpanel from '@/libs/mixpanel'
 import { mockSignIn } from '@/libs/auth'
 import { signInWithApple } from '@/libs/apple'
 import { HOME } from '@/constants/routes'
+import { COMUNA_PRIVACY_URL, COMUNA_TERMS_URL } from '@/constants/url'
 import Text from '@/components/ui/Text'
 import { SessionContext } from '@/containers/SessionProvider'
 import MarqueeItem from '@/components/Onboarding/MarqueeItem'
@@ -164,6 +165,21 @@ const LoginScreen = () => {
               </TouchableOpacity>
             ))}
           </View>
+          <Spacer size="xsmall" />
+          <Text
+            type="footnote"
+            style={{ color: 'rgba(255, 255, 255, 0.6)' }}
+            className="text-center px-6">
+            By signing in, you agree to the{' '}
+            <Link href={COMUNA_TERMS_URL} style={{ color: 'white' }}>
+              Terms of Service
+            </Link>{' '}
+            and{' '}
+            <Link href={COMUNA_PRIVACY_URL} style={{ color: 'white' }}>
+              Privacy Policy
+            </Link>
+            .
+          </Text>
         </Stagger>
       </Animated.View>
     </View>
