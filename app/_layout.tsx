@@ -82,6 +82,7 @@ const RootLayout = () => {
                 headerShown: false,
                 headerTransparent: true,
                 headerTintColor: Colors.text,
+                gestureEnabled: false,
               }}>
               <Stack.Screen name="+not-found" />
               <Stack.Screen name="home" />
