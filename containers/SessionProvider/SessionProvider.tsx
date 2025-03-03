@@ -62,23 +62,26 @@ const SessionProvider = ({ children }: Props) => {
   }, [fetchProfile, session?.user])
 
   useEffect(() => {
-    if (!session?.user?.id) return
+    if (!profile?.id) return
 
-    const subscription = supabase.channel('profiles').on(
-      'postgres_changes',
-      {
-        event: 'UPDATE',
-        schema: 'public',
-        table: 'profiles',
-        filter: `id=eq.${session.user.id}`,
-      },
-      () => fetchProfile(),
-    )
+    const subscription = supabase
+      .channel('profiles')
+      .on(
+        'postgres_changes',
+        {
+          event: 'UPDATE',
+          schema: 'public',
+          table: 'profiles',
+          filter: `id=eq.${profile?.id}`,
+        },
+        () => fetchProfile(),
+      )
+      .subscribe()
 
     return () => {
       subscription.unsubscribe()
     }
-  }, [fetchProfile, session?.user?.id])
+  }, [fetchProfile, profile?.id])
 
   const values = useMemo(
     () => ({
