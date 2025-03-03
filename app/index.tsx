@@ -140,7 +140,7 @@ const LoginScreen = () => {
           stagger={100}
           initialEnteringDelay={1000}
           style={{
-            flex: 0.5,
+            flex: 0.55,
             justifyContent: 'center',
             alignItems: 'center',
           }}>
@@ -157,7 +157,7 @@ const LoginScreen = () => {
             {PROVIDERS.filter((provider) => provider.show).map((provider) => (
               <TouchableOpacity
                 key={provider.name}
-                className="rounded-full p-4 flex-row items-center gap-2"
+                className="rounded-full px-4 py-2 flex-row items-center gap-2"
                 onPress={() => handleSignIn(provider.name, provider.onPress)}
                 style={{ backgroundColor: provider.buttonColor }}>
                 <Ionicons name={provider.iconName} size={24} color={provider.iconColor} />
