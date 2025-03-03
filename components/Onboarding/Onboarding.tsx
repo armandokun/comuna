@@ -45,12 +45,22 @@ const Onboarding = ({ isVisible, onDismiss }: Props) => {
 
   const { registerForPushNotifications, checkPermissions } = usePushNotifications()
 
+  const handleUsernameChange = (text: string) => {
+    const prefix = text.startsWith('@') ? text.substring(1) : text
+
+    const cleanText = prefix.replace(/[^a-z0-9]/g, '')
+
+    const formattedUsername = `@${cleanText}`
+
+    setUsername(formattedUsername)
+  }
+
   const submitUsername = async (onPress: () => void) => {
     if (!username.trim() || !profile?.id) return
 
-    setIsLoading(true)
+    const usernameWithoutPrefix = username.startsWith('@') ? username.substring(1) : username
 
-    const usernameRegex = /^[a-zA-Z0-9._-]+$/
+    setIsLoading(true)
 
     if (username.length < MIN_USERNAME_LENGTH) {
       Alert.alert('Username must be at least 5 characters long.')
@@ -60,21 +70,10 @@ const Onboarding = ({ isVisible, onDismiss }: Props) => {
       return
     }
 
-    if (!usernameRegex.test(username)) {
-      Alert.alert(
-        'Please use only latin characters and numbers.',
-        'Special characters are not allowed, except dots (.), dashes (-) and underscores (_).',
-      )
-
-      setIsLoading(false)
-
-      return
-    }
-
     const { data, error: existingUsernameError } = await supabase
       .from('profiles')
       .select('username, id')
-      .eq('username', username)
+      .eq('username', usernameWithoutPrefix)
 
     if (data?.length) {
       if (data[0].id === profile.id) {
@@ -100,7 +99,10 @@ const Onboarding = ({ isVisible, onDismiss }: Props) => {
       return
     }
 
-    const { error } = await supabase.from('profiles').update({ username }).eq('id', profile.id)
+    const { error } = await supabase
+      .from('profiles')
+      .update({ username: usernameWithoutPrefix })
+      .eq('id', profile.id)
 
     if (error) Alert.alert('Error updating profile details', error.message)
 
@@ -242,22 +244,15 @@ const Onboarding = ({ isVisible, onDismiss }: Props) => {
                   className="flex-row items-center justify-center px-4 rounded-3xl overflow-hidden"
                   style={{ width: Dimensions.get('window').width * 0.9 }}>
                   <TextInput
-                    className="text-center h-20"
-                    style={{ fontSize: 28, color: 'rgba(255, 255, 255, 0.7)' }}
-                    placeholder="@"
-                    editable={false}
-                    placeholderTextColor="rgba(255, 255, 255, 0.7)"
-                  />
-                  <TextInput
                     ref={usernameInput}
-                    placeholder="username"
+                    placeholder="@username"
                     value={username}
-                    onChangeText={(text) => setUsername(text.toLowerCase())}
+                    onChangeText={handleUsernameChange}
                     maxLength={20}
                     autoCapitalize="none"
                     autoComplete="off"
                     autoCorrect={false}
-                    className="text-text text-center h-20"
+                    className="text-text text-center h-20 w-full"
                     placeholderTextColor="rgba(255, 255, 255, 0.7)"
                     style={{
                       fontSize: 28,
