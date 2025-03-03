@@ -327,7 +327,7 @@ const AboutCommunityScreen = () => {
             <>
               <InviteLinkSection />
               <Spacer size="medium" />
-              {pendingRequests.length && (
+              {pendingRequests.length ? (
                 <>
                   <Label title={`Pending approval (${pendingRequests.length})`} />
                   {pendingRequests.map((member) => (
@@ -364,7 +364,7 @@ const AboutCommunityScreen = () => {
                     </BlurView>
                   ))}
                 </>
-              )}
+              ) : null}
             </>
           )}
           <Spacer size="small" />
