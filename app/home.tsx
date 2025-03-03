@@ -138,7 +138,7 @@ const HomeScreen = () => {
             id: comment.author?.id ?? '',
             name: comment.author?.name ?? '',
             username: comment.author?.username ?? '',
-            avatar_url: comment.author?.avatar_url ?? '',
+            avatarUrl: comment.author?.avatar_url ?? '',
           },
         })),
       }))

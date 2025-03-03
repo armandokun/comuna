@@ -141,7 +141,7 @@ const PostScreen = () => {
           ...comment.author,
           name: comment.author.name ?? '',
           username: comment.author.username ?? '',
-          avatar_url: comment.author.avatar_url ?? '',
+          avatarUrl: comment.author.avatar_url ?? '',
         },
       }))
 
@@ -229,12 +229,7 @@ const PostScreen = () => {
                     id={comment.id}
                     content={comment.content}
                     createdAt={comment.created_at}
-                    author={{
-                      id: comment.author.id,
-                      name: comment.author.name,
-                      username: comment.author.username,
-                      avatarUrl: comment.author.avatar_url,
-                    }}
+                    author={comment.author}
                     likes={comment.likes}
                     currentUserId={profile?.id}
                   />

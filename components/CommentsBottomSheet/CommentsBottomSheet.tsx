@@ -73,7 +73,7 @@ const CommentsBottomSheet = ({ show, postId, onClose }: Props) => {
           ...comment.author,
           name: comment.author.name ?? '',
           username: comment.author.username ?? '',
-          avatar_url: comment.author.avatar_url ?? '',
+          avatarUrl: comment.author.avatar_url ?? '',
         },
       }))
 
@@ -90,28 +90,6 @@ const CommentsBottomSheet = ({ show, postId, onClose }: Props) => {
       setShouldShow(false)
     }
   }, [fetchComments, show])
-
-  useEffect(() => {
-    if (!postId) return
-
-    const subscription = supabase
-      .channel('comments')
-      .on(
-        'postgres_changes',
-        {
-          event: 'INSERT',
-          schema: 'public',
-          table: 'comments',
-          filter: `post_id=eq.${postId}`,
-        },
-        () => fetchComments(),
-      )
-      .subscribe()
-
-    return () => {
-      subscription.unsubscribe()
-    }
-  }, [fetchComments, postId])
 
   const handleSubmitComment = async (content: string) => {
     if (!postId) return
@@ -149,7 +127,7 @@ const CommentsBottomSheet = ({ show, postId, onClose }: Props) => {
       keyboardBlurBehavior="restore"
       scrollViewRef={bottomSheetScrollViewRef}
       footer={
-        <View className="flex-row items-center gap-2 justify-between mt-4">
+        <View className="flex-row items-center gap-2 mt-4 justify-between">
           <Image
             source={profile?.avatar_url}
             style={{ width: 44, height: 44, borderRadius: 36 }}
@@ -163,7 +141,7 @@ const CommentsBottomSheet = ({ show, postId, onClose }: Props) => {
               placeholderTextColor={Colors.muted}
               keyboardAppearance="dark"
               returnKeyType="send"
-              onSubmitEditing={(event) => handleSubmitComment(event.nativeEvent.text)}
+              onEndEditing={(event) => handleSubmitComment(event.nativeEvent.text)}
             />
           </View>
         </View>
@@ -182,12 +160,7 @@ const CommentsBottomSheet = ({ show, postId, onClose }: Props) => {
                 content={comment.content}
                 createdAt={comment.created_at}
                 currentUserId={profile?.id}
-                author={{
-                  id: comment.author.id,
-                  name: comment.author.name,
-                  username: comment.author.username,
-                  avatarUrl: comment.author.avatar_url,
-                }}
+                author={comment.author}
                 likes={comment.likes}
               />
             ))}
