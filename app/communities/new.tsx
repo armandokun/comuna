@@ -3,27 +3,24 @@ import { useContext, useEffect, useState } from 'react'
 import {
   Alert,
   KeyboardAvoidingView,
-  NativeSyntheticEvent,
   SafeAreaView,
   StyleSheet,
   TextInput,
-  TextInputChangeEventData,
   View,
 } from 'react-native'
 import { router, useNavigation } from 'expo-router'
 import { BlurView } from 'expo-blur'
 import { Ionicons } from '@expo/vector-icons'
 import AsyncStorage from '@react-native-async-storage/async-storage'
-import { Image } from 'expo-image'
 
 import { supabase } from '@/libs/supabase'
+import { Colors } from '@/constants/colors'
 import { SELECTED_COMMUNITY_KEY } from '@/constants/async-storage'
 import { CommunityContext } from '@/containers/CommunityProvider'
 
 import Text from '@/components/ui/Text'
 import Button from '@/components/ui/Button'
 import Spacer from '@/components/ui/Spacer'
-import { Colors } from '@/constants/colors'
 import KeyboardDismissPressable from '@/components/ui/KeyboardDismissPressable'
 import FullScreenLoader from '@/components/FullScreenLoader'
 
@@ -75,9 +72,7 @@ const NewCommunityScreen = () => {
     })
   }, [comunas, name, navigation, setComunas, setSelectedComuna])
 
-  const handleNameChange = (e: NativeSyntheticEvent<TextInputChangeEventData>) => {
-    const { text } = e.nativeEvent
-
+  const handleNameChange = (text: string) => {
     // remove all non-alphanumeric characters and spaces
     const cleanedText = text.replace(/[^a-zA-Z0-9]/g, '')
 
@@ -86,11 +81,6 @@ const NewCommunityScreen = () => {
 
   return (
     <>
-      <Image
-        source={require('@/assets/images/onboarding-background-1.png')}
-        style={StyleSheet.absoluteFillObject}
-        contentFit="cover"
-      />
       <BlurView
         intensity={80}
         tint="systemChromeMaterialDark"
@@ -127,7 +117,7 @@ const NewCommunityScreen = () => {
                   <TextInput
                     placeholder="comuna"
                     value={name}
-                    onChange={handleNameChange}
+                    onChangeText={handleNameChange}
                     maxLength={20}
                     autoCapitalize="none"
                     autoComplete="off"

@@ -4,19 +4,18 @@ import { Alert, StyleSheet, KeyboardAvoidingView, SafeAreaView } from 'react-nat
 import { router, useLocalSearchParams, useNavigation } from 'expo-router'
 import React, { useCallback, useContext, useEffect, useState } from 'react'
 import { Image } from 'expo-image'
-import { LinearGradient } from 'expo-linear-gradient'
 
 import mixpanel from '@/libs/mixpanel'
 import { supabase } from '@/libs/supabase'
 import { Colors } from '@/constants/colors'
 import { HOME } from '@/constants/routes'
+import { CommunityContext } from '@/containers/CommunityProvider'
 
 import TextArea from '@/components/ui/TextArea'
 import Spacer from '@/components/ui/Spacer'
 import Button from '@/components/ui/Button'
 import KeyboardDismissPressable from '@/components/ui/KeyboardDismissPressable'
 import FullScreenLoader from '@/components/FullScreenLoader'
-import { CommunityContext } from '@/containers/CommunityProvider'
 
 const NewScreen = () => {
   const [description, setDescription] = useState('')
@@ -72,12 +71,6 @@ const NewScreen = () => {
     navigation.setOptions({
       headerRight: () => <Button title="Post" onPress={uploadPost} />,
       headerLeft: () => <Button title="Cancel" type="flat" onPress={() => navigation.goBack()} />,
-      headerBackground: () => (
-        <LinearGradient
-          colors={['rgba(0, 0, 0, 0.8)', 'transparent']}
-          style={StyleSheet.absoluteFill}
-        />
-      ),
     })
   }, [navigation, uploadPost])
 

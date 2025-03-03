@@ -14,7 +14,6 @@ import { HOME } from '@/constants/routes'
 import { Colors } from '@/constants/colors'
 import SessionProvider from '@/containers/SessionProvider'
 import CommunityProvider from '@/containers/CommunityProvider'
-import HeaderBackground from '@/components/HeaderBackground'
 import { useInviteLink } from '@/hooks/useInviteLink'
 import InviteSheet from '@/components/InviteSheet'
 
@@ -83,7 +82,6 @@ const RootLayout = () => {
                 headerShown: false,
                 headerTransparent: true,
                 headerTintColor: Colors.text,
-                headerBackground: HeaderBackground,
               }}>
               <Stack.Screen name="+not-found" />
               <Stack.Screen name="home" />
@@ -124,6 +122,9 @@ const RootLayout = () => {
                   presentation: 'modal',
                   headerTitle: 'New Comuna',
                   headerShown: true,
+                  contentStyle: {
+                    backgroundColor: 'transparent',
+                  },
                 }}
               />
               <Stack.Screen
