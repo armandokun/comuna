@@ -27,7 +27,7 @@ import usePushNotifications from '@/hooks/usePushNotifications'
 
 import ContextMenu from '../ui/ContextMenu'
 
-const MIN_USERNAME_LENGTH = 6
+const MIN_USERNAME_LENGTH = 5
 
 type Props = {
   isVisible: boolean
@@ -40,7 +40,7 @@ const Onboarding = ({ isVisible, onDismiss }: Props) => {
   const [isLoading, setIsLoading] = useState(false)
   const [notificationsEnabled, setNotificationsEnabled] = useState(false)
 
-  const { profile, setProfileUsername, setProfileAvatar } = useContext(SessionContext)
+  const { profile } = useContext(SessionContext)
   const usernameInput = useRef<TextInput>(null)
 
   const { registerForPushNotifications, checkPermissions } = usePushNotifications()
@@ -51,6 +51,14 @@ const Onboarding = ({ isVisible, onDismiss }: Props) => {
     setIsLoading(true)
 
     const usernameRegex = /^[a-zA-Z0-9._-]+$/
+
+    if (username.length < MIN_USERNAME_LENGTH) {
+      Alert.alert('Username must be at least 5 characters long.')
+
+      setIsLoading(false)
+
+      return
+    }
 
     if (!usernameRegex.test(username)) {
       Alert.alert(
@@ -80,8 +88,6 @@ const Onboarding = ({ isVisible, onDismiss }: Props) => {
       Alert.alert('Username already taken', 'Please choose another username.')
 
       setIsLoading(false)
-
-      setProfileUsername(username)
 
       return
     }
@@ -149,8 +155,6 @@ const Onboarding = ({ isVisible, onDismiss }: Props) => {
     if (error) Alert.alert('Error updating profile picture', error.message)
 
     onPress()
-
-    setProfileAvatar(publicUrl)
 
     setIsLoading(false)
   }
@@ -227,7 +231,7 @@ const Onboarding = ({ isVisible, onDismiss }: Props) => {
               subtitle: 'This will be used to identify you in the app.',
               mediaPosition: 'bottom',
               backgroundImage: require('@/assets/images/onboarding-background-1.png'),
-              actionDisabled: !username.trim() || username.length <= MIN_USERNAME_LENGTH,
+              actionDisabled: !username.trim(),
               onActionPress: async (onPress: () => void) => {
                 await submitUsername(onPress)
               },

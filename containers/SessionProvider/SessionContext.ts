@@ -8,8 +8,6 @@ type Args = {
   profile: Profile | null
   isSessionFetched: boolean
   isProfileFetched: boolean
-  setProfileUsername: (username: string) => void
-  setProfileAvatar: (avatar: string) => void
 }
 
 export const SessionContext = createContext<Args>({
@@ -17,6 +15,4 @@ export const SessionContext = createContext<Args>({
   profile: null,
   isSessionFetched: false,
   isProfileFetched: false,
-  setProfileUsername: () => {},
-  setProfileAvatar: () => {},
 })

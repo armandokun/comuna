@@ -18,23 +18,11 @@ const SessionProvider = ({ children }: Props) => {
   const [isSessionFetched, setIsSessionFetched] = useState(false)
   const [isProfileFetched, setIsProfileFetched] = useState(false)
 
-  const setProfileUsername = useCallback(
-    (username: string) => {
-      if (!profile) return
+  useEffect(() => {
+    if (!session?.user.id) return
 
-      setProfile({ ...profile, username })
-    },
-    [profile],
-  )
-
-  const setProfileAvatar = useCallback(
-    (avatar: string) => {
-      if (!profile) return
-
-      setProfile({ ...profile, avatar_url: avatar })
-    },
-    [profile],
-  )
+    mixpanel.identify(session.user.id)
+  }, [session?.user.id])
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session: sessionData } }) => {
@@ -63,8 +51,6 @@ const SessionProvider = ({ children }: Props) => {
 
     if (error) Alert.alert(error.message)
 
-    mixpanel.identify(session?.user.id)
-
     setProfile(data)
     setIsProfileFetched(true)
   }, [session?.user])
@@ -86,9 +72,7 @@ const SessionProvider = ({ children }: Props) => {
         table: 'profiles',
         filter: `id=eq.${session.user.id}`,
       },
-      () => {
-        fetchProfile()
-      },
+      () => fetchProfile(),
     )
 
     return () => {
@@ -102,10 +86,8 @@ const SessionProvider = ({ children }: Props) => {
       isSessionFetched,
       profile,
       isProfileFetched,
-      setProfileUsername,
-      setProfileAvatar,
     }),
-    [session, isSessionFetched, profile, isProfileFetched, setProfileUsername, setProfileAvatar],
+    [session, isSessionFetched, profile, isProfileFetched],
   )
 
   return <SessionContext.Provider value={values}>{children}</SessionContext.Provider>
