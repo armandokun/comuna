@@ -9,7 +9,7 @@ import { nativeBuildVersion, nativeApplicationVersion } from 'expo-application'
 
 import { SessionContext } from '@/containers/SessionProvider'
 import { Colors } from '@/constants/colors'
-import { AUTH, SETTINGS_FEEDBACK } from '@/constants/routes'
+import { AUTH, SETTINGS_FEEDBACK, PROFILE_EDIT } from '@/constants/routes'
 import Text from '@/components/ui/Text'
 import mixpanel from '@/libs/mixpanel'
 import { signOut } from '@/libs/auth'
@@ -122,6 +122,8 @@ const Settings = () => {
                 </Text>
               ) : null
             }
+            onPress={() => router.push(PROFILE_EDIT)}
+            suffix={<Ionicons name="chevron-forward" size={24} color={Colors.text} />}
           />
         </BlurView>
         <Spacer size="medium" />

@@ -176,6 +176,21 @@ const RootLayout = () => {
                   ),
                 }}
               />
+              <Stack.Screen
+                name="profile/settings/edit"
+                options={{
+                  headerShown: true,
+                  headerTitle: 'Edit Profile',
+                  headerLeft: () => (
+                    <TouchableOpacity onPress={handleGoBack}>
+                      <Ionicons name="close-circle" size={36} color={Colors.text} />
+                    </TouchableOpacity>
+                  ),
+                  contentStyle: {
+                    backgroundColor: 'transparent',
+                  },
+                }}
+              />
             </Stack>
             {isInviteSheetOpen && (
               <InviteSheet
