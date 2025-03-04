@@ -249,8 +249,11 @@ const Post = ({ item, onPress, isVisible }: Props) => {
       <View className="gap-2 mt-2 px-4" ref={commentContainerRef}>
         {item.comments?.slice(0, 2).map((comment) => (
           <View key={comment.id} className="flex-row flex-wrap">
-            <Text type="footnote">
-              <Text type="footnote" className="font-semibold">
+            <Text type="footnote" numberOfLines={2} ellipsizeMode="tail">
+              <Text
+                type="footnote"
+                className="font-semibold"
+                style={{ color: 'rgba(255, 255, 255, 0.9)' }}>
                 {comment.author.username || comment.author.name}
               </Text>
               <Text type="footnote"> {comment.content}</Text>

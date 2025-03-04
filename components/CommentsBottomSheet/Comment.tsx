@@ -94,7 +94,7 @@ const Comment = ({ id, currentUserId, content, createdAt, author, likes }: Props
       <View className="flex-1 gap-1">
         <View className="flex-row items-center flex-wrap gap-1">
           <Text type="subhead">{author.username || author.name}</Text>
-          <Text type="subhead" style={{ color: Colors.muted }}>
+          <Text type="subhead" style={{ color: 'rgba(255, 255, 255, 0.5)' }}>
             {getRelativeTimeFromNow(createdAt)}
           </Text>
         </View>
@@ -106,7 +106,7 @@ const Comment = ({ id, currentUserId, content, createdAt, author, likes }: Props
         onLongPress={handleLongPress}>
         <Ionicons name={isLiked ? 'heart' : 'heart-outline'} size={20} color={Colors.text} />
         {likesCount > 0 && (
-          <Text type="footnote" style={{ color: Colors.muted }}>
+          <Text type="footnote" style={{ color: Colors.text }}>
             {likesCount}
           </Text>
         )}
