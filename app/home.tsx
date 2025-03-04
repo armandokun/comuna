@@ -1,4 +1,4 @@
-import { Alert, StyleSheet, View, AppState, ActivityIndicator, FlatList } from 'react-native'
+import { Alert, StyleSheet, View, ActivityIndicator, FlatList } from 'react-native'
 import React, { useCallback, useContext, useEffect, useRef, useState } from 'react'
 import { BlurView } from 'expo-blur'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
@@ -38,7 +38,6 @@ const HomeScreen = () => {
   const { selectedComuna } = useContext(CommunityContext)
   const { profile, isProfileFetched } = useContext(SessionContext)
   const headerRef = useRef<View>(null)
-  const appState = useRef(AppState.currentState)
   const flatListRef = useRef<FlatList>(null)
 
   useEffect(() => {
@@ -248,7 +247,7 @@ const HomeScreen = () => {
           }
         />
       </View>
-      <Header headerRef={headerRef} />
+      <Header headerRef={headerRef} headerHeight={headerHeight} />
       <Onboarding isVisible={showOnboarding} onDismiss={() => setShowOnboarding(false)} />
     </>
   )
