@@ -83,7 +83,15 @@ const AboutCommunityScreen = () => {
     }))
 
     if (formattedMembers) {
-      setMembers(formattedMembers.filter((member) => member.is_approved))
+      setMembers(
+        formattedMembers.filter((member) => {
+          if (!member.username && !member.name) return false
+
+          if (member.is_approved) return true
+
+          return false
+        }),
+      )
       setManager(formattedMembers.find((member) => member.is_manager) ?? null)
       setPendingRequests(formattedMembers.filter((member) => !member.is_approved))
 
