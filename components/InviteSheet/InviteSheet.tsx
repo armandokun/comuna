@@ -7,8 +7,8 @@ import { Colors } from '@/constants/colors'
 import { supabase } from '@/libs/supabase'
 import { Comuna } from '@/types/comuna'
 import BottomSheet from '@/components/ui/BottomSheet'
-
 import { SessionContext } from '@/containers/SessionProvider'
+import { PLACEHOLDER_AVATAR_URL } from '@/constants/url'
 
 import Spacer from '../ui/Spacer'
 import Text from '../ui/Text'
@@ -175,7 +175,7 @@ const InviteSheet = ({ show, onClose, communityId }: Props) => {
           <Spacer size="xxsmall" />
           <View className="flex-row items-center gap-2">
             <Image
-              source={{ uri: community?.creator?.avatar_url }}
+              source={{ uri: community?.creator?.avatar_url || PLACEHOLDER_AVATAR_URL }}
               style={{
                 width: 32,
                 height: 32,

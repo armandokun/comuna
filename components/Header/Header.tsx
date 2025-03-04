@@ -11,6 +11,7 @@ import { Colors } from '@/constants/colors'
 import { SELECTED_COMMUNITY_KEY } from '@/constants/async-storage'
 import { SessionContext } from '@/containers/SessionProvider'
 import { CommunityContext } from '@/containers/CommunityProvider'
+import { PLACEHOLDER_AVATAR_URL } from '@/constants/url'
 
 import GradientBlur from '../GradientBlur'
 import ImagePickerButton from '../ImagePickerButton'
@@ -92,7 +93,9 @@ const Header = ({ headerRef, headerHeight }: Props) => {
             <ImagePickerButton />
             <TouchableOpacity className="pl-1" onPress={() => router.push(PROFILE_SETTINGS)}>
               <Image
-                source={{ uri: `${profile?.avatar_url}?width=50&height=50` }}
+                source={{
+                  uri: `${profile?.avatar_url}?width=50&height=50` || PLACEHOLDER_AVATAR_URL,
+                }}
                 contentFit="cover"
                 style={{ width: 36, height: 36, borderRadius: 36 }}
               />

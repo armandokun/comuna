@@ -8,6 +8,7 @@ import { BlurView } from 'expo-blur'
 import { supabase } from '@/libs/supabase'
 import Text from '@/components/ui/Text'
 import { Profile } from '@/types/profile'
+import { PLACEHOLDER_AVATAR_URL } from '@/constants/url'
 
 type User = Omit<Profile, 'expo_push_token'>
 
@@ -46,7 +47,7 @@ const LikesScreen = () => {
   const renderProfile = ({ item }: { item: User }) => (
     <View className="flex-row items-center gap-3 px-4 py-2">
       <Image
-        source={{ uri: item.avatar_url }}
+        source={{ uri: item.avatar_url ?? PLACEHOLDER_AVATAR_URL }}
         style={{ width: 44, height: 44, borderRadius: 22 }}
         contentFit="cover"
       />

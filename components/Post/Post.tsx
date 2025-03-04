@@ -15,6 +15,8 @@ import { HOME } from '@/constants/routes'
 import { SessionContext } from '@/containers/SessionProvider'
 import { supabase } from '@/libs/supabase'
 
+import { PLACEHOLDER_AVATAR_URL } from '@/constants/url'
+
 import GradientBlur from '../GradientBlur'
 import VideoPost from './Video'
 import ContextMenu from '../ui/ContextMenu'
@@ -171,7 +173,9 @@ const Post = ({ item, onPress, isVisible }: Props) => {
               <View className="flex-row items-center justify-between p-4">
                 <View className="flex-row items-center gap-2">
                   <Image
-                    source={{ uri: `${item.author.avatar_url}?width=32&height=32` }}
+                    source={{
+                      uri: `${item.author.avatar_url}?width=32&height=32` || PLACEHOLDER_AVATAR_URL,
+                    }}
                     contentFit="cover"
                     style={{ width: 32, height: 32, borderRadius: 32 }}
                   />

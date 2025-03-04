@@ -22,6 +22,7 @@ import { Post, CommentWithLikes } from '@/types/posts'
 import Text from '@/components/ui/Text'
 import GradientBlur from '@/components/GradientBlur'
 import { Colors } from '@/constants/colors'
+import { PLACEHOLDER_AVATAR_URL } from '@/constants/url'
 import Spacer from '@/components/ui/Spacer'
 import { SessionContext } from '@/containers/SessionProvider'
 import Comment from '@/components/CommentsBottomSheet/Comment'
@@ -102,7 +103,7 @@ const PostScreen = () => {
           id: data.author?.id ?? '',
           name: data.author?.name ?? '',
           username: data.author?.username ?? '',
-          avatar_url: data.author?.avatar_url ?? '',
+          avatar_url: data.author?.avatar_url ?? PLACEHOLDER_AVATAR_URL,
         },
       })
 
@@ -141,7 +142,7 @@ const PostScreen = () => {
           ...comment.author,
           name: comment.author.name ?? '',
           username: comment.author.username ?? '',
-          avatarUrl: comment.author.avatar_url ?? '',
+          avatarUrl: comment.author.avatar_url ?? PLACEHOLDER_AVATAR_URL,
         },
       }))
 
@@ -206,7 +207,10 @@ const PostScreen = () => {
                 <LinearGradient colors={['rgba(0,0,0,0.6)', 'transparent']} locations={[0, 1]}>
                   <View className="flex-row items-center gap-2 p-4">
                     <Image
-                      source={{ uri: `${post.author.avatar_url}?width=32&height=32` }}
+                      source={{
+                        uri:
+                          `${post.author.avatar_url}?width=32&height=32` || PLACEHOLDER_AVATAR_URL,
+                      }}
                       contentFit="cover"
                       style={{ width: 32, height: 32, borderRadius: 32 }}
                     />
@@ -248,7 +252,7 @@ const PostScreen = () => {
           </Animated.ScrollView>
           <View className="flex-row items-center gap-2 justify-between py-4 px-4">
             <Image
-              source={profile?.avatar_url}
+              source={profile?.avatar_url || PLACEHOLDER_AVATAR_URL}
               style={{ width: 44, height: 44, borderRadius: 36 }}
               contentFit="cover"
               cachePolicy="memory-disk"

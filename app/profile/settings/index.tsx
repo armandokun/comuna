@@ -10,6 +10,7 @@ import { nativeBuildVersion, nativeApplicationVersion } from 'expo-application'
 import { SessionContext } from '@/containers/SessionProvider'
 import { Colors } from '@/constants/colors'
 import { AUTH, SETTINGS_FEEDBACK } from '@/constants/routes'
+import { PLACEHOLDER_AVATAR_URL } from '@/constants/url'
 import Text from '@/components/ui/Text'
 import mixpanel from '@/libs/mixpanel'
 import { signOut } from '@/libs/auth'
@@ -109,7 +110,9 @@ const Settings = () => {
             size="large"
             prefix={
               <Image
-                source={{ uri: `${profile?.avatar_url}?width=50&height=50` }}
+                source={{
+                  uri: `${profile?.avatar_url}?width=50&height=50` || PLACEHOLDER_AVATAR_URL,
+                }}
                 contentFit="cover"
                 style={{ width: 50, height: 50, borderRadius: 25 }}
               />

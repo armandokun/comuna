@@ -10,6 +10,7 @@ import BottomSheet from '@/components/ui/BottomSheet'
 import { CommentWithLikes } from '@/types/posts'
 import { SessionContext } from '@/containers/SessionProvider'
 import { Colors } from '@/constants/colors'
+import { PLACEHOLDER_AVATAR_URL } from '@/constants/url'
 
 import Comment from './Comment'
 import Spacer from '../ui/Spacer'
@@ -74,7 +75,7 @@ const CommentsBottomSheet = ({ show, postId, communityId, onClose }: Props) => {
           ...comment.author,
           name: comment.author.name ?? '',
           username: comment.author.username ?? '',
-          avatarUrl: comment.author.avatar_url ?? '',
+          avatarUrl: comment.author.avatar_url ?? PLACEHOLDER_AVATAR_URL,
         },
       }))
 
@@ -131,7 +132,7 @@ const CommentsBottomSheet = ({ show, postId, communityId, onClose }: Props) => {
       footer={
         <View className="flex-row items-center gap-2 mt-4 justify-between">
           <Image
-            source={profile?.avatar_url}
+            source={profile?.avatar_url || PLACEHOLDER_AVATAR_URL}
             style={{ width: 44, height: 44, borderRadius: 36 }}
             contentFit="cover"
             cachePolicy="memory-disk"
