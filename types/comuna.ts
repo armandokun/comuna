@@ -12,6 +12,7 @@ type ComunaMember = {
   username: string | null
   avatar_url: string | null
   is_approved: boolean
+  is_blocked: boolean
 }
 
 export type { Comuna, ComunaMember }

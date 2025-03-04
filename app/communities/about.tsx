@@ -24,9 +24,27 @@ const AboutCommunityScreen = () => {
   const [isExpanded, setIsExpanded] = useState(false)
   const [manager, setManager] = useState<ComunaMember | null>(null)
   const [pendingRequests, setPendingRequests] = useState<Array<ComunaMember>>([])
-
   const { selectedComuna, setComunas, comunas, setSelectedComuna } = useContext(CommunityContext)
   const { profile } = useContext(SessionContext)
+
+  const fetchBlockedMembers = useCallback(async () => {
+    if (!profile?.id || !selectedComuna?.id) return
+
+    const { data, error } = await supabase
+      .from('member_blocks')
+      .select('*')
+      .eq('community_id', selectedComuna.id)
+      .eq('user_id', profile.id)
+
+    if (error) Alert.alert('Error fetching blocked members', error.message)
+
+    setMembers((prevMembers) =>
+      prevMembers.map((member) => ({
+        ...member,
+        is_blocked: data?.some((block) => block.blocked_user_id === member.id) ?? false,
+      })),
+    )
+  }, [profile?.id, selectedComuna?.id])
 
   const fetchMembers = useCallback(async () => {
     if (!selectedComuna?.id) return
@@ -61,14 +79,17 @@ const AboutCommunityScreen = () => {
       avatar_url: member?.avatar_url!,
       is_manager: community.manager_id === member?.id,
       is_approved: isApproved,
+      is_blocked: false,
     }))
 
     if (formattedMembers) {
       setMembers(formattedMembers.filter((member) => member.is_approved))
       setManager(formattedMembers.find((member) => member.is_manager) ?? null)
       setPendingRequests(formattedMembers.filter((member) => !member.is_approved))
+
+      fetchBlockedMembers()
     }
-  }, [selectedComuna?.id])
+  }, [fetchBlockedMembers, selectedComuna?.id])
 
   useEffect(() => {
     if (members.length) return
@@ -233,6 +254,23 @@ const AboutCommunityScreen = () => {
     )
   }
 
+  const handleUnblockMember = async (memberId: string) => {
+    if (!selectedComuna?.id || !profile?.id) return
+
+    const { error } = await supabase
+      .from('member_blocks')
+      .delete()
+      .eq('community_id', selectedComuna?.id)
+      .eq('user_id', profile?.id)
+      .eq('blocked_user_id', memberId)
+
+    if (error) {
+      Alert.alert('Error unblocking member', error.message)
+    }
+
+    fetchMembers()
+  }
+
   const handleMemberMenuPress = (memberId: string, actionId: string) => {
     const allMembers = [...members, ...pendingRequests]
     const member = allMembers.find((person) => person.id === memberId)
@@ -285,6 +323,23 @@ const AboutCommunityScreen = () => {
               text: 'Remove',
               style: 'destructive',
               onPress: () => handleRemoveMember(memberId),
+            },
+          ],
+        )
+        break
+      case `unblock-${memberId}`:
+        Alert.alert(
+          'Unblock member',
+          `Are you sure you want to unblock ${member?.username || member?.name} from #${selectedComuna?.name}?`,
+          [
+            {
+              text: 'Cancel',
+              style: 'cancel',
+            },
+            {
+              text: 'Unblock',
+              style: 'destructive',
+              onPress: () => handleUnblockMember(memberId),
             },
           ],
         )
@@ -396,7 +451,9 @@ const AboutCommunityScreen = () => {
                     style={{ width: 30, height: 30, borderRadius: 30 }}
                   />
                   <View>
-                    <Text type="body">{member.username || member.name}</Text>
+                    <Text type="body">
+                      {member.username || member.name} {member.is_blocked && '(blocked)'}
+                    </Text>
                     {member.is_manager && (
                       <Text type="subhead" style={{ color: Colors.muted }}>
                         Manager
@@ -404,7 +461,7 @@ const AboutCommunityScreen = () => {
                     )}
                   </View>
                 </View>
-                {(isCurrentUserManager || member.id === profile?.id) && (
+                {(isCurrentUserManager || member.id === profile?.id || member.is_blocked) && (
                   <TouchableOpacity>
                     <ContextMenu
                       itemId={Number(member.id)}
@@ -423,6 +480,19 @@ const AboutCommunityScreen = () => {
                                 attributes: {
                                   destructive: true,
                                 },
+                              },
+                            ]
+                          : []),
+                        ...(member.is_blocked
+                          ? [
+                              {
+                                id: `unblock-${member.id}`,
+                                title: 'Unblock',
+                                image: Platform.select({
+                                  ios: 'person.slash',
+                                  android: 'ic_menu_block',
+                                }),
+                                imageColor: Colors.text,
                               },
                             ]
                           : []),

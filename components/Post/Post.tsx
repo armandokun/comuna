@@ -11,10 +11,9 @@ import { router } from 'expo-router'
 import Text from '@/components/ui/Text'
 import { Post as PostType } from '@/types/posts'
 import { Colors } from '@/constants/colors'
+import { HOME } from '@/constants/routes'
 import { SessionContext } from '@/containers/SessionProvider'
 import { supabase } from '@/libs/supabase'
-
-import { HOME } from '@/constants/routes'
 
 import GradientBlur from '../GradientBlur'
 import VideoPost from './Video'
@@ -75,12 +74,58 @@ const Post = ({ item, onPress, isVisible }: Props) => {
     router.replace(HOME)
   }
 
+  const reportPost = async () => {
+    const { error } = await supabase.from('feedback').insert({
+      post_id: item.id,
+      user_id: profile?.id,
+      type: 'report',
+      feedback: 'Reported content violates our guidelines.',
+    })
+
+    if (error) Alert.alert('Error reporting post', error.message)
+
+    Alert.alert(
+      'Post reported',
+      'Thank you for reporting this post. We will review it and remove it if it violates our guidelines.',
+    )
+  }
+
+  const blockMember = async () => {
+    const { error } = await supabase.from('member_blocks').insert({
+      user_id: profile?.id,
+      blocked_user_id: item.author.id,
+      community_id: item.community_id,
+    })
+
+    if (error) Alert.alert('Error blocking member', error.message)
+
+    Alert.alert('Member blocked', 'You will no longer be able to see posts from this member.')
+  }
+
   const handleContextMenuPress = (actionId: string) => {
     switch (actionId) {
       case `delete-${item.id}`:
         Alert.alert('Delete post', 'Are you sure you want to delete this post?', [
           { text: 'Cancel', style: 'cancel' },
           { text: 'Delete', style: 'destructive', onPress: deletePost },
+        ])
+
+        break
+      case `report-${item.id}`:
+        Alert.alert(
+          'Report post?',
+          'Reported content will be reviewed and removed from the community if they violate our guidelines.',
+          [
+            { text: 'Cancel', style: 'cancel' },
+            { text: 'Report', style: 'destructive', onPress: reportPost },
+          ],
+        )
+
+        break
+      case `block-${item.id}`:
+        Alert.alert('Block member?', 'You will no longer be able to see posts from this member.', [
+          { text: 'Cancel', style: 'cancel' },
+          { text: 'Block', style: 'destructive', onPress: blockMember },
         ])
 
         break
@@ -134,32 +179,59 @@ const Post = ({ item, onPress, isVisible }: Props) => {
                     {item.author.username || item.author.name}
                   </Text>
                 </View>
-                {item.author.id === profile?.id && (
-                  <TouchableOpacity className="p-1 rounded-full">
-                    <ContextMenu
-                      itemId={item.id}
-                      onPress={handleContextMenuPress}
-                      shouldOpenOnLongPress={false}
-                      actions={[
-                        {
-                          id: `delete-${item.id}`,
-                          title: 'Delete',
-                          image: Platform.select({
-                            ios: 'trash',
-                            android: 'ic_menu_delete',
-                          }),
-                          imageColor: Colors.systemDestructive,
-                          attributes: {
-                            destructive: true,
-                          },
-                        },
-                      ]}>
-                      <View className="p-1 rounded-full">
-                        <Ionicons name="ellipsis-horizontal" size={24} color="white" />
-                      </View>
-                    </ContextMenu>
-                  </TouchableOpacity>
-                )}
+                <TouchableOpacity className="p-1 rounded-full">
+                  <ContextMenu
+                    itemId={item.id}
+                    onPress={handleContextMenuPress}
+                    shouldOpenOnLongPress={false}
+                    actions={[
+                      ...(item.author.id === profile?.id
+                        ? [
+                            {
+                              id: `delete-${item.id}`,
+                              title: 'Delete',
+                              image: Platform.select({
+                                ios: 'trash',
+                                android: 'ic_menu_delete',
+                              }),
+                              imageColor: Colors.systemDestructive,
+                              attributes: {
+                                destructive: true,
+                              },
+                            },
+                          ]
+                        : [
+                            {
+                              id: `report-${item.id}`,
+                              title: 'Report',
+                              image: Platform.select({
+                                ios: 'flag',
+                                android: 'ic_menu_report_image',
+                              }),
+                              imageColor: Colors.systemDestructive,
+                              attributes: {
+                                destructive: true,
+                              },
+                            },
+                            {
+                              id: `block-${item.id}`,
+                              title: 'Block member',
+                              image: Platform.select({
+                                ios: 'person.slash',
+                                android: 'ic_menu_block',
+                              }),
+                              imageColor: Colors.systemDestructive,
+                              attributes: {
+                                destructive: true,
+                              },
+                            },
+                          ]),
+                    ]}>
+                    <View className="p-1 rounded-full">
+                      <Ionicons name="ellipsis-horizontal" size={24} color="white" />
+                    </View>
+                  </ContextMenu>
+                </TouchableOpacity>
               </View>
             </LinearGradient>
           </View>

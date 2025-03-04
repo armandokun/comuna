@@ -209,6 +209,7 @@ export type Database = {
           created_at: string
           feedback: string | null
           id: number
+          post_id: number | null
           type: string | null
           user_id: string | null
           version: string | null
@@ -218,6 +219,7 @@ export type Database = {
           created_at?: string
           feedback?: string | null
           id?: number
+          post_id?: number | null
           type?: string | null
           user_id?: string | null
           version?: string | null
@@ -227,13 +229,67 @@ export type Database = {
           created_at?: string
           feedback?: string | null
           id?: number
+          post_id?: number | null
           type?: string | null
           user_id?: string | null
           version?: string | null
         }
         Relationships: [
           {
+            foreignKeyName: 'feedback_post_id_fkey'
+            columns: ['post_id']
+            isOneToOne: false
+            referencedRelation: 'posts'
+            referencedColumns: ['id']
+          },
+          {
             foreignKeyName: 'feedback_user_id_fkey'
+            columns: ['user_id']
+            isOneToOne: false
+            referencedRelation: 'profiles'
+            referencedColumns: ['id']
+          },
+        ]
+      }
+      member_blocks: {
+        Row: {
+          blocked_user_id: string
+          community_id: number
+          created_at: string
+          id: number
+          user_id: string
+        }
+        Insert: {
+          blocked_user_id: string
+          community_id: number
+          created_at?: string
+          id?: number
+          user_id?: string
+        }
+        Update: {
+          blocked_user_id?: string
+          community_id?: number
+          created_at?: string
+          id?: number
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: 'member_blocks_blocked_user_id_fkey'
+            columns: ['blocked_user_id']
+            isOneToOne: false
+            referencedRelation: 'profiles'
+            referencedColumns: ['id']
+          },
+          {
+            foreignKeyName: 'member_blocks_community_id_fkey'
+            columns: ['community_id']
+            isOneToOne: false
+            referencedRelation: 'communities'
+            referencedColumns: ['id']
+          },
+          {
+            foreignKeyName: 'member_blocks_user_id_fkey'
             columns: ['user_id']
             isOneToOne: false
             referencedRelation: 'profiles'
@@ -322,7 +378,7 @@ export type Database = {
         }
         Relationships: [
           {
-            foreignKeyName: 'fk_author'
+            foreignKeyName: 'posts_author_id_fkey1'
             columns: ['author_id']
             isOneToOne: false
             referencedRelation: 'profiles'
