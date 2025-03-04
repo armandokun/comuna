@@ -11,6 +11,7 @@ export type Database = {
     Tables: {
       comments: {
         Row: {
+          community_id: number | null
           content: string
           created_at: string
           id: number
@@ -18,6 +19,7 @@ export type Database = {
           user_id: string
         }
         Insert: {
+          community_id?: number | null
           content?: string
           created_at?: string
           id?: never
@@ -25,6 +27,7 @@ export type Database = {
           user_id?: string
         }
         Update: {
+          community_id?: number | null
           content?: string
           created_at?: string
           id?: never
@@ -32,6 +35,13 @@ export type Database = {
           user_id?: string
         }
         Relationships: [
+          {
+            foreignKeyName: 'comments_community_id_fkey'
+            columns: ['community_id']
+            isOneToOne: false
+            referencedRelation: 'communities'
+            referencedColumns: ['id']
+          },
           {
             foreignKeyName: 'comments_post_id_fkey'
             columns: ['post_id']

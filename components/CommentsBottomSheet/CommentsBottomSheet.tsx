@@ -17,10 +17,11 @@ import Spacer from '../ui/Spacer'
 type Props = {
   show: boolean
   postId: number | null
+  communityId: number | null
   onClose: () => void
 }
 
-const CommentsBottomSheet = ({ show, postId, onClose }: Props) => {
+const CommentsBottomSheet = ({ show, postId, communityId, onClose }: Props) => {
   const [comments, setComments] = useState<Array<CommentWithLikes>>([])
   const [shouldShow, setShouldShow] = useState(false)
 
@@ -104,6 +105,7 @@ const CommentsBottomSheet = ({ show, postId, onClose }: Props) => {
     const { error } = await supabase.from('comments').insert({
       post_id: postId,
       content,
+      community_id: communityId,
     })
 
     if (error) {

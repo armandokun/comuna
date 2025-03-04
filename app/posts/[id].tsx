@@ -156,7 +156,7 @@ const PostScreen = () => {
   }, [fetchComments, id])
 
   const handleSubmitComment = async (content: string) => {
-    if (!id) return
+    if (!id || !post?.community_id) return
     if (!content.trim()) return
 
     commentInputRef.current?.clear()
@@ -164,6 +164,7 @@ const PostScreen = () => {
     const { error } = await supabase.from('comments').insert({
       post_id: Number(id),
       content,
+      community_id: post.community_id,
     })
 
     if (error) {

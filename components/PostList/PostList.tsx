@@ -117,6 +117,7 @@ const PostList = forwardRef(
         <CommentsBottomSheet
           show={!!selectedPostId}
           postId={selectedPostId}
+          communityId={data[0]?.community_id}
           onClose={() => setSelectedPostId(null)}
         />
       </>
