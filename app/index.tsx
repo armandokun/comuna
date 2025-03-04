@@ -10,7 +10,6 @@ import Animated, {
   FadeOut,
   useSharedValue,
 } from 'react-native-reanimated'
-import { Stagger } from '@animatereactnative/stagger'
 import { BlurView } from 'expo-blur'
 import { Image } from 'expo-image'
 
@@ -135,10 +134,14 @@ const LoginScreen = () => {
           </Animated.View>
         </Marquee>
         <Spacer size="xlarge" />
-        <Stagger
-          duration={500}
-          stagger={100}
-          initialEnteringDelay={1000}
+        <Animated.View
+          entering={FadeIn.duration(1500)
+            .delay(1000)
+            .easing(Easing.elastic(0.9))
+            .withInitialValues({
+              transform: [{ translateY: -itemHeight / 2 }],
+              opacity: 0,
+            })}
           style={{
             flex: 0.55,
             justifyContent: 'center',
@@ -180,7 +183,7 @@ const LoginScreen = () => {
             </Link>
             .
           </Text>
-        </Stagger>
+        </Animated.View>
       </Animated.View>
     </View>
   )

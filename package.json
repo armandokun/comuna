@@ -21,7 +21,6 @@
   },
   "dependencies": {
     "@animatereactnative/marquee": "^0.5.2",
-    "@animatereactnative/stagger": "^0.3.0",
     "@expo/vector-icons": "^14.0.2",
     "@faker-js/faker": "^9.4.0",
     "@gorhom/bottom-sheet": "^5.1.1",
