@@ -65,6 +65,7 @@ const CommentsBottomSheet = ({ show, postId, communityId, onClose }: Props) => {
       `,
       )
       .eq('post_id', postId)
+      .order('created_at', { ascending: true })
 
     if (error) Alert.alert('Error fetching comments', error.message)
 
