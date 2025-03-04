@@ -2,15 +2,17 @@ import { Alert, StyleSheet, View, AppState, ActivityIndicator, FlatList } from '
 import React, { useCallback, useContext, useEffect, useRef, useState } from 'react'
 import { BlurView } from 'expo-blur'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
-import { SplashScreen } from 'expo-router'
+import { SplashScreen, useFocusEffect } from 'expo-router'
 import { Image } from 'expo-image'
 import Animated, { FadeIn, FadeOut } from 'react-native-reanimated'
 
 import mixpanel from '@/libs/mixpanel'
 import { supabase } from '@/libs/supabase'
+import { mmkvStorage } from '@/libs/mmkv'
 import { SessionContext } from '@/containers/SessionProvider'
 import { CommunityContext } from '@/containers/CommunityProvider'
 import { Post } from '@/types/posts'
+import { REFRESH_POSTS_KEY } from '@/constants/async-storage'
 
 import PostList from '@/components/PostList'
 import Onboarding from '@/components/Onboarding'
@@ -170,19 +172,17 @@ const HomeScreen = () => {
     fetchPosts({ refresh: true })
   }, [selectedComuna?.id]) // TODO: Fix infinite loading when applying all dependencies
 
-  useEffect(() => {
-    const subscription = AppState.addEventListener('change', (nextAppState) => {
-      if (appState.current.match(/inactive|background/) && nextAppState === 'active') {
-        handleRefresh()
-      }
+  useFocusEffect(
+    useCallback(() => {
+      const refreshPostsItem = mmkvStorage.getBoolean(REFRESH_POSTS_KEY)
 
-      appState.current = nextAppState
-    })
+      if (!refreshPostsItem) return
 
-    return () => {
-      subscription.remove()
-    }
-  }, [handleRefresh])
+      handleRefresh()
+
+      mmkvStorage.delete(REFRESH_POSTS_KEY)
+    }, [handleRefresh]),
+  )
 
   const handleLoadMore = async () => {
     if (isLoading || !hasMore) return
@@ -248,7 +248,7 @@ const HomeScreen = () => {
           }
         />
       </View>
-      <Header headerRef={headerRef} headerHeight={headerHeight} />
+      <Header headerRef={headerRef} />
       <Onboarding isVisible={showOnboarding} onDismiss={() => setShowOnboarding(false)} />
     </>
   )

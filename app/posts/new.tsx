@@ -7,8 +7,9 @@ import { Image } from 'expo-image'
 
 import mixpanel from '@/libs/mixpanel'
 import { supabase } from '@/libs/supabase'
+import { mmkvStorage } from '@/libs/mmkv'
 import { Colors } from '@/constants/colors'
-import { HOME } from '@/constants/routes'
+import { REFRESH_POSTS_KEY } from '@/constants/async-storage'
 import { CommunityContext } from '@/containers/CommunityProvider'
 
 import TextArea from '@/components/ui/TextArea'
@@ -59,7 +60,9 @@ const NewScreen = () => {
         'Post Id': postData?.id,
       })
 
-      router.replace(HOME)
+      mmkvStorage.set(REFRESH_POSTS_KEY, true)
+
+      router.back()
     } catch (error) {
       setIsUploading(false)
 
