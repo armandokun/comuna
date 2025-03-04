@@ -82,15 +82,19 @@ const RootLayout = () => {
                 headerShown: false,
                 headerTransparent: true,
                 headerTintColor: Colors.text,
-                gestureEnabled: false,
               }}>
               <Stack.Screen name="+not-found" />
               <Stack.Screen name="home" />
               <Stack.Screen
                 name="posts/new"
-                options={{ presentation: 'modal', headerTitle: 'New Post', headerShown: true }}
+                options={{
+                  presentation: 'modal',
+                  headerTitle: 'New Post',
+                  headerShown: true,
+                  gestureEnabled: false,
+                }}
               />
-              <Stack.Screen name="index" />
+              <Stack.Screen name="index" options={{ gestureEnabled: false }} />
               <Stack.Screen
                 name="posts/[id]"
                 options={{
@@ -107,8 +111,11 @@ const RootLayout = () => {
               <Stack.Screen
                 name="comments/[id]/likes"
                 options={{
-                  presentation: 'transparentModal',
+                  presentation: 'modal',
                   headerTitle: 'Likes',
+                  contentStyle: {
+                    backgroundColor: 'transparent',
+                  },
                   headerShown: true,
                   headerRight: () => (
                     <TouchableOpacity onPress={handleGoBack}>
@@ -123,6 +130,7 @@ const RootLayout = () => {
                   presentation: 'modal',
                   headerTitle: 'New Comuna',
                   headerShown: true,
+                  gestureEnabled: false,
                   contentStyle: {
                     backgroundColor: 'transparent',
                   },
@@ -166,6 +174,7 @@ const RootLayout = () => {
                   presentation: 'modal',
                   headerShown: true,
                   headerTitle: 'Feedback',
+                  gestureEnabled: false,
                   contentStyle: {
                     backgroundColor: 'transparent',
                   },
