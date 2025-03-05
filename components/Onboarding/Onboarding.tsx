@@ -24,10 +24,9 @@ import { Colors } from '@/constants/colors'
 import { SessionContext } from '@/containers/SessionProvider'
 import { supabase } from '@/libs/supabase'
 import usePushNotifications from '@/hooks/usePushNotifications'
+import { USERNAME_MAX_LENGTH, USERNAME_MIN_LENGTH } from '@/constants/profile'
 
 import ContextMenu from '../ui/ContextMenu'
-
-const MIN_USERNAME_LENGTH = 5
 
 type Props = {
   isVisible: boolean
@@ -62,7 +61,7 @@ const Onboarding = ({ isVisible, onDismiss }: Props) => {
 
     setIsLoading(true)
 
-    if (username.length < MIN_USERNAME_LENGTH) {
+    if (username.length < USERNAME_MIN_LENGTH) {
       Alert.alert('Username must be at least 5 characters long.')
 
       setIsLoading(false)
@@ -248,7 +247,7 @@ const Onboarding = ({ isVisible, onDismiss }: Props) => {
                     placeholder="@username"
                     value={username}
                     onChangeText={handleUsernameChange}
-                    maxLength={20}
+                    maxLength={USERNAME_MAX_LENGTH}
                     autoCapitalize="none"
                     autoComplete="off"
                     autoCorrect={false}
