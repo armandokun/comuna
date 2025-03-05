@@ -10,12 +10,14 @@ import {
   Keyboard,
   Animated,
   SafeAreaView,
+  TouchableOpacity,
 } from 'react-native'
-import { SplashScreen, useLocalSearchParams } from 'expo-router'
+import { router, SplashScreen, useLocalSearchParams, useNavigation } from 'expo-router'
 import React, { useCallback, useContext, useEffect, useRef, useState } from 'react'
 import { Image } from 'expo-image'
 import { BlurView } from 'expo-blur'
 import { LinearGradient } from 'expo-linear-gradient'
+import { Ionicons } from '@expo/vector-icons'
 
 import { supabase } from '@/libs/supabase'
 import { Post, CommentWithLikes } from '@/types/posts'
@@ -41,6 +43,18 @@ const PostScreen = () => {
   const commentInputRef = useRef<TextInput>(null)
 
   const { profile } = useContext(SessionContext)
+  const navigation = useNavigation()
+
+  useEffect(() => {
+    navigation.setOptions({
+      headerRight: () =>
+        navigation.canGoBack() ? null : (
+          <TouchableOpacity onPress={() => navigation.goBack()}>
+            <Ionicons name="close-circle" size={36} color={Colors.text} />
+          </TouchableOpacity>
+        ),
+    })
+  }, [navigation])
 
   useEffect(() => {
     const keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', () => {
@@ -94,6 +108,13 @@ const PostScreen = () => {
 
       if (!data) {
         Alert.alert('Post not found')
+
+        if (navigation.canGoBack()) {
+          navigation.goBack()
+        } else {
+          router.replace('/')
+        }
+
         return
       }
 
@@ -132,6 +153,7 @@ const PostScreen = () => {
     `,
       )
       .eq('post_id', Number(id))
+      .order('created_at', { ascending: true })
 
     if (error) Alert.alert('Error fetching comments', error.message)
 
@@ -200,7 +222,7 @@ const PostScreen = () => {
                   source={post.image_url}
                   placeholder={{ blurhash: post.image_blurhash }}
                   contentFit="cover"
-                  style={{ width: '100%', height: Dimensions.get('window').height * 0.5 }}
+                  style={{ width: '100%', height: Dimensions.get('window').height * 0.6 }}
                 />
               </GradientBlur>
               <View className="absolute w-full gap-4">

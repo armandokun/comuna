@@ -99,13 +99,7 @@ const RootLayout = () => {
                 name="posts/[id]"
                 options={{
                   headerTitle: '',
-                  headerBackTitle: 'Home',
                   headerShown: true,
-                  headerRight: () => (
-                    <TouchableOpacity onPress={handleGoBack}>
-                      <Ionicons name="close-circle" size={36} color={Colors.text} />
-                    </TouchableOpacity>
-                  ),
                 }}
               />
               <Stack.Screen
