@@ -22,14 +22,14 @@ import Label from '../ui/Label'
 import KeyboardDismissPressable from '../ui/KeyboardDismissPressable'
 
 const ProfileEditScreen = () => {
+  const [loading, setLoading] = useState(false)
+
   const { profile } = useContext(SessionContext)
 
   const [username, setUsername] = useState(profile?.username || '')
   const [name, setName] = useState(profile?.name || '')
   const [avatarUrl, setAvatarUrl] = useState(profile?.avatar_url || '')
   const [newAvatarAsset, setNewAvatarAsset] = useState<ImagePicker.ImagePickerAsset | null>(null)
-
-  const [loading, setLoading] = useState(false)
 
   const handlePickImage = async () => {
     const result = await ImagePicker.launchImageLibraryAsync({
@@ -42,13 +42,12 @@ const ProfileEditScreen = () => {
 
     if (result.canceled) return
 
-    setAvatarUrl(result.assets[0].uri)
     setNewAvatarAsset(result.assets[0])
   }
 
   const isUsernameChanged = profile?.username !== username
   const isNameChanged = profile?.name !== name
-  const isAvatarChanged = profile?.avatar_url !== avatarUrl
+  const isAvatarChanged = profile?.avatar_url !== avatarUrl || newAvatarAsset
   const isAnyFieldChanged = isUsernameChanged || isNameChanged || isAvatarChanged
 
   const handleSave = async () => {
@@ -99,6 +98,8 @@ const ProfileEditScreen = () => {
       }
 
       try {
+        setLoading(true)
+
         if (newAvatarAsset) {
           const fileName = `${Date.now()}-${newAvatarAsset.uri.split('/').pop()}`
           const base64Data = newAvatarAsset.base64!
@@ -155,7 +156,7 @@ const ProfileEditScreen = () => {
           <View className="items-center">
             <TouchableOpacity onPress={handlePickImage}>
               <Image
-                source={{ uri: avatarUrl }}
+                source={{ uri: newAvatarAsset?.uri || avatarUrl }}
                 contentFit="cover"
                 style={{ width: 100, height: 100, borderRadius: 50 }}
               />
