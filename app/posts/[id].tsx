@@ -10,18 +10,21 @@ import {
   Keyboard,
   Animated,
   SafeAreaView,
+  TouchableOpacity,
 } from 'react-native'
-import { SplashScreen, useLocalSearchParams } from 'expo-router'
+import { router, SplashScreen, useLocalSearchParams, useNavigation } from 'expo-router'
 import React, { useCallback, useContext, useEffect, useRef, useState } from 'react'
 import { Image } from 'expo-image'
 import { BlurView } from 'expo-blur'
 import { LinearGradient } from 'expo-linear-gradient'
+import { Ionicons } from '@expo/vector-icons'
 
 import { supabase } from '@/libs/supabase'
 import { Post, CommentWithLikes } from '@/types/posts'
 import Text from '@/components/ui/Text'
 import GradientBlur from '@/components/GradientBlur'
 import { Colors } from '@/constants/colors'
+import { PLACEHOLDER_AVATAR_URL } from '@/constants/url'
 import Spacer from '@/components/ui/Spacer'
 import { SessionContext } from '@/containers/SessionProvider'
 import Comment from '@/components/CommentsBottomSheet/Comment'
@@ -40,6 +43,18 @@ const PostScreen = () => {
   const commentInputRef = useRef<TextInput>(null)
 
   const { profile } = useContext(SessionContext)
+  const navigation = useNavigation()
+
+  useEffect(() => {
+    navigation.setOptions({
+      headerRight: () =>
+        navigation.canGoBack() ? null : (
+          <TouchableOpacity onPress={() => navigation.goBack()}>
+            <Ionicons name="close-circle" size={36} color={Colors.text} />
+          </TouchableOpacity>
+        ),
+    })
+  }, [navigation])
 
   useEffect(() => {
     const keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', () => {
@@ -93,6 +108,13 @@ const PostScreen = () => {
 
       if (!data) {
         Alert.alert('Post not found')
+
+        if (navigation.canGoBack()) {
+          navigation.goBack()
+        } else {
+          router.replace('/')
+        }
+
         return
       }
 
@@ -102,7 +124,7 @@ const PostScreen = () => {
           id: data.author?.id ?? '',
           name: data.author?.name ?? '',
           username: data.author?.username ?? '',
-          avatar_url: data.author?.avatar_url ?? '',
+          avatar_url: data.author?.avatar_url ?? PLACEHOLDER_AVATAR_URL,
         },
       })
 
@@ -131,6 +153,7 @@ const PostScreen = () => {
     `,
       )
       .eq('post_id', Number(id))
+      .order('created_at', { ascending: true })
 
     if (error) Alert.alert('Error fetching comments', error.message)
 
@@ -141,7 +164,7 @@ const PostScreen = () => {
           ...comment.author,
           name: comment.author.name ?? '',
           username: comment.author.username ?? '',
-          avatarUrl: comment.author.avatar_url ?? '',
+          avatarUrl: comment.author.avatar_url ?? PLACEHOLDER_AVATAR_URL,
         },
       }))
 
@@ -199,14 +222,17 @@ const PostScreen = () => {
                   source={post.image_url}
                   placeholder={{ blurhash: post.image_blurhash }}
                   contentFit="cover"
-                  style={{ width: '100%', height: Dimensions.get('window').height * 0.5 }}
+                  style={{ width: '100%', height: Dimensions.get('window').height * 0.6 }}
                 />
               </GradientBlur>
               <View className="absolute w-full gap-4">
                 <LinearGradient colors={['rgba(0,0,0,0.6)', 'transparent']} locations={[0, 1]}>
                   <View className="flex-row items-center gap-2 p-4">
                     <Image
-                      source={{ uri: `${post.author.avatar_url}?width=32&height=32` }}
+                      source={{
+                        uri:
+                          `${post.author.avatar_url}?width=32&height=32` || PLACEHOLDER_AVATAR_URL,
+                      }}
                       contentFit="cover"
                       style={{ width: 32, height: 32, borderRadius: 32 }}
                     />
@@ -248,7 +274,7 @@ const PostScreen = () => {
           </Animated.ScrollView>
           <View className="flex-row items-center gap-2 justify-between py-4 px-4">
             <Image
-              source={profile?.avatar_url}
+              source={profile?.avatar_url || PLACEHOLDER_AVATAR_URL}
               style={{ width: 44, height: 44, borderRadius: 36 }}
               contentFit="cover"
               cachePolicy="memory-disk"

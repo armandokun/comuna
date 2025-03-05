@@ -5,6 +5,7 @@ import React, { useState, useEffect, ReactNode, useCallback, useMemo } from 'rea
 import mixpanel from '@/libs/mixpanel'
 import { supabase } from '@/libs/supabase'
 import { Profile } from '@/types/profile'
+import { PLACEHOLDER_AVATAR_URL } from '@/constants/url'
 
 import { SessionContext } from './SessionContext'
 
@@ -51,7 +52,16 @@ const SessionProvider = ({ children }: Props) => {
 
     if (error) Alert.alert(error.message)
 
-    setProfile(data)
+    setProfile(
+      data
+        ? {
+            ...data,
+            avatar_url: data.avatar_url
+              ? `${data.avatar_url}?width=50&height=50`
+              : PLACEHOLDER_AVATAR_URL,
+          }
+        : null,
+    )
     setIsProfileFetched(true)
   }, [session?.user])
 

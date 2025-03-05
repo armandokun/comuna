@@ -20,6 +20,7 @@ import { nativeBuildVersion, nativeApplicationVersion } from 'expo-application'
 import { SessionContext } from '@/containers/SessionProvider'
 import { Colors } from '@/constants/colors'
 import { AUTH, SETTINGS_FEEDBACK } from '@/constants/routes'
+import { APP_STORE_REVIEW_URL, PLACEHOLDER_AVATAR_URL } from '@/constants/url'
 import Text from '@/components/ui/Text'
 import mixpanel from '@/libs/mixpanel'
 import { signOut } from '@/libs/auth'
@@ -196,6 +197,13 @@ const Settings = () => {
           title={<Text type="body">Send feedback</Text>}
           onPress={() => router.push(SETTINGS_FEEDBACK)}
         />
+        <Divider />
+         <Cell
+           size="medium"
+           prefix={<Ionicons name="star" size={24} color={Colors.text} />}
+           title={<Text type="body">Rate us on the App Store!</Text>}
+           onPress={() => Linking.openURL(APP_STORE_REVIEW_URL)}
+         />
       </BlurView>
       <Spacer size="medium" />
       <Label title="Danger Zone" />

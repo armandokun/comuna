@@ -13,6 +13,7 @@ import { SessionContext } from '@/containers/SessionProvider'
 import { CommunityContext } from '@/containers/CommunityProvider'
 import { Post } from '@/types/posts'
 import { REFRESH_POSTS_KEY } from '@/constants/async-storage'
+import { PLACEHOLDER_AVATAR_URL } from '@/constants/url'
 
 import PostList from '@/components/PostList'
 import Onboarding from '@/components/Onboarding'
@@ -131,7 +132,7 @@ const HomeScreen = () => {
           id: post.author?.id ?? '',
           name: post.author?.name ?? '',
           username: post.author?.username ?? '',
-          avatar_url: post.author?.avatar_url ?? '',
+          avatar_url: post.author?.avatar_url ?? PLACEHOLDER_AVATAR_URL,
         },
         comments: post.comments.map((comment) => ({
           ...comment,
@@ -139,7 +140,7 @@ const HomeScreen = () => {
             id: comment.author?.id ?? '',
             name: comment.author?.name ?? '',
             username: comment.author?.username ?? '',
-            avatarUrl: comment.author?.avatar_url ?? '',
+            avatarUrl: comment.author?.avatar_url ?? PLACEHOLDER_AVATAR_URL,
           },
         })),
       }))

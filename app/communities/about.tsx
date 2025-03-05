@@ -12,6 +12,7 @@ import { supabase } from '@/libs/supabase'
 import { ComunaMember } from '@/types/comuna'
 import Spacer from '@/components/ui/Spacer'
 import { Colors } from '@/constants/colors'
+import { PLACEHOLDER_AVATAR_URL } from '@/constants/url'
 import ContextMenu from '@/components/ui/ContextMenu'
 import { SessionContext } from '@/containers/SessionProvider'
 import { HOME } from '@/constants/routes'
@@ -76,14 +77,22 @@ const AboutCommunityScreen = () => {
       id: member?.id!,
       name: member?.name || null,
       username: member?.username || null,
-      avatar_url: member?.avatar_url!,
+      avatar_url: member?.avatar_url || PLACEHOLDER_AVATAR_URL,
       is_manager: community.manager_id === member?.id,
       is_approved: isApproved,
       is_blocked: false,
     }))
 
     if (formattedMembers) {
-      setMembers(formattedMembers.filter((member) => member.is_approved))
+      setMembers(
+        formattedMembers.filter((member) => {
+          if (!member.username && !member.name) return false
+
+          if (member.is_approved) return true
+
+          return false
+        }),
+      )
       setManager(formattedMembers.find((member) => member.is_manager) ?? null)
       setPendingRequests(formattedMembers.filter((member) => !member.is_approved))
 
@@ -365,7 +374,7 @@ const AboutCommunityScreen = () => {
             <Spacer size="xxsmall" />
             <View className="flex-row items-center gap-2">
               <Image
-                source={{ uri: manager?.avatar_url }}
+                source={{ uri: manager?.avatar_url || PLACEHOLDER_AVATAR_URL }}
                 style={{
                   width: 32,
                   height: 32,
@@ -394,7 +403,7 @@ const AboutCommunityScreen = () => {
                       <View className="flex-row items-center gap-2">
                         <Image
                           key={member.id}
-                          source={{ uri: member.avatar_url }}
+                          source={{ uri: member.avatar_url || PLACEHOLDER_AVATAR_URL }}
                           contentFit="cover"
                           style={{ width: 30, height: 30, borderRadius: 30 }}
                         />
@@ -446,7 +455,7 @@ const AboutCommunityScreen = () => {
                 <View className="flex-row items-center gap-2">
                   <Image
                     key={member.id}
-                    source={{ uri: member.avatar_url }}
+                    source={{ uri: member.avatar_url || PLACEHOLDER_AVATAR_URL }}
                     contentFit="cover"
                     style={{ width: 30, height: 30, borderRadius: 30 }}
                   />
