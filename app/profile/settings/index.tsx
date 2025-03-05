@@ -155,7 +155,9 @@ const Settings = () => {
           size="large"
           prefix={
             <Image
-              source={{ uri: `${profile?.avatar_url}?width=50&height=50` }}
+              source={{
+                uri: `${profile?.avatar_url}?width=50&height=50` || PLACEHOLDER_AVATAR_URL,
+              }}
               contentFit="cover"
               style={{ width: 50, height: 50, borderRadius: 25 }}
             />
@@ -198,12 +200,12 @@ const Settings = () => {
           onPress={() => router.push(SETTINGS_FEEDBACK)}
         />
         <Divider />
-         <Cell
-           size="medium"
-           prefix={<Ionicons name="star" size={24} color={Colors.text} />}
-           title={<Text type="body">Rate us on the App Store!</Text>}
-           onPress={() => Linking.openURL(APP_STORE_REVIEW_URL)}
-         />
+        <Cell
+          size="medium"
+          prefix={<Ionicons name="star" size={24} color={Colors.text} />}
+          title={<Text type="body">Rate us on the App Store!</Text>}
+          onPress={() => Linking.openURL(APP_STORE_REVIEW_URL)}
+        />
       </BlurView>
       <Spacer size="medium" />
       <Label title="Danger Zone" />
