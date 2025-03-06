@@ -178,6 +178,20 @@ const AboutCommunityScreen = () => {
     router.replace(HOME)
   }
 
+  const handleLeavePress = () => {
+    Alert.alert(`Leave #${selectedComuna?.name}?`, 'Are you sure you want to leave this comuna?', [
+      {
+        text: 'Cancel',
+        style: 'cancel',
+      },
+      {
+        text: 'Leave',
+        style: 'destructive',
+        onPress: handleLeaveCommunity,
+      },
+    ])
+  }
+
   const handlePromoteToManager = async (memberId: string) => {
     if (!selectedComuna?.id) return
 
@@ -543,6 +557,18 @@ const AboutCommunityScreen = () => {
               </BlurView>
             ))}
           </View>
+          <Spacer size="medium" />
+          <Label title="Danger" />
+          <BlurView tint="light" intensity={30} className="rounded-xl overflow-hidden">
+            <TouchableOpacity onPress={handleLeavePress} className="p-2">
+              <View className="flex-row items-center justify-center gap-2">
+                <Ionicons name="log-out-outline" size={24} color={Colors.systemDestructive} />
+                <Text type="button" style={{ color: Colors.systemDestructive }}>
+                  Leave
+                </Text>
+              </View>
+            </TouchableOpacity>
+          </BlurView>
         </ScrollView>
       </SafeAreaView>
     </BlurView>
