@@ -13,7 +13,7 @@ import {
   TouchableOpacity,
 } from 'react-native'
 import { Link, router, SplashScreen, useLocalSearchParams, useNavigation } from 'expo-router'
-import React, { useCallback, useContext, useEffect, useRef, useState } from 'react'
+import React, { useCallback, useContext, useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { Image } from 'expo-image'
 import { BlurView } from 'expo-blur'
 import { LinearGradient } from 'expo-linear-gradient'
@@ -32,6 +32,8 @@ import Button from '@/components/ui/Button'
 
 type PostWithoutComments = Omit<Post, 'comments'>
 
+const MIN_DESCRIPTION_HEIGHT = 50
+
 const PostScreen = () => {
   const [post, setPost] = useState<PostWithoutComments | null>(null)
   const [comments, setComments] = useState<Array<CommentWithLikes>>([])
@@ -48,6 +50,7 @@ const PostScreen = () => {
 
   useEffect(() => {
     navigation.setOptions({
+      headerBackTitle: 'Back',
       headerRight: () =>
         navigation.canGoBack() ? null : (
           <TouchableOpacity onPress={() => navigation.goBack()}>
@@ -72,13 +75,14 @@ const PostScreen = () => {
     }
   }, [])
 
-  useEffect(() => {
+  useLayoutEffect(() => {
+    if (!post?.description) return
     if (!descriptionRef.current) return
 
     descriptionRef.current.measure((x, y, width, height, pageX, pageY) => {
-      setDescriptionHeight(height)
+      setDescriptionHeight(height + MIN_DESCRIPTION_HEIGHT)
     })
-  }, [])
+  }, [post?.description])
 
   const closeSplashScreen = async () => {
     await SplashScreen.hideAsync()
@@ -243,7 +247,7 @@ const PostScreen = () => {
             keyboardShouldPersistTaps="handled"
             contentContainerClassName="px-4">
             <View className="relative rounded-3xl overflow-hidden">
-              <GradientBlur height={descriptionHeight + 50}>
+              <GradientBlur height={descriptionHeight}>
                 <Image
                   source={post.image_url}
                   placeholder={{ blurhash: post.image_blurhash }}
