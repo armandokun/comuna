@@ -12,7 +12,7 @@ import {
   SafeAreaView,
   TouchableOpacity,
 } from 'react-native'
-import { router, SplashScreen, useLocalSearchParams, useNavigation } from 'expo-router'
+import { Link, router, SplashScreen, useLocalSearchParams, useNavigation } from 'expo-router'
 import React, { useCallback, useContext, useEffect, useRef, useState } from 'react'
 import { Image } from 'expo-image'
 import { BlurView } from 'expo-blur'
@@ -28,6 +28,7 @@ import { PLACEHOLDER_AVATAR_URL } from '@/constants/url'
 import Spacer from '@/components/ui/Spacer'
 import { SessionContext } from '@/containers/SessionProvider'
 import Comment from '@/components/CommentsBottomSheet/Comment'
+import Button from '@/components/ui/Button'
 
 type PostWithoutComments = Omit<Post, 'comments'>
 
@@ -103,6 +104,7 @@ const PostScreen = () => {
 
       if (error) {
         Alert.alert('Error fetching post', error.message)
+
         return
       }
 
@@ -132,9 +134,11 @@ const PostScreen = () => {
     }
 
     fetchPost()
-  }, [id])
+  }, [id, navigation])
 
   const fetchComments = useCallback(async () => {
+    if (!post?.id) return
+
     const { data, error } = await supabase
       .from('comments')
       .select(
@@ -152,7 +156,7 @@ const PostScreen = () => {
       )
     `,
       )
-      .eq('post_id', Number(id))
+      .eq('post_id', Number(post.id))
       .order('created_at', { ascending: true })
 
     if (error) Alert.alert('Error fetching comments', error.message)
@@ -170,7 +174,7 @@ const PostScreen = () => {
 
       setComments(formattedComments)
     }
-  }, [id])
+  }, [post?.id])
 
   useEffect(() => {
     if (!id) return
@@ -199,7 +203,29 @@ const PostScreen = () => {
     fetchComments()
   }
 
-  if (!post) return null
+  if (!post) {
+    return (
+      <>
+        <Image
+          source={require('@/assets/images/onboarding-background-2.png')}
+          contentFit="cover"
+          style={StyleSheet.absoluteFill}
+        />
+        <BlurView intensity={80} tint="systemChromeMaterialDark" style={StyleSheet.absoluteFill} />
+        <View className="flex-1 justify-center items-center px-4">
+          <Text type="heading">Post Not Found</Text>
+          <Spacer size="small" />
+          <Text className="text-center text-gray-500">
+            The post you&apos;re looking for doesn&apos;t exist or has been removed.
+          </Text>
+          <Spacer size="large" />
+          <Link href="/" className="text-blue-500">
+            <Button title="Return Home" size="medium" onPress={() => router.replace('/home')} />
+          </Link>
+        </View>
+      </>
+    )
+  }
 
   return (
     <>
