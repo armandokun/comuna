@@ -45,6 +45,39 @@ const ProfileEditScreen = () => {
     setNewAvatarAsset(result.assets[0])
   }
 
+  const uploadAvatar = async () => {
+    if (!newAvatarAsset) return
+
+    const fileName = `${Date.now()}-${newAvatarAsset.uri.split('/').pop()}`
+    const base64Data = newAvatarAsset.base64
+
+    if (!base64Data) {
+      Alert.alert('Error uploading image', 'No base64 data found')
+
+      return
+    }
+
+    const { error: storageError } = await supabase.storage
+      .from('avatars')
+      .upload(fileName, decode(base64Data), {
+        contentType: newAvatarAsset.mimeType,
+        cacheControl: '3600', // 1 hour
+        upsert: true,
+      })
+
+    if (storageError) {
+      Alert.alert('Error uploading image', storageError.message)
+
+      return
+    }
+
+    const {
+      data: { publicUrl },
+    } = supabase.storage.from('avatars').getPublicUrl(fileName)
+
+    return publicUrl
+  }
+
   const isUsernameChanged = profile?.username !== username
   const isNameChanged = profile?.name !== name
   const isAvatarChanged = profile?.avatar_url !== avatarUrl || newAvatarAsset
@@ -52,100 +85,72 @@ const ProfileEditScreen = () => {
 
   const handleSave = async () => {
     if (!profile?.id) return
+    if (!isAnyFieldChanged) return
 
-    if (isAnyFieldChanged) {
-      setLoading(true)
+    setLoading(true)
 
-      if (isUsernameChanged) {
-        if (username.length < USERNAME_MIN_LENGTH) {
-          Alert.alert('Username must be at least 4 characters long')
-
-          setLoading(false)
-
-          return
-        }
-
-        const { data: existingUser, error: existingUserError } = await supabase
-          .from('profiles')
-          .select('*')
-          .eq('username', username)
-
-        if (existingUserError) {
-          Alert.alert('Error checking username', existingUserError.message)
-
-          setLoading(false)
-
-          return
-        }
-
-        if (existingUser?.length > 0) {
-          Alert.alert('Username already taken', 'Please choose another username')
-
-          setLoading(false)
-
-          return
-        }
-      }
-
-      if (isNameChanged) {
-        if (name.length < NAME_MIN_LENGTH) {
-          Alert.alert('Name must be at least 3 characters long')
-
-          setLoading(false)
-
-          return
-        }
-      }
-
-      try {
-        setLoading(true)
-
-        if (newAvatarAsset) {
-          const fileName = `${Date.now()}-${newAvatarAsset.uri.split('/').pop()}`
-          const base64Data = newAvatarAsset.base64!
-
-          const { error: storageError } = await supabase.storage
-            .from('avatars')
-            .upload(fileName, decode(base64Data), {
-              contentType: newAvatarAsset.mimeType,
-              cacheControl: '3600', // 1 hour
-              upsert: true,
-            })
-
-          if (storageError) {
-            Alert.alert('Error uploading image', storageError.message)
-
-            setAvatarUrl(profile?.avatar_url || '')
-
-            return
-          }
-
-          const {
-            data: { publicUrl },
-          } = supabase.storage.from('avatars').getPublicUrl(fileName)
-
-          setAvatarUrl(publicUrl)
-        }
-
-        const { error } = await supabase
-          .from('profiles')
-          .update({ username, name, avatar_url: avatarUrl })
-          .eq('id', profile?.id)
-
-        if (error) Alert.alert('Error updating profile', error.message)
+    if (isUsernameChanged) {
+      if (username.length < USERNAME_MIN_LENGTH) {
+        Alert.alert('Username must be at least 4 characters long')
 
         setLoading(false)
 
-        setUsername(username)
-        setName(name)
-        setAvatarUrl(avatarUrl)
+        return
+      }
 
-        Alert.alert('Profile updated', 'Your profile has been updated successfully')
-      } catch (error) {
-        Alert.alert('Error updating profile', (error as Error).message)
+      const { data: existingUser, error: existingUserError } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('username', username)
+
+      if (existingUserError) {
+        Alert.alert('Error checking username', existingUserError.message)
 
         setLoading(false)
+
+        return
       }
+
+      if (existingUser?.length > 0) {
+        Alert.alert('Username already taken', 'Please choose another username')
+
+        setLoading(false)
+
+        return
+      }
+    }
+
+    if (isNameChanged) {
+      if (name.length < NAME_MIN_LENGTH) {
+        Alert.alert('Name must be at least 3 characters long')
+
+        setLoading(false)
+
+        return
+      }
+    }
+
+    try {
+      const newAvatarPublicUrl = await uploadAvatar()
+
+      const { error } = await supabase
+        .from('profiles')
+        .update({ username, name, avatar_url: newAvatarPublicUrl })
+        .eq('id', profile?.id)
+
+      if (error) Alert.alert('Error updating profile', error.message)
+
+      setLoading(false)
+      setUsername(username)
+      setName(name)
+      setAvatarUrl(newAvatarPublicUrl || '')
+      setNewAvatarAsset(null)
+
+      Alert.alert('Profile updated', 'Your profile has been updated successfully')
+    } catch (error) {
+      Alert.alert('Error updating profile', (error as Error).message)
+
+      setLoading(false)
     }
   }
 

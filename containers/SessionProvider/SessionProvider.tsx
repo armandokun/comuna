@@ -56,9 +56,7 @@ const SessionProvider = ({ children }: Props) => {
       data
         ? {
             ...data,
-            avatar_url: data.avatar_url
-              ? `${data.avatar_url}?width=50&height=50`
-              : PLACEHOLDER_AVATAR_URL,
+            avatar_url: data.avatar_url || PLACEHOLDER_AVATAR_URL,
           }
         : null,
     )
