@@ -50,6 +50,7 @@ const RootLayout = () => {
       if (!postId) return
 
       setTimeout(() => {
+        router.dismissAll()
         router.push(`/posts/${postId}`)
       }, 1000)
     })
