@@ -26,6 +26,8 @@ import { supabase } from '@/libs/supabase'
 import usePushNotifications from '@/hooks/usePushNotifications'
 import { USERNAME_MAX_LENGTH, USERNAME_MIN_LENGTH } from '@/constants/profile'
 
+import { PLACEHOLDER_AVATAR_URL } from '@/constants/url'
+
 import ContextMenu from '../ui/ContextMenu'
 
 type Props = {
@@ -220,6 +222,8 @@ const Onboarding = ({ isVisible, onDismiss }: Props) => {
   }
 
   const isDismissReady = username.trim() && (avatar?.uri || profile?.avatar_url)
+  const profileAvatarUrl =
+    profile?.avatar_url === PLACEHOLDER_AVATAR_URL ? null : profile?.avatar_url
 
   return (
     <Modal visible={isVisible} onDismiss={onDismiss} animationType="fade">
@@ -271,7 +275,7 @@ const Onboarding = ({ isVisible, onDismiss }: Props) => {
               },
               backgroundImage: require('@/assets/images/onboarding-background-3.png'),
               mediaPosition: 'bottom',
-              actionDisabled: isLoading || (!avatar?.uri && !profile?.avatar_url),
+              actionDisabled: isLoading || (!avatar?.uri && !profileAvatarUrl),
               media: (
                 <TouchableOpacity>
                   <ContextMenu
@@ -299,9 +303,9 @@ const Onboarding = ({ isVisible, onDismiss }: Props) => {
                     ]}
                     onPress={handleContextMenuPress}>
                     <View className="size-32 items-center justify-center rounded-full border border-dashed border-white">
-                      {avatar || profile?.avatar_url ? (
+                      {avatar?.uri || profileAvatarUrl ? (
                         <Image
-                          source={{ uri: avatar ? avatar.uri : profile?.avatar_url! }}
+                          source={{ uri: avatar?.uri || profileAvatarUrl! }}
                           className="size-32 rounded-full border-2 border-white"
                         />
                       ) : (
