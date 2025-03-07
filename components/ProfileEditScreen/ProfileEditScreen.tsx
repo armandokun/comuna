@@ -27,8 +27,8 @@ const ProfileEditScreen = () => {
   const { profile } = useContext(SessionContext)
 
   const [username, setUsername] = useState(profile?.username || '')
-  const [name, setName] = useState(profile?.name || '')
-  const [avatarUrl, setAvatarUrl] = useState(profile?.avatar_url || '')
+  const [name, setName] = useState<string | null>(profile?.name || null)
+  const [avatarUrl, setAvatarUrl] = useState<string | null>(profile?.avatar_url || null)
   const [newAvatarAsset, setNewAvatarAsset] = useState<ImagePicker.ImagePickerAsset | null>(null)
 
   const handlePickImage = async () => {
@@ -121,7 +121,7 @@ const ProfileEditScreen = () => {
     }
 
     if (isNameChanged) {
-      if (name.length < NAME_MIN_LENGTH) {
+      if (name && name.length < NAME_MIN_LENGTH) {
         Alert.alert('Name must be at least 3 characters long')
 
         setLoading(false)
@@ -188,7 +188,7 @@ const ProfileEditScreen = () => {
             <TextInput
               autoCorrect={false}
               autoCapitalize="words"
-              value={name}
+              value={name || ''}
               onChangeText={setName}
               placeholder="Full Name"
               maxLength={NAME_MAX_LENGTH}
