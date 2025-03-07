@@ -5,17 +5,16 @@ import { Image } from 'expo-image'
 import Animated from 'react-native-reanimated'
 import { SnapbackZoom } from 'react-native-zoom-toolkit'
 import { Ionicons } from '@expo/vector-icons'
-
 import { router } from 'expo-router'
 
 import Text from '@/components/ui/Text'
 import { Post as PostType } from '@/types/posts'
 import { Colors } from '@/constants/colors'
 import { HOME } from '@/constants/routes'
+import { PLACEHOLDER_AVATAR_URL } from '@/constants/url'
 import { SessionContext } from '@/containers/SessionProvider'
 import { supabase } from '@/libs/supabase'
-
-import { PLACEHOLDER_AVATAR_URL } from '@/constants/url'
+import { getRelativeTimeFromNow } from '@/libs/date'
 
 import GradientBlur from '../GradientBlur'
 import VideoPost from './Video'
@@ -181,6 +180,9 @@ const Post = ({ item, onPress, isVisible }: Props) => {
                   />
                   <Text type="subhead" style={{ color: 'white' }}>
                     {item.author.username || item.author.name}
+                  </Text>
+                  <Text type="subhead" style={{ color: 'rgba(255, 255, 255, 0.7)' }}>
+                    {getRelativeTimeFromNow(item.created_at)}
                   </Text>
                 </View>
                 <TouchableOpacity className="p-1 rounded-full">
