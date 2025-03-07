@@ -2,7 +2,7 @@ import { Alert, TouchableOpacity, View, StyleSheet } from 'react-native'
 import { useContext, useEffect, useState } from 'react'
 import { Image } from 'expo-image'
 import { Ionicons } from '@expo/vector-icons'
-import { useLocalSearchParams } from 'expo-router'
+import { SplashScreen, useLocalSearchParams, useNavigation } from 'expo-router'
 import { BlurView } from 'expo-blur'
 
 import { Colors } from '@/constants/colors'
@@ -44,8 +44,17 @@ const ComunaInviteScreen = () => {
   const [isRequesting, setIsRequesting] = useState(false)
   const [hasRequested, setHasRequested] = useState(false)
 
+  const navigation = useNavigation()
   const { profile } = useContext(SessionContext)
   const { hash } = useLocalSearchParams()
+
+  useEffect(() => {
+    const closeSplashScreen = async () => {
+      await SplashScreen.hideAsync()
+    }
+
+    closeSplashScreen()
+  }, [])
 
   useEffect(() => {
     if (!hash) return
@@ -189,10 +198,28 @@ const ComunaInviteScreen = () => {
     )
   }
 
-  if (!community) return null
+  if (!community) {
+    return (
+      <>
+        <Image
+          source={require('@/assets/images/onboarding-background-3.png')}
+          style={StyleSheet.absoluteFill}
+          contentFit="cover"
+        />
+        <BlurView intensity={80} tint="systemChromeMaterialDark" style={StyleSheet.absoluteFill} />
+      </>
+    )
+  }
 
   return (
     <>
+      {!navigation.canGoBack() && (
+        <Image
+          source={require('@/assets/images/intro-marquee/item-3.png')}
+          style={StyleSheet.absoluteFill}
+          contentFit="cover"
+        />
+      )}
       <BlurView intensity={80} tint="systemChromeMaterialDark" style={StyleSheet.absoluteFill} />
       <View className="flex-1 px-4 items-center justify-center">
         <AnimatedMemberCircle
