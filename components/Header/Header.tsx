@@ -6,6 +6,8 @@ import { router } from 'expo-router'
 import { Ionicons } from '@expo/vector-icons'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 
+import { BlurView } from 'expo-blur'
+
 import { ABOUT_COMMUNITY, NEW_COMMUNITY, PROFILE_SETTINGS } from '@/constants/routes'
 import { Colors } from '@/constants/colors'
 import { SELECTED_COMMUNITY_KEY } from '@/constants/async-storage'
@@ -86,19 +88,22 @@ const Header = ({ headerRef, headerHeight }: Props) => {
               </View>
             </ContextMenu>
           </TouchableOpacity>
-          <View className="flex-row items-center gap-2">
+          <View className="flex-row items-center gap-4">
             <TouchableOpacity onPress={() => router.push(ABOUT_COMMUNITY)}>
-              <Ionicons name="people-circle-outline" size={40} color={Colors.text} />
+              <BlurView
+                intensity={50}
+                tint="dark"
+                className="w-10 h-10 rounded-full overflow-hidden items-center justify-center">
+                <Ionicons name="heart" size={24} color={Colors.text} />
+              </BlurView>
             </TouchableOpacity>
-            <ImagePickerButton />
-            <TouchableOpacity className="pl-1" onPress={() => router.push(PROFILE_SETTINGS)}>
-              <Image
-                source={{
-                  uri: `${profile?.avatar_url}?width=50&height=50` || PLACEHOLDER_AVATAR_URL,
-                }}
-                contentFit="cover"
-                style={{ width: 36, height: 36, borderRadius: 36 }}
-              />
+            <TouchableOpacity onPress={() => router.push(ABOUT_COMMUNITY)}>
+              <BlurView
+                intensity={50}
+                tint="dark"
+                className="w-10 h-10 rounded-full overflow-hidden items-center justify-center">
+                <Ionicons name="people" size={24} color={Colors.text} />
+              </BlurView>
             </TouchableOpacity>
           </View>
         </View>

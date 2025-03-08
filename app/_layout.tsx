@@ -80,8 +80,9 @@ const RootLayout = () => {
                 headerTransparent: true,
                 headerTintColor: Colors.text,
               }}>
+              <Stack.Screen name="index" options={{ gestureEnabled: false }} />
+              <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
               <Stack.Screen name="+not-found" />
-              <Stack.Screen name="home" />
               <Stack.Screen
                 name="posts/new"
                 options={{
@@ -91,7 +92,6 @@ const RootLayout = () => {
                   gestureEnabled: false,
                 }}
               />
-              <Stack.Screen name="index" options={{ gestureEnabled: false }} />
               <Stack.Screen
                 name="posts/[id]"
                 options={{
@@ -143,7 +143,7 @@ const RootLayout = () => {
                   ),
                 }}
               />
-              <Stack.Screen
+              {/* <Stack.Screen
                 name="profile/settings/index"
                 options={{
                   presentation: 'modal',
@@ -158,8 +158,8 @@ const RootLayout = () => {
                     backgroundColor: 'transparent',
                   },
                 }}
-              />
-              <Stack.Screen
+              /> */}
+              {/* <Stack.Screen
                 name="profile/settings/feedback"
                 options={{
                   presentation: 'modal',
@@ -175,7 +175,7 @@ const RootLayout = () => {
                     </TouchableOpacity>
                   ),
                 }}
-              />
+              /> */}
               <Stack.Screen
                 name="invite/[hash]"
                 options={{
