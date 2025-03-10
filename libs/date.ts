@@ -21,5 +21,5 @@ export const getRelativeTimeFromNow = (timestampDate: string) => {
   if (hours === 1) return '1h'
   if (minutes > 1) return `${minutes}m`
 
-  return 'just now'
+  return 'now'
 }
