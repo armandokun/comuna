@@ -1,5 +1,13 @@
 import { useCallback, useContext, useEffect, useState } from 'react'
-import { View, Alert, ScrollView, TouchableOpacity, Platform, SafeAreaView } from 'react-native'
+import {
+  View,
+  Alert,
+  ScrollView,
+  TouchableOpacity,
+  Platform,
+  SafeAreaView,
+  Switch,
+} from 'react-native'
 import { Image } from 'expo-image'
 import { router } from 'expo-router'
 import { BlurView } from 'expo-blur'
@@ -19,12 +27,15 @@ import { HOME } from '@/constants/routes'
 import { SELECTED_COMMUNITY_KEY } from '@/constants/async-storage'
 import InviteLinkSection from '@/components/InviteLinkSection'
 import Label from '@/components/ui/Label'
+import Cell from '@/components/ui/Cell'
 
 const AboutCommunityScreen = () => {
   const [members, setMembers] = useState<Array<ComunaMember>>([])
   const [isExpanded, setIsExpanded] = useState(false)
   const [manager, setManager] = useState<ComunaMember | null>(null)
+  const [currentMember, setCurrentMember] = useState<ComunaMember | null>(null)
   const [pendingRequests, setPendingRequests] = useState<Array<ComunaMember>>([])
+
   const { selectedComuna, setComunas, comunas, setSelectedComuna } = useContext(CommunityContext)
   const { profile } = useContext(SessionContext)
 
@@ -55,6 +66,7 @@ const AboutCommunityScreen = () => {
       .select(
         `
         is_approved,
+        push_notifications_enabled,
         community:communities(
           manager_id,
           name,
@@ -73,32 +85,41 @@ const AboutCommunityScreen = () => {
 
     if (error) Alert.alert('Error', error.message)
 
-    const formattedMembers = data?.map(({ is_approved: isApproved, member, community }) => ({
-      id: member?.id!,
-      name: member?.name || null,
-      username: member?.username || null,
-      avatar_url: member?.avatar_url || PLACEHOLDER_AVATAR_URL,
-      is_manager: community.manager_id === member?.id,
-      is_approved: isApproved,
-      is_blocked: false,
-    }))
+    const formattedMembers = data?.map(
+      ({
+        is_approved: isApproved,
+        member,
+        community,
+        push_notifications_enabled: isAlertsEnabled,
+      }) => ({
+        id: member?.id!,
+        name: member?.name || null,
+        username: member?.username || null,
+        avatarUrl: member?.avatar_url || PLACEHOLDER_AVATAR_URL,
+        isManager: community.manager_id === member?.id,
+        isApproved,
+        isAlertsEnabled,
+        isBlocked: false,
+      }),
+    )
 
     if (formattedMembers) {
       setMembers(
         formattedMembers.filter((member) => {
           if (!member.username && !member.name) return false
 
-          if (member.is_approved) return true
+          if (member.isApproved) return true
 
           return false
         }),
       )
-      setManager(formattedMembers.find((member) => member.is_manager) ?? null)
-      setPendingRequests(formattedMembers.filter((member) => !member.is_approved))
+      setManager(formattedMembers.find((member) => member.isManager) ?? null)
+      setPendingRequests(formattedMembers.filter((member) => !member.isApproved))
+      setCurrentMember(formattedMembers.find((member) => member.id === profile?.id) ?? null)
 
       fetchBlockedMembers()
     }
-  }, [fetchBlockedMembers, selectedComuna?.id])
+  }, [fetchBlockedMembers, profile?.id, selectedComuna?.id])
 
   useEffect(() => {
     if (members.length) return
@@ -124,8 +145,7 @@ const AboutCommunityScreen = () => {
     fetchMembers()
   }
 
-  const isCurrentUserManager =
-    members.find((member) => member.id === profile?.id)?.is_manager && manager?.id === profile?.id
+  const isCurrentUserManager = currentMember?.isManager && manager?.id === profile?.id
 
   const handleLeaveCommunity = async () => {
     if (!selectedComuna?.id || !profile?.id) return
@@ -370,6 +390,40 @@ const AboutCommunityScreen = () => {
     }
   }
 
+  const handlePushNotificationsToggle = async () => {
+    if (!currentMember || !selectedComuna?.id) return
+
+    const pushNotificationsEnabled = currentMember.isAlertsEnabled
+
+    setCurrentMember((prevMember) => {
+      if (!prevMember) return null
+
+      return {
+        ...prevMember,
+        isAlertsEnabled: !pushNotificationsEnabled,
+      }
+    })
+
+    const { error } = await supabase
+      .from('community_members')
+      .update({ push_notifications_enabled: !pushNotificationsEnabled })
+      .eq('community_id', selectedComuna.id)
+      .eq('user_id', currentMember.id)
+
+    if (error) {
+      Alert.alert('Error updating push notifications', error.message)
+
+      setCurrentMember((prevMember) => {
+        if (!prevMember) return null
+
+        return {
+          ...prevMember,
+          isAlertsEnabled: !pushNotificationsEnabled,
+        }
+      })
+    }
+  }
+
   const toggleAccordion = () => setIsExpanded(!isExpanded)
 
   const displayedMembers = isExpanded ? members : members.slice(0, 3)
@@ -388,7 +442,7 @@ const AboutCommunityScreen = () => {
             <Spacer size="xxsmall" />
             <View className="flex-row items-center gap-2">
               <Image
-                source={{ uri: manager?.avatar_url || PLACEHOLDER_AVATAR_URL }}
+                source={{ uri: manager?.avatarUrl || PLACEHOLDER_AVATAR_URL }}
                 style={{
                   width: 32,
                   height: 32,
@@ -417,7 +471,7 @@ const AboutCommunityScreen = () => {
                       <View className="flex-row items-center gap-2">
                         <Image
                           key={member.id}
-                          source={{ uri: member.avatar_url || PLACEHOLDER_AVATAR_URL }}
+                          source={{ uri: member.avatarUrl || PLACEHOLDER_AVATAR_URL }}
                           contentFit="cover"
                           style={{ width: 30, height: 30, borderRadius: 30 }}
                         />
@@ -469,22 +523,22 @@ const AboutCommunityScreen = () => {
                 <View className="flex-row items-center gap-2">
                   <Image
                     key={member.id}
-                    source={{ uri: member.avatar_url || PLACEHOLDER_AVATAR_URL }}
+                    source={{ uri: member.avatarUrl || PLACEHOLDER_AVATAR_URL }}
                     contentFit="cover"
                     style={{ width: 30, height: 30, borderRadius: 30 }}
                   />
                   <View>
                     <Text type="body">
-                      {member.username || member.name} {member.is_blocked && '(blocked)'}
+                      {member.username || member.name} {member.isBlocked && '(blocked)'}
                     </Text>
-                    {member.is_manager && (
+                    {member.isManager && (
                       <Text type="subhead" style={{ color: Colors.muted }}>
                         Manager
                       </Text>
                     )}
                   </View>
                 </View>
-                {(isCurrentUserManager || member.id === profile?.id || member.is_blocked) && (
+                {(isCurrentUserManager || member.id === profile?.id || member.isBlocked) && (
                   <TouchableOpacity>
                     <ContextMenu
                       itemId={Number(member.id)}
@@ -506,7 +560,7 @@ const AboutCommunityScreen = () => {
                               },
                             ]
                           : []),
-                        ...(member.is_blocked
+                        ...(member.isBlocked
                           ? [
                               {
                                 id: `unblock-${member.id}`,
@@ -519,7 +573,7 @@ const AboutCommunityScreen = () => {
                               },
                             ]
                           : []),
-                        ...(isCurrentUserManager && !member.is_manager
+                        ...(isCurrentUserManager && !member.isManager
                           ? [
                               {
                                 id: `manager-${member.id}`,
@@ -557,6 +611,23 @@ const AboutCommunityScreen = () => {
               </BlurView>
             ))}
           </View>
+          <Spacer size="medium" />
+          <BlurView tint="light" intensity={30} className="rounded-xl overflow-hidden">
+            <Cell
+              title={<Text type="body">Push Notifications</Text>}
+              suffix={
+                <Switch
+                  ios_backgroundColor={Colors.muted}
+                  value={currentMember?.isAlertsEnabled}
+                  onValueChange={handlePushNotificationsToggle}
+                />
+              }
+            />
+          </BlurView>
+          <Spacer size="xxsmall" />
+          <Text type="footnote" style={{ color: Colors.muted }} className="px-4">
+            This only affects notifications for this community.
+          </Text>
           <Spacer size="medium" />
           <Label title="Danger" />
           <BlurView tint="light" intensity={30} className="rounded-xl overflow-hidden">

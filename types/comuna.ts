@@ -2,17 +2,18 @@ type Comuna = {
   id: number
   name: string
   description: string
-  requires_member_approval: boolean
+  requiresMemberApproval: boolean
 }
 
 type ComunaMember = {
   id: string
-  is_manager: boolean
+  isManager: boolean
   name: string | null
   username: string | null
-  avatar_url: string | null
-  is_approved: boolean
-  is_blocked: boolean
+  avatarUrl: string | null
+  isApproved: boolean
+  isBlocked: boolean
+  isAlertsEnabled: boolean
 }
 
 export type { Comuna, ComunaMember }

@@ -180,6 +180,7 @@ export type Database = {
           created_at: string
           id: number
           is_approved: boolean
+          push_notifications_enabled: boolean
           user_id: string | null
         }
         Insert: {
@@ -187,6 +188,7 @@ export type Database = {
           created_at?: string
           id?: number
           is_approved?: boolean
+          push_notifications_enabled?: boolean
           user_id?: string | null
         }
         Update: {
@@ -194,6 +196,7 @@ export type Database = {
           created_at?: string
           id?: number
           is_approved?: boolean
+          push_notifications_enabled?: boolean
           user_id?: string | null
         }
         Relationships: [
