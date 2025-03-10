@@ -1,4 +1,4 @@
-import { View, TouchableOpacity, Dimensions } from 'react-native'
+import { View, TouchableOpacity } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { Ionicons } from '@expo/vector-icons'
 import { BlurView } from 'expo-blur'
@@ -7,9 +7,6 @@ import { BottomTabBarProps } from '@react-navigation/bottom-tabs'
 
 import { Colors } from '@/constants/colors'
 import ImagePickerButton from '@/components/ImagePickerButton'
-
-const { width } = Dimensions.get('window')
-const TAB_BAR_WIDTH = width * 0.5
 
 const CustomTabBar = ({ state, descriptors, navigation }: BottomTabBarProps) => {
   const insets = useSafeAreaInsets()
@@ -57,7 +54,7 @@ const CustomTabBar = ({ state, descriptors, navigation }: BottomTabBarProps) => 
         accessibilityState={isFocused ? { selected: true } : {}}
         accessibilityLabel={options.tabBarAccessibilityLabel}
         onPress={onPress}
-        className="flex-1 items-center">
+        className="items-center p-2">
         <View className={`p-2 rounded-[20px] ${isFocused ? 'bg-white/15' : ''}`}>
           <Ionicons
             name={getTabIcon(route.name)}
@@ -77,7 +74,6 @@ const CustomTabBar = ({ state, descriptors, navigation }: BottomTabBarProps) => 
         entering={FadeIn.duration(500)}
         className="rounded-[30px] overflow-hidden shadow-lg"
         style={{
-          width: TAB_BAR_WIDTH,
           shadowColor: '#000',
           shadowOffset: { width: 0, height: 4 },
           shadowOpacity: 0.3,
@@ -87,15 +83,13 @@ const CustomTabBar = ({ state, descriptors, navigation }: BottomTabBarProps) => 
         <BlurView
           intensity={80}
           tint="systemChromeMaterialDark"
-          className="rounded-[30px] overflow-hidden">
-          <View className="flex-row h-[50px] rounded-[30px] items-center">
-            {beforeTabs.map((route, index) => renderTab(route, index)).filter(Boolean)}
-            <View className="w-[60px] items-center">
+          className="rounded-full overflow-hidden border border-white/10">
+          <View className="flex-row rounded-full items-center">
+            {beforeTabs.map((route, index) => renderTab(route, index))}
+            <View className="w-[80px] items-center">
               <ImagePickerButton buttonType="icon" />
             </View>
-            {afterTabs
-              .map((route, index) => renderTab(route, index + beforeTabs.length))
-              .filter(Boolean)}
+            {afterTabs.map((route, index) => renderTab(route, index + beforeTabs.length))}
           </View>
         </BlurView>
       </Animated.View>
