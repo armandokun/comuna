@@ -56,7 +56,7 @@ const Post = ({ item, onPress, isVisible }: Props) => {
   const { height: screenHeight } = Dimensions.get('screen')
 
   const DEFAULT_HEIGHT = 50
-  const SAFE_AREA_HEIGHT = 40
+  const SAFE_AREA_HEIGHT = 60
   const IMAGE_SIZE = screenHeight * 0.8 - commentContainerHeight - SAFE_AREA_HEIGHT
 
   useEffect(() => {
