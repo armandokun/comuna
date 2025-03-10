@@ -51,7 +51,7 @@ const Post = ({ item, onPress, isVisible }: Props) => {
     commentContainerRef.current.measure((x, y, width, height, pageX, pageY) => {
       setCommentContainerHeight(height)
     })
-  }, [])
+  }, [item.comments])
 
   const { height: screenHeight } = Dimensions.get('screen')
 
