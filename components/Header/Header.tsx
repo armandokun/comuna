@@ -91,8 +91,7 @@ const Header = ({ headerRef, headerHeight }: Props) => {
           <View className="flex-row items-center gap-4">
             <TouchableOpacity onPress={() => router.push(ABOUT_COMMUNITY)}>
               <BlurView
-                intensity={50}
-                tint="dark"
+                tint="light"
                 className="w-10 h-10 rounded-full overflow-hidden items-center justify-center">
                 <Ionicons name="people" size={24} color={Colors.text} />
               </BlurView>
