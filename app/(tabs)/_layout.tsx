@@ -7,7 +7,6 @@ const TabsLayout = () => (
   <Tabs
     screenOptions={{
       headerShown: false,
-      tabBarStyle: { display: 'none' }, // Hide default tab bar
     }}
     tabBar={(props) => <CustomTabBar {...props} />}>
     <Tabs.Screen
@@ -17,7 +16,7 @@ const TabsLayout = () => (
       }}
     />
     <Tabs.Screen
-      name="profile/index"
+      name="profile"
       options={{
         title: 'Profile',
       }}

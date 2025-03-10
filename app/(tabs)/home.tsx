@@ -2,7 +2,7 @@ import { Alert, StyleSheet, View, ActivityIndicator, FlatList } from 'react-nati
 import React, { useCallback, useContext, useEffect, useRef, useState } from 'react'
 import { BlurView } from 'expo-blur'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
-import { SplashScreen, useFocusEffect } from 'expo-router'
+import { SplashScreen, useFocusEffect, useNavigation } from 'expo-router'
 import { Image } from 'expo-image'
 import Animated, { FadeIn, FadeOut } from 'react-native-reanimated'
 
@@ -11,6 +11,7 @@ import { supabase } from '@/libs/supabase'
 import { mmkvStorage } from '@/libs/mmkv'
 import { SessionContext } from '@/containers/SessionProvider'
 import { CommunityContext } from '@/containers/CommunityProvider'
+import { BackgroundContext } from '@/containers/BackgroundProvider'
 import { Post } from '@/types/posts'
 import { REFRESH_POSTS_KEY } from '@/constants/async-storage'
 import { PLACEHOLDER_AVATAR_URL } from '@/constants/url'
@@ -26,7 +27,6 @@ const POSTS_PER_BATCH = 5
 const POSTS_PER_BATCH_INDEX = POSTS_PER_BATCH - 1
 
 const HomeScreen = () => {
-  const [backgroundBlurhash, setBackgroundBlurhash] = useState('')
   const [isRefreshing, setIsRefreshing] = useState(false)
   const [showOnboarding, setShowOnboarding] = useState(false)
   const [headerHeight, setHeaderHeight] = useState(0)
@@ -38,8 +38,10 @@ const HomeScreen = () => {
   const insets = useSafeAreaInsets()
   const { selectedComuna } = useContext(CommunityContext)
   const { profile, isProfileFetched } = useContext(SessionContext)
+  const { backgroundBlurhash, setBackgroundBlurhash } = useContext(BackgroundContext)
   const headerRef = useRef<View>(null)
   const flatListRef = useRef<FlatList>(null)
+  const navigation = useNavigation()
 
   useEffect(() => {
     if (!isProfileFetched) return
@@ -162,6 +164,18 @@ const HomeScreen = () => {
       setIsRefreshing(false)
     }, 1000)
   }, [fetchPosts])
+
+  useEffect(() => {
+    const unsubscribe = navigation.addListener('tabRePress', (event) => {
+      if (event.data?.routeName === 'home') {
+        flatListRef.current?.scrollToOffset({ offset: 0, animated: true })
+
+        handleRefresh()
+      }
+    })
+
+    return unsubscribe
+  }, [handleRefresh, navigation])
 
   useEffect(() => {
     if (!selectedComuna?.id) return

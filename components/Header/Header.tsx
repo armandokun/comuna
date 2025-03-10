@@ -94,14 +94,6 @@ const Header = ({ headerRef, headerHeight }: Props) => {
                 intensity={50}
                 tint="dark"
                 className="w-10 h-10 rounded-full overflow-hidden items-center justify-center">
-                <Ionicons name="heart" size={24} color={Colors.text} />
-              </BlurView>
-            </TouchableOpacity>
-            <TouchableOpacity onPress={() => router.push(ABOUT_COMMUNITY)}>
-              <BlurView
-                intensity={50}
-                tint="dark"
-                className="w-10 h-10 rounded-full overflow-hidden items-center justify-center">
                 <Ionicons name="people" size={24} color={Colors.text} />
               </BlurView>
             </TouchableOpacity>

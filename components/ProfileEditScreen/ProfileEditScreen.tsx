@@ -157,7 +157,7 @@ const ProfileEditScreen = () => {
   return (
     <KeyboardAvoidingView behavior="padding" className="flex-1">
       <KeyboardDismissPressable>
-        <View className="px-4 mt-8">
+        <View className="p-4 mt-12">
           <View className="items-center">
             <TouchableOpacity onPress={handlePickImage}>
               <Image

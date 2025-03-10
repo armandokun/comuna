@@ -8,6 +8,7 @@ import {
   Switch,
   TouchableOpacity,
   View,
+  StyleSheet,
 } from 'react-native'
 import { BlurView } from 'expo-blur'
 import { Image } from 'expo-image'
@@ -33,6 +34,7 @@ import { supabase } from '@/libs/supabase'
 import useSlideTransition from '@/hooks/useSlideTransition'
 import SlideTransition from '@/components/SlideTransition'
 import ProfileEditScreen from '@/components/ProfileEditScreen'
+import { BackgroundContext } from '@/containers/BackgroundProvider'
 
 const Settings = () => {
   const [appState, setAppState] = useState<AppStateStatus | null>(null)
@@ -50,6 +52,7 @@ const Settings = () => {
   const navigation = useNavigation()
 
   const { profile } = useContext(SessionContext)
+  const { backgroundBlurhash } = useContext(BackgroundContext)
 
   const { checkPermissions, registerForPushNotifications } = usePushNotifications()
 
@@ -64,15 +67,16 @@ const Settings = () => {
 
     navigation.setOptions({
       headerShown: true,
-      headerLeft: () => (
-        <TouchableOpacity onPress={handleBack}>
-          <Ionicons
-            name={showEditProfile ? 'chevron-back-circle' : 'close-circle'}
-            size={36}
-            color={Colors.text}
-          />
-        </TouchableOpacity>
-      ),
+      headerTitleStyle: {
+        color: Colors.text,
+      },
+      headerTransparent: true,
+      headerLeft: () =>
+        showEditProfile ? (
+          <TouchableOpacity onPress={handleBack} className="px-4">
+            <Ionicons name="chevron-back-circle" size={36} color={Colors.text} />
+          </TouchableOpacity>
+        ) : null,
     })
   }, [handleHideEditProfile, navigation, showEditProfile])
 
@@ -149,7 +153,7 @@ const Settings = () => {
   }
 
   const MainContent = (
-    <View className="px-4">
+    <View className="p-4">
       <BlurView tint="light" intensity={30} className="mt-10 rounded-xl overflow-hidden">
         <Cell
           size="large"
@@ -236,17 +240,24 @@ const Settings = () => {
   )
 
   return (
-    <BlurView tint="systemChromeMaterialDark" intensity={80} className="flex-1">
-      <SafeAreaView className="flex-1">
-        <SlideTransition
-          mainContent={MainContent}
-          slideInContent={<ProfileEditScreen />}
-          showSlideContent={showEditProfile}
-          mainContentStyle={mainContentStyle}
-          slideInContentStyle={slideInContentStyle}
-        />
-      </SafeAreaView>
-    </BlurView>
+    <>
+      <Image
+        source={{ blurhash: backgroundBlurhash }}
+        style={StyleSheet.absoluteFill}
+        contentFit="cover"
+      />
+      <BlurView tint="systemChromeMaterialDark" intensity={80} className="flex-1">
+        <SafeAreaView className="flex-1">
+          <SlideTransition
+            mainContent={MainContent}
+            slideInContent={<ProfileEditScreen />}
+            showSlideContent={showEditProfile}
+            mainContentStyle={mainContentStyle}
+            slideInContentStyle={slideInContentStyle}
+          />
+        </SafeAreaView>
+      </BlurView>
+    </>
   )
 }
 

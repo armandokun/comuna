@@ -14,6 +14,7 @@ import { HOME } from '@/constants/routes'
 import { Colors } from '@/constants/colors'
 import SessionProvider from '@/containers/SessionProvider'
 import CommunityProvider from '@/containers/CommunityProvider'
+import BackgroundProvider from '@/containers/BackgroundProvider'
 
 import '../global.css'
 
@@ -74,125 +75,114 @@ const RootLayout = () => {
       <BottomSheetModalProvider>
         <SessionProvider>
           <CommunityProvider>
-            <Stack
-              screenOptions={{
-                headerShown: false,
-                headerTransparent: true,
-                headerTintColor: Colors.text,
-              }}>
-              <Stack.Screen name="index" options={{ gestureEnabled: false }} />
-              <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-              <Stack.Screen name="+not-found" />
-              <Stack.Screen
-                name="posts/new"
-                options={{
-                  presentation: 'modal',
-                  headerTitle: 'New Post',
-                  headerShown: true,
-                  gestureEnabled: false,
-                }}
-              />
-              <Stack.Screen
-                name="posts/[id]"
-                options={{
-                  headerTitle: '',
-                  headerShown: true,
-                }}
-              />
-              <Stack.Screen
-                name="comments/[id]/likes"
-                options={{
-                  presentation: 'modal',
-                  headerTitle: 'Likes',
+            <BackgroundProvider>
+              <Stack
+                screenOptions={{
+                  headerShown: false,
+                  headerTransparent: true,
+                  headerTintColor: Colors.text,
                   contentStyle: {
-                    backgroundColor: 'transparent',
+                    backgroundColor: Colors.muted,
                   },
-                  headerShown: true,
-                  headerRight: () => (
-                    <TouchableOpacity onPress={handleGoBack}>
-                      <Ionicons name="close-circle" size={36} color={Colors.text} />
-                    </TouchableOpacity>
-                  ),
-                }}
-              />
-              <Stack.Screen
-                name="communities/new"
-                options={{
-                  presentation: 'modal',
-                  headerTitle: 'New Comuna',
-                  headerShown: true,
-                  gestureEnabled: false,
-                  contentStyle: {
-                    backgroundColor: 'transparent',
-                  },
-                }}
-              />
-              <Stack.Screen
-                name="communities/about"
-                options={{
-                  presentation: 'modal',
-                  headerShown: true,
-                  contentStyle: {
-                    backgroundColor: 'transparent',
-                  },
-                  headerTitle: '',
-                  headerLeft: () => (
-                    <TouchableOpacity onPress={handleGoBack}>
-                      <Ionicons name="close-circle" size={36} color={Colors.text} />
-                    </TouchableOpacity>
-                  ),
-                }}
-              />
-              {/* <Stack.Screen
-                name="profile/settings/index"
-                options={{
-                  presentation: 'modal',
-                  headerShown: true,
-                  headerTitle: 'Settings',
-                  headerLeft: () => (
-                    <TouchableOpacity onPress={handleGoBack}>
-                      <Ionicons name="close-circle" size={36} color={Colors.text} />
-                    </TouchableOpacity>
-                  ),
-                  contentStyle: {
-                    backgroundColor: 'transparent',
-                  },
-                }}
-              /> */}
-              {/* <Stack.Screen
-                name="profile/settings/feedback"
-                options={{
-                  presentation: 'modal',
-                  headerShown: true,
-                  headerTitle: 'Feedback',
-                  gestureEnabled: false,
-                  contentStyle: {
-                    backgroundColor: 'transparent',
-                  },
-                  headerLeft: () => (
-                    <TouchableOpacity onPress={handleGoBack}>
-                      <Ionicons name="close-circle" size={36} color={Colors.text} />
-                    </TouchableOpacity>
-                  ),
-                }}
-              /> */}
-              <Stack.Screen
-                name="invite/[hash]"
-                options={{
-                  headerShown: true,
-                  presentation: 'modal',
-                  contentStyle: {
-                    backgroundColor: 'transparent',
-                  },
-                  headerLeft: () => (
-                    <TouchableOpacity onPress={handleGoBack}>
-                      <Ionicons name="close-circle" size={36} color={Colors.text} />
-                    </TouchableOpacity>
-                  ),
-                  headerTitle: 'Invitation',
-                }}
-              />
-            </Stack>
+                }}>
+                <Stack.Screen name="index" options={{ gestureEnabled: false }} />
+                <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+                <Stack.Screen name="+not-found" />
+                <Stack.Screen
+                  name="posts/new"
+                  options={{
+                    presentation: 'modal',
+                    headerTitle: 'New Post',
+                    headerShown: true,
+                    gestureEnabled: false,
+                  }}
+                />
+                <Stack.Screen
+                  name="posts/[id]"
+                  options={{
+                    headerTitle: '',
+                    headerShown: true,
+                  }}
+                />
+                <Stack.Screen
+                  name="comments/[id]/likes"
+                  options={{
+                    presentation: 'modal',
+                    headerTitle: 'Likes',
+                    contentStyle: {
+                      backgroundColor: 'transparent',
+                    },
+                    headerShown: true,
+                    headerRight: () => (
+                      <TouchableOpacity onPress={handleGoBack}>
+                        <Ionicons name="close-circle" size={36} color={Colors.text} />
+                      </TouchableOpacity>
+                    ),
+                  }}
+                />
+                <Stack.Screen
+                  name="communities/new"
+                  options={{
+                    presentation: 'modal',
+                    headerTitle: 'New Comuna',
+                    headerShown: true,
+                    gestureEnabled: false,
+                    contentStyle: {
+                      backgroundColor: 'transparent',
+                    },
+                  }}
+                />
+                <Stack.Screen
+                  name="communities/about"
+                  options={{
+                    presentation: 'modal',
+                    headerShown: true,
+                    contentStyle: {
+                      backgroundColor: 'transparent',
+                    },
+                    headerTitle: '',
+                    headerLeft: () => (
+                      <TouchableOpacity onPress={handleGoBack}>
+                        <Ionicons name="close-circle" size={36} color={Colors.text} />
+                      </TouchableOpacity>
+                    ),
+                  }}
+                />
+                <Stack.Screen
+                  name="profile/feedback"
+                  options={{
+                    presentation: 'modal',
+                    headerShown: true,
+                    headerTitle: 'Feedback',
+                    gestureEnabled: false,
+                    contentStyle: {
+                      backgroundColor: 'transparent',
+                    },
+                    headerLeft: () => (
+                      <TouchableOpacity onPress={handleGoBack}>
+                        <Ionicons name="close-circle" size={36} color={Colors.text} />
+                      </TouchableOpacity>
+                    ),
+                  }}
+                />
+                <Stack.Screen
+                  name="invite/[hash]"
+                  options={{
+                    headerShown: true,
+                    presentation: 'modal',
+                    contentStyle: {
+                      backgroundColor: 'transparent',
+                    },
+                    headerLeft: () => (
+                      <TouchableOpacity onPress={handleGoBack}>
+                        <Ionicons name="close-circle" size={36} color={Colors.text} />
+                      </TouchableOpacity>
+                    ),
+                    headerTitle: 'Invitation',
+                  }}
+                />
+              </Stack>
+            </BackgroundProvider>
           </CommunityProvider>
         </SessionProvider>
       </BottomSheetModalProvider>
